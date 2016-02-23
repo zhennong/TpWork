@@ -19,20 +19,23 @@ if(version_compare(PHP_VERSION,'5.4.0','<'))  die('require PHP > 5.4.0 !');
 // 开启调试模式 建议开发阶段开启 部署阶段注释或者设为false
 define('APP_DEBUG',True);
 
+// 定义应用根目录
+define('APP_ROOT',dirname(__FILE__));
+
 // 定义默认模块
 define('BIND_MODULE','Admin');
 
 // 定义应用目录
-define('APP_PATH','./Application/');
+define('APP_PATH',APP_ROOT.'/Application/');
 
 // 定义缓存目录
-define('RUNTIME_PATH','./Runtime/');
+define('RUNTIME_PATH',APP_ROOT.'/Runtime/');
 
 // composer
 require 'vendor/autoload.php';
 
 // vendor目录
-define('VENDOR_PATH','./vendor/');
+define('VENDOR_PATH',APP_ROOT.'/vendor/');
 
 //设置自定义类自动加载
 spl_autoload_register(function($classname){
