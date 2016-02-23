@@ -46,6 +46,7 @@ return [
     /* 模板相关配置 */
     'TMPL_PARSE_STRING' => [
         '__STATIC__' => __ROOT__ . '/Public/static/',
+        '__BOWER__' => VENDOR_PATH . '/bower/',
         '__COMMON__' => __ROOT__ . '/Public/Common/',
         '__HOME__' => __ROOT__ . '/Public/Home/',
         '__ADMIN__' => __ROOT__ . '/Public/Admin/',
