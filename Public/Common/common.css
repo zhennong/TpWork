@@ -1,3 +1,7 @@
+.position_fixed{
+    position: fixed;
+}
+
 .height_100{
     height: 100%;
 }
