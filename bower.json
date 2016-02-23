@@ -1,0 +1,28 @@
+{
+  "name": "TpWork",
+  "homepage": "https://github.com/zhennong/TpWork",
+  "authors": [
+    "wodrow <wodrow451611cv@gmail.com>"
+  ],
+  "description": "TpWork",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "vendor/bower"
+  ],
+  "keywords": [
+    "TpWork"
+  ],
+  "private": true,
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "bootstrap": "^3.3.6",
+    "datatables": "^1.10.11"
+  }
+}
