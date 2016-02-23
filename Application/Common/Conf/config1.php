@@ -37,7 +37,7 @@ return [
     //服务器ip
     'WEB_IP'=>'192.168.0.15',
     //网站url
-    'WEB_URL'=>'',
+    'WEB_URL'=>'http://192.168.0.15/TpWork/',
     //网站域名
     'WEB_DOMAIN'=>'',
 

@@ -11,5 +11,7 @@ namespace Common;
 
 class Tools
 {
-
+    public static function test(){
+        echo C('WEB_IP');
+    }
 }
