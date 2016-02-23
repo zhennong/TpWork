@@ -34,6 +34,9 @@ phpunit.phar
 .tags
 .tags_sorted_by_file
 
+# npm
+npm-debug.log
+
 
 Runtime
 Uploads
