@@ -7,10 +7,12 @@
  */
 
 namespace Admin\Controller;
-use Think\Controller;
 
 
-class AdminController extends Controller
+
+use Common\Controller\CommonController;
+
+class AdminController extends CommonController
 {
 
 }
