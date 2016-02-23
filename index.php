@@ -45,11 +45,6 @@ spl_autoload_register(function($classname){
     }
 });
 
-// 全局对象
-$TPApp = new \Common\TPAppReg\TPApp();
-$TPApp -> run();
-$APP = \Common\TPAppReg\TP::$app;
-
 // 引入ThinkPHP入口文件
 require './ThinkPHP/ThinkPHP.php';
 
