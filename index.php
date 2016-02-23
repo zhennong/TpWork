@@ -39,11 +39,16 @@ define('VENDOR_PATH',APP_ROOT.'/vendor/');
 
 //设置自定义类自动加载
 spl_autoload_register(function($classname){
-    $_file = './Application/' . str_replace('\\','/',$classname) . '.php';
+    $_file = APP_ROOT.'/Application/' . str_replace('\\','/',$classname) . '.php';
     if(file_exists($_file)){
         require_once $_file;
     }
 });
+
+// 全局对象
+$TPApp = new \Common\TPAppReg\TPApp();
+$TPApp -> run();
+$APP = \Common\TPAppReg\TP::$app;
 
 // 引入ThinkPHP入口文件
 require './ThinkPHP/ThinkPHP.php';
