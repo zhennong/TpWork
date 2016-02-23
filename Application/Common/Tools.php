@@ -11,8 +11,5 @@ namespace Common;
 
 class Tools
 {
-    public static function test(){
-        echo 'test';
-        echo 'test';
-    }
+
 }
