@@ -36,11 +36,12 @@ abstract class AdminController extends CommonController
         foreach($x as $k => $v){
             $groups = M('AuthGroupAccess')->where(['uid'=>$v['id']])->select();
             foreach($groups as $k1 => $v1){
-                if(in_array('group_detail',$bind)){
-                    $x[$k]['group_detail'] = $this->getAuthGroupDetail($v[]);
-                }elseif(in_array('rules_detail',$bind)){
-
-                }
+                $y[] = $v1['group_id'];
+            }
+            if(in_array('group_detail',$bind)){
+                $x[$k]['group_detail'] = $this->getAuthGroupDetail($y);
+            }elseif(in_array('rules_detail',$bind)){
+                $x[$k]['group_detail'] = $this->getAuthGroupDetail($y,['rules_detail']);
             }
         }
         return $x;

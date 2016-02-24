@@ -35,7 +35,7 @@ class AuthController extends AdminController
         //下面代码动态判断权限
         $Auth = new Auth();
         if (!$Auth->check($this->route, $this->admin_user['id']) && $this->admin_user['id'] != 1) {
-            $this->error('没有权限');
+            $this->error('没有权限',U('Admin/Index/index'));
         }
     }
 }

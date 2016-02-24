@@ -12,14 +12,14 @@ namespace Admin\Controller;
 class UserController extends AuthController
 {
     public function index(){
-        echo 123;
+        $this->display('Index:index');
     }
 
     /**
      * 用户管理
      */
     public function user_manage(){
-        $user_list = M('Admin')->select();
+        $user_list = $this->getAdminUserDetail(null,['group_detail']);
         $this->assign(['user_list'=>$user_list]);
         $this->display();
     }
