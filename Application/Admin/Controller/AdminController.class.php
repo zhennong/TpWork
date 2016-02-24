@@ -12,7 +12,15 @@ namespace Admin\Controller;
 
 use Common\Controller\CommonController;
 
-class AdminController extends CommonController
+abstract class AdminController extends CommonController
 {
+    public $admin_user = [];//后台用户
 
+    public function _initialize(){
+        parent::_initialize();
+        $admin_user = session('admin_user');
+        if($admin_user){
+            $this->admin_user = $admin_user;
+        }
+    }
 }

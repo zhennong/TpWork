@@ -21,6 +21,9 @@ return [
     //trace
     'SHOW_PAGE_TRACE' =>true,
 
+    /* 系统数据加密设置 */
+    'DATA_AUTH_KEY' => 'wodrow',
+
     /* 数据缓存设置 */
     'DATA_CACHE_PREFIX' => 'app_', // 缓存前缀
     'DATA_CACHE_TYPE'   => 'File', // 数据缓存类型

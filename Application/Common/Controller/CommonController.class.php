@@ -12,5 +12,9 @@ use Think\Controller;
 
 abstract class CommonController extends Controller
 {
+    public $route='';
 
+    public function _initialize(){
+        $this->route = MODULE_NAME . "/" . CONTROLLER_NAME . "/" . ACTION_NAME;
+    }
 }

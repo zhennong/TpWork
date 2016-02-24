@@ -9,8 +9,6 @@
 namespace Admin\Controller;
 
 
-use Common\Controller\AuthController;
-
 class SystemController extends AuthController
 {
     public function index(){

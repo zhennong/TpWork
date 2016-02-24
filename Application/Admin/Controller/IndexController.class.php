@@ -1,8 +1,7 @@
 <?php
 namespace Admin\Controller;
-use Common\Tools;
 
-class IndexController extends AdminController {
+class IndexController extends AuthController {
     public function index(){
         $this->display();
     }
