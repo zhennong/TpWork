@@ -10,7 +10,7 @@ namespace Common\Controller;
 use Think\Controller;
 
 
-class CommonController extends Controller
+abstract class CommonController extends Controller
 {
 
 }
