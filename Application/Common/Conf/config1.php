@@ -32,7 +32,7 @@ return [
     'DB_USER'               =>  'root',      // 用户名
     'DB_PWD'                =>  'root',          // 密码
     'DB_PORT'               =>  '3306',        // 端口
-    'DB_PREFIX'             =>  'destoon_',    // 数据库表前缀
+    'DB_PREFIX'             =>  'destoon_appknow_',    // 数据库表前缀
 
     //服务器ip
     'WEB_IP'=>'192.168.0.15',
@@ -66,7 +66,7 @@ return [
     'URL_MODEL'             =>  2,
 
     // 其他数据库
-//    'BASIC_LIB_TABLES' => 'mysql://wft_open:WeiFengTou2015@116.255.217.235:3306/basic_lib_tables',
+    'DATABASE_MALL' => 'mysql://root:root@192.168.0.99:3306/nongyao001_com',
 
     //上传二级目录
     'UPLOAD2DIR' => 'wodrow/',
