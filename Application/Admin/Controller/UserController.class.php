@@ -9,6 +9,8 @@
 namespace Admin\Controller;
 
 
+use Common\Tools;
+
 class UserController extends AuthController
 {
     public function user_index(){
@@ -37,8 +39,8 @@ class UserController extends AuthController
      * 节点管理
      */
     public function node_manage(){
-        $node_list = M('AuthRule')->select();
-        $this->assign(['node_list'=>$node_list]);
+        $node_tree = Tools::list2tree($this->authAll);
+        $this->assign(['node_tree'=>$node_tree]);
         $this->display();
     }
 }

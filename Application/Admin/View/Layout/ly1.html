@@ -192,7 +192,7 @@
                     <?php foreach($authTree as $k => $v): ?>
                     <?php if($v['_child']): ?>
                     <li>
-                        <a><i class="{$v['icon']}"></i>用户管理<span class="fa arrow"></span></a>
+                        <a><i class="{$v['icon']}"></i> {$v['title']} <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <?php foreach($v['_child'] as $k1 => $v1): ?>
                             <li>
@@ -203,7 +203,7 @@
                     </li>
                     <?php else: ?>
                     <li>
-                        <a href="{:U($v['name'])}"><i class="{$v['icon']}"></i>{$v['title']}</a>
+                        <a href="{:U($v['name'])}"><i class="{$v['icon']}"></i> {$v['title']}</a>
                     </li>
                     <?php endif; ?>
                     <?php endforeach; ?>

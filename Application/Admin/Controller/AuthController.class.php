@@ -17,6 +17,7 @@ class AuthController extends AdminController
     public $not_check = [
         'Admin/Index/index'
     ];// 不需要验证的方法
+    public $authAll =[[]]; // 所有节点
     public $authNames =[]; // 允许访问节点名数组
     public $authList = [[]]; // 允许访问节点列表
     public $authTree = [[]]; // 允许访问节点树
@@ -30,16 +31,6 @@ class AuthController extends AdminController
             $this->error("尚未登录",U("Admin/Public/login"));
         }
 
-        //session存在时，不需要验证的权限
-//        if(!in_array($this->route,$this->not_check)){
-//            //下面代码动态判断权限
-//            $Auth = new Auth();
-//            if (!$Auth->check($this->route, $this->admin_user['id']) && $this->admin_user['id'] != C('ADMIN_USER_ID')) {
-//                $this->error('没有权限',U('Admin/Index/index'));
-//            }
-//        }
-
-
         //获取允许访问的节点
         $this->authList = $this->getAuthList($this->admin_user['id']);
         foreach($this->authList as $k => $v){
@@ -50,7 +41,6 @@ class AuthController extends AdminController
         }
         $this->authTree = Tools::list2tree($this->authList);
         $this->assign(['authNames'=>$this->authNames,'authList'=>$this->authList,'authTree'=>$this->authTree]);
-//        Tools::_vp($this->authTree,0,2);
     }
 
     /**
@@ -61,6 +51,7 @@ class AuthController extends AdminController
     protected function getAuthList($user_id){
         $Auth = new Auth();
         $rules = M('AuthRule')->order("id ASC")->select();
+        $this->authAll = $rules;
         foreach($rules as $k => $v){
             $a = $this->admin_user['id'] == C('ADMIN_USER_ID');
             $b = in_array($v['name'],$this->not_check);

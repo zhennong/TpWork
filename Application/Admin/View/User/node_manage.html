@@ -4,7 +4,8 @@
     <script>
         $(document).ready(function () {
             $("table").DataTable({
-                language:dataTables_zh_CN
+                language: dataTables_zh_CN,
+                pageLength: 100
             })
         });
     </script>
@@ -33,25 +34,18 @@
                                 <thead>
                                 <tr>
                                     <th>编号</th>
-                                    <th>pid</th>
+                                    <th>父级</th>
+                                    <th>标志</th>
                                     <th>标题</th>
-                                    <th>icon</th>
+                                    <th>图标</th>
+                                    <th>状态</th>
+                                    <th>排序</th>
+                                    <th>添加时间</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php foreach($node_list as $k => $v): ?>
-                                <tr data-id="{$v['id']}">
-                                    <th scope="row">{$v['id']}</th>
-                                    <th>{$v['pid']}</th>
-                                    <td>{$v['title']}</td>
-                                    <td><i class="{$v['icon']}"></i></td>
-                                    <td>
-                                        <button class="btn btn-warning">编辑</button>
-                                        <button class="btn btn-danger">删除</button>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                {:W("Admin/Recursion/showAuth",[$node_tree])}
                                 </tbody>
                             </table>
                         </div>

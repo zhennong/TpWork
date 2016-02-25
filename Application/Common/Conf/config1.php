@@ -70,6 +70,7 @@ return [
 
     // 其他数据库
     'DATABASE_MALL' => 'mysql://root:root@192.168.0.99:3306/nongyao001_com',
+    'DATABASE_MALL_TABLE_PREFIX' => 'destoon_',
 
     //上传二级目录
     'UPLOAD2DIR' => 'wodrow/',

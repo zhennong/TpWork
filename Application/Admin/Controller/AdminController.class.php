@@ -36,6 +36,20 @@ abstract class AdminController extends CommonController
     public function getAdminUserDetail($map,$bind=[]){
         $x = M('Admin')->where(get_map($map))->select();
         foreach($x as $k => $v){
+            switch($v['status']){
+                case 0:
+                    $status_name = "禁用中";
+                    break;
+
+                case 1:
+                    $status_name = "启用中";
+                    break;
+
+                default:
+                    $status_name = "未定义状态：".$v['status'];
+                    break;
+            }
+            $x[$k]['status_name'] = $status_name;
             $groups = M('AuthGroupAccess')->where(['uid'=>$v['id']])->select();
             foreach($groups as $k1 => $v1){
                 $y[] = $v1['group_id'];
