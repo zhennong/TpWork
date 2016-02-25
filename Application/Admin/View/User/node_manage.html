@@ -33,7 +33,9 @@
                                 <thead>
                                 <tr>
                                     <th>编号</th>
+                                    <th>pid</th>
                                     <th>标题</th>
+                                    <th>icon</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -41,7 +43,9 @@
                                 <?php foreach($node_list as $k => $v): ?>
                                 <tr data-id="{$v['id']}">
                                     <th scope="row">{$v['id']}</th>
+                                    <th>{$v['pid']}</th>
                                     <td>{$v['title']}</td>
+                                    <td><i class="{$v['icon']}"></i></td>
                                     <td>
                                         <button class="btn btn-warning">编辑</button>
                                         <button class="btn btn-danger">删除</button>

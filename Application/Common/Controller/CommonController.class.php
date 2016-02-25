@@ -12,9 +12,10 @@ use Think\Controller;
 
 abstract class CommonController extends Controller
 {
-    public $route='';
+    public $route=''; //  路由地址
 
     public function _initialize(){
+        // 获取路由地址
         $this->route = MODULE_NAME . "/" . CONTROLLER_NAME . "/" . ACTION_NAME;
     }
 }

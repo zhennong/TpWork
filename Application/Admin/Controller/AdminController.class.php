@@ -19,10 +19,12 @@ abstract class AdminController extends CommonController
 
     public function _initialize(){
         parent::_initialize();
+        // 保存session用户信息到公共成员变量
         $admin_user = session('admin_user');
         if($admin_user){
             $this->admin_user = $admin_user;
         }
+        $this->assign(['admin_user'=>$admin_user]);
     }
 
     /**

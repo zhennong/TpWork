@@ -13,6 +13,9 @@ use Common\Tools;
 
 class PublicController extends CommonController
 {
+    /**
+     * 登录
+     */
     public function login(){
         $Admin = M('Admin');
         if(IS_POST){
@@ -25,6 +28,9 @@ class PublicController extends CommonController
         $this->display();
     }
 
+    /**
+     * 注销登录
+     */
     public function logout(){
         session(null);
         $this->success("注销成功",U("Admin/Public/login"));

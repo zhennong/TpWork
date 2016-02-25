@@ -392,7 +392,7 @@ class Tools
      * @return void       浏览器输出
      * @author wodrow <wodrow451611cv@gmail.com | 1173957281@qq.com>
      */
-    public static function _vp($test,$style=0,$stop=0)
+    public static function _vp($test,$stop=0,$style=0)
     {
         switch ($style) {
             case 0:
@@ -412,11 +412,13 @@ class Tools
                 break;
 
             case 2:
-                file_put_contents(C("DOCUMENT_ROOT").RUNTIME_PATH.'/_vpFile.php', "<? \r".var_export($test, true));
+                $x = "##".date('Y-m-d H:i:s',time())."\r\r```\r".var_export($test, true)."\r```\r";
+                file_put_contents(C("DOCUMENT_ROOT").RUNTIME_PATH.'/VPFILE.md',$x);
                 break;
 
             case 3:
-                file_put_contents(C("DOCUMENT_ROOT").RUNTIME_PATH.'/_vpFile.php', "\r\r".var_export($test, true),FILE_APPEND);
+                $x = "##".date('Y-m-d H:i:s',time())."\r\r```\r".var_export($test, true)."\r```\r";
+                file_put_contents(C("DOCUMENT_ROOT").RUNTIME_PATH.'/VPFILE.md',$x,FILE_APPEND);
                 break;
         }
         if ($stop!=0) {

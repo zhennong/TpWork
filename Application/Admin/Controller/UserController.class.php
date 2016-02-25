@@ -11,7 +11,7 @@ namespace Admin\Controller;
 
 class UserController extends AuthController
 {
-    public function index(){
+    public function user_index(){
         $this->display('Index:index');
     }
 
