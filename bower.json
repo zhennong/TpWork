@@ -23,6 +23,8 @@
   "dependencies": {
     "jquery": "^2.2.1",
     "bootstrap": "^3.3.6",
-    "datatables": "^1.10.11"
+    "datatables": "^1.10.11",
+    "layer": "*",
+    "fancybox": "^2.1.5"
   }
 }

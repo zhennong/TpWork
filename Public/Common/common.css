@@ -1,7 +1,15 @@
+a{
+    cursor: pointer;
+}
+
 .position_fixed{
     position: fixed;
 }
 
 .height_100{
     height: 100%;
+}
+
+.word_wrap{
+    word-wrap: break-word;
 }

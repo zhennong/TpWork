@@ -21,8 +21,13 @@ class UserController extends AuthController
      * 用户管理
      */
     public function user_manage(){
+        if(IS_POST){
+            Tools::_vp($_POST);
+            exit();
+        }
         $user_list = $this->getAdminUserDetail(null,['group_detail']);
         $this->assign(['user_list'=>$user_list]);
+        Tools::_vp(D('AdminUser')->select());
         $this->display();
     }
 

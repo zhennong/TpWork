@@ -3,11 +3,15 @@
 <block name="head">
     <script>
         $(document).ready(function () {
-            var Table = $('table').DataTable({
+            var url = "{:U('Admin/Test/test2')}";
+            var Table = $('table');
+            var DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
-                pageLength: 10
-            })
-            Table.page('last').draw( false );
+                pageLength: 10,
+                "processing": true,
+                "serverSide": true,
+                "ajax": url
+            });
         });
     </script>
 </block>
@@ -16,7 +20,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">用户管理</h1>
+                <h1 class="page-header">test</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -25,7 +29,8 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        用户列表
+                        area列表
+                        <a id="add_one_row" class="pull-right">add</a>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -37,14 +42,6 @@
                                     <th>areaname</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <?php foreach($all_area as $k => $v): ?>
-                                <tr data-id="{$v['areaid']}">
-                                    <td scope="row">{$v['areaid']}</td>
-                                    <td>{$v['areaname']}</td>
-                                </tr>
-                                <?php endforeach; ?>
-                                </tbody>
                             </table>
                         </div>
                         <!-- /.table-responsive -->

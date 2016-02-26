@@ -1,15 +1,55 @@
 <extend name="Layout:ly1"/>
 
 <block name="head">
+    <style>
+        #user_edit{
+            max-width: 600px;
+            margin-top: 10px;
+        }
+    </style>
     <script>
         $(document).ready(function () {
-            $("table").DataTable({
+            $("#add_admin_user_page").hide();
+            $("#opt_admin_user").ajaxForm({
+                success:function(msg){
+                    alert(msg);
+                }
+            });
+            var Table = $("table");
+            var DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
                 pageLength: 100
-            })
+            });
+            //关闭
+            $("#admin_user_cancel").click(function(){
+                $("#add_admin_user_page").hide();
+            });
+            //添加
+            $("#add_admin_user").click(function(){
+                $("#opt_admin_user").find(".form-group").first().hide().find('#id').val('');
+                $("#admin_user_reset").trigger('click');
+                $("input[name='status'][value='1']").trigger('click');
+                $("#add_admin_user_page").show();
+            });
+            //编辑
+            Table.on('click','.admin_user_edit',function(){
+                var tr = $(this).parents('tr');
+                $("#add_admin_user").trigger('click');
+                $("#opt_admin_user").find(".form-group").first().show().find('#id').val(tr.data('id'));
+                $("input[name='account']").val(tr.data('account'));
+                $("input[name='mobile']").val(tr.data('mobile'));
+                $("input[name='email']").val(tr.data('email'));
+                $("input[name='status'][value='" + tr.data('status') + "']").trigger('click');
+            });
+            //重置
+            $("#admin_user_reset").click(function(){
+                $("input[name!='id']").val('');
+            });
         });
     </script>
 </block>
+
+
 
 <block name="body">
     <div id="page-wrapper">
@@ -25,12 +65,75 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         用户列表
-                        <span class="pull-right"><a href="{:U('Admin/User/user_manage',['add'=>1])}">添加用户</a></span>
+                        <span class="pull-right"><a id="add_admin_user">添加用户</a></span>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="dataTable_wrapper">
-                            <table class="table table-bordered table-hover">
+                            <div id="add_admin_user_page">
+                                <div class="word_wrap" id="user_edit">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <form class="form-horizontal" method="post" id="opt_admin_user" action="{:U('Admin/User/user_manage')}">
+                                                    <div class="form-group">
+                                                        <label for="id" class="col-sm-2 control-label">编号</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" name="id" id="id" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="account" class="col-sm-2 control-label">帐号</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" name="account" id="account" placeholder="帐号">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="password" class="col-sm-2 control-label">密码</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="password" class="form-control" name="password" id="password" placeholder="密码">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="repassword" class="col-sm-2 control-label">确认密码</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="password" class="form-control" name="repassword" id="repassword" placeholder="再次输入密码">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="mobile" class="col-sm-2 control-label">手机号</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" name="mobile" id="mobile" placeholder="手机号">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email" class="col-sm-2 control-label">邮箱</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="email" class="form-control" name="email" id="email" placeholder="邮箱">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label">状态</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="radio" name="status" value="0"> 禁用
+                                                            <input type="radio" name="status" value="1"> 启用
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-offset-2 col-sm-10">
+                                                            <button class="btn btn-success" id="admin_user_submit">确认</button>
+                                                            <a id="admin_user_reset" class="btn btn-warning">重置</a>
+                                                            <a id="admin_user_cancel" class="btn btn-warning">取消</a>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            <table class="table table-bordered table-hover table-responsive">
                                 <thead>
                                 <tr>
                                     <th>编号</th>
@@ -43,14 +146,14 @@
                                 </thead>
                                 <tbody>
                                 <?php foreach($user_list as $k => $v): ?>
-                                <tr data-id="{$v['id']}">
-                                    <th scope="row">{$v['id']}</th>
+                                <tr data-id="{$v['id']}" data-account="{$v['account']}" data-mobile="{$v['mobile']}" data-email="{$v['email']}" data-status="{$v['status']}">
+                                    <td scope="row">{$v['id']}</td>
                                     <td>{$v['account']}</td>
                                     <td>{$v['mobile']}</td>
                                     <td>{$v['email']}</td>
                                     <td>{$v['status_name']}</td>
                                     <td>
-                                        <a class="btn btn-warning" href="{:U('Admin/User/user_manage',['update'=>$v['id']])}">编辑</a>
+                                        <a class="btn btn-warning admin_user_edit">编辑</a>
                                         <a class="btn btn-warning">分组</a>
                                         <a class="btn btn-danger">删除</a>
                                     </td>
