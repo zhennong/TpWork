@@ -29,11 +29,12 @@ abstract class AdminController extends CommonController
 
     /**
      * 获取后台用户详细信息
-     * @param $user_id
+     * @param $map $user_id
      * @param array $bind | $bind = ['group_detail','rules_detail']
      * @return [[]]
      */
     public function getAdminUserDetail($map,$bind=[]){
+        Tools::_vp($map,0,2);
         $x = M('Admin')->where(get_map($map))->select();
         foreach($x as $k => $v){
             switch($v['status']){
@@ -55,9 +56,9 @@ abstract class AdminController extends CommonController
                 $y[] = $v1['group_id'];
             }
             if(in_array('group_detail',$bind)){
-                $x[$k]['group_detail'] = $this->getAuthGroupDetail($y);
+                $x[$k]['group_detail'] = $this->getAdminUserDetail($y);
             }elseif(in_array('rules_detail',$bind)){
-                $x[$k]['group_detail'] = $this->getAuthGroupDetail($y,['rules_detail']);
+                $x[$k]['group_detail'] = $this->getAdminUserDetail($y,['rules_detail']);
             }
         }
         return $x;

@@ -1,0 +1,32 @@
+<div class="container-fluid admin_user_group_edit">
+    <div class="row">
+        <div class="col-sm-12">
+            <form method="post" action="{:U('Admin/User/user_manage')}" >
+                <input type="hidden" name="operate" value="edit_user_group_list" />
+                <input type="hidden" name="user_id" value="{$user_id}" />
+                <?php foreach($user_group_list as $k => $v): ?>
+                    <input type="checkbox" name="user_group_list[]" value="{$v['id']}" {$v['group_checked']}>{$v['title']}
+                <?php endforeach; ?>
+                <hr>
+            </form>
+            <button class="edit_admin_user_group">保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".edit_admin_user_group").click(function(){
+            var form = $(this).parents(".admin_user_group_edit").find("form");
+            form.ajaxSubmit({
+                success:function(msg){
+                    if(msg==1){
+                        alert("修改成功");
+                    }else{
+                        alert("修改失败");
+                    }
+                }
+            });
+        });
+    });
+</script>
