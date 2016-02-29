@@ -57,7 +57,7 @@ class UserController extends AuthController
             case 'delete_admin_user':
                 $AdminUser = D('AdminUser');
                 if ($id = I("post.delete_id")) { //  删除用户
-                    if ($AdminUser->delete($id)) {
+                    if ($AdminUser->delete($id)&&M('AuthGroupAccess')->where(['uid'=>$id])->delete()) {
                         echo 1;
                     }
                 }
@@ -108,9 +108,30 @@ class UserController extends AuthController
      */
     public function group_manage()
     {
-        $group_list = $this->getAuthGroupDetail();
-        $this->assign(['group_list' => $group_list]);
-        $this->display();
+        switch($_POST['operate']){
+            case 'add_group':
+                $AuthGroup = D('AuthGroup');
+                $x = $AuthGroup->create();
+                Tools::_vp($_POST);
+//                if($x){
+//                    $y = $AuthGroup->data($x)->add();
+//                    if($y){
+//                        echo 1;
+//                    }
+//                }else{
+//                    echo $AuthGroup->getError();
+//                }
+                break;
+
+            case 'edit_group':
+                break;
+
+            default:
+                $group_list = $this->getAuthGroupDetail();
+                $this->assign(['group_list' => $group_list]);
+                $this->display();
+                break;
+        }
     }
 
     /**
