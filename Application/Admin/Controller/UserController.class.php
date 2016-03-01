@@ -57,7 +57,8 @@ class UserController extends AuthController
             case 'delete_admin_user':
                 $AdminUser = D('AdminUser');
                 if ($id = I("post.delete_id")) { //  删除用户
-                    if ($AdminUser->delete($id)&&M('AuthGroupAccess')->where(['uid'=>$id])->delete()) {
+                    M('AuthGroupAccess')->where(['uid'=>$id])->delete();
+                    if ($AdminUser->delete($id)) {
                         echo 1;
                     }
                 }
@@ -89,8 +90,12 @@ class UserController extends AuthController
                 foreach (I("post.user_group_list") as $k => $v) {
                     $datas[] = ['uid' => I('post.user_id'), 'group_id' => $v];
                 }
-                if ($AuthGroupAccess->addAll($datas)) {
+                if(count($datas)==0){
                     echo 1;
+                }else{
+                    if ($AuthGroupAccess->addAll($datas)) {
+                        echo 1;
+                    }
                 }
                 break;
 
@@ -112,18 +117,38 @@ class UserController extends AuthController
             case 'add_group':
                 $AuthGroup = D('AuthGroup');
                 $x = $AuthGroup->create();
-                Tools::_vp($_POST);
-//                if($x){
-//                    $y = $AuthGroup->data($x)->add();
-//                    if($y){
-//                        echo 1;
-//                    }
-//                }else{
-//                    echo $AuthGroup->getError();
-//                }
+                if($x){
+                    $y = $AuthGroup->data($x)->add();
+                    if($y){
+                        echo 1;
+                    }
+                }else{
+                    echo $AuthGroup->getError();
+                }
                 break;
 
             case 'edit_group':
+                $AuthGroup = D('AuthGroup');
+                $x = $AuthGroup->create();
+                if($x){
+                    $y = $AuthGroup->data($x)->save();
+                    if($y){
+                        echo 1;
+                    }
+                }else{
+                    echo $AuthGroup->getError();
+                }
+                break;
+
+            case 'delete_group':
+                $Group = M('AuthGroup');
+                $id = I("post.group_id");
+                M('AuthGroupAccess')->where(['group_id'=>$id])->delete();
+                if ($Group->delete($id)) {
+                    echo 1;
+                }else{
+                    echo 0;
+                }
                 break;
 
             default:
@@ -139,8 +164,65 @@ class UserController extends AuthController
      */
     public function node_manage()
     {
-        $node_tree = Tools::list2tree($this->authAll);
-        $this->assign(['node_tree' => $node_tree]);
-        $this->display();
+        switch($_POST['operate']){
+            case 'add_node': //添加节点
+                $AuthRule = D('AuthRule');
+                $x = $AuthRule->create();
+                if($x){
+                    if($AuthRule->data($x)->add()){
+                        echo 1;
+                    }
+                }else{
+                    echo $AuthRule->getError();
+                }
+                break;
+
+            case 'edit_node': //编辑节点
+                $AuthRule = D('AuthRule');
+                $x = $AuthRule->create();
+                if($x){
+                    if($AuthRule->data($x)->save()){
+                        echo 1;
+                    }
+                }else{
+                    echo $AuthRule->getError();
+                }
+                break;
+
+            case 'delete_node': //删除节点
+                $node_id = I("post.node_id");
+                if(M('AuthRule')->delete($node_id)){
+                    echo 1;
+                }else{
+                    echo 0;
+                }
+                break;
+
+            default:
+                $node_tree = Tools::list2tree($this->authAll);
+                foreach($this->authAll as $k => $v){
+                    if($v['pid']==0){
+                        $p_node_list[] = $v;
+                    }
+                }
+                $this->assign(['node_tree' => $node_tree,'p_node_list'=>$p_node_list]);
+                $this->display();
+                break;
+        }
+    }
+
+    /**
+     * 权限管理
+     */
+    public function auth_manage(){
+        switch($_POST['operate']){
+            default:
+                $groups = M('AuthGroup')->field(['id','title'])->select();
+                $rules = M('AuthRule')->field(['id','pid','title'])->select();
+                $rules = Tools::list2tree($rules);
+                $this->assign(['groups'=>$groups,'rules'=>$rules]);
+                $this->display();
+                break;
+        }
     }
 }

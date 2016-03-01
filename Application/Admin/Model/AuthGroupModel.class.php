@@ -19,5 +19,6 @@ class AuthGroupModel extends AdminModel
     //自动验证
     protected $_validate = [
         ['title','require','标题必须填写！'],
+        ['title','','名称已经存在！',0,'unique'],
     ];
 }

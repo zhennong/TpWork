@@ -3,10 +3,74 @@
 <block name="head">
     <script>
         $(document).ready(function () {
-            $("table").DataTable({
+            $("#opt_node_div").hide();
+            var Table = $("table");
+            DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
                 pageLength: 100
-            })
+            });
+            DataTable.on('order.dt search.dt', function () {
+                DataTable.column(0, {
+                    search: 'applied',
+                    order: 'applied'
+                }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+            //添加节点
+            $("#add_node").click(function () {
+                $("input[name='operate']").val('add_node');
+                $("input[name='id']").val('').parents('.form-group').hide();
+                $("input[name='status']").last().trigger('click');
+                $("select[name='pid']").get(0).value = 0;
+                $("#opt_node_div").show();
+            });
+            //节点修改
+            $(".node_edit").click(function () {
+                var tr = $(this).parents('tr');
+                $("input[name='operate']").val('edit_node');
+                $("input[name='id']").val(tr.data('id')).parents('.form-group').show();
+
+                $("input[name='status'][value='" + tr.data('status') + "']").trigger('click');
+                $("select[name='pid']").get(0).value = tr.data("pid");
+                $("input[name='name']").val(tr.data('name'));
+                $("input[name='title']").val(tr.data('title'));
+                $("input[name='sort']").val(tr.data('sort'));
+                $("input[name='icon']").val(tr.data('icon'));
+                $("#opt_node_div").show();
+            });
+            //表单取消
+            $("#group_cancel").click(function () {
+                $("#opt_node_div").hide();
+            });
+            //提交表单
+            $("#group_submit").click(function () {
+                $("form#opt_node_form").ajaxSubmit({
+                    success: function (msg) {
+                        if (msg == 1) {
+                            location.reload();
+                        } else {
+                            alert(msg);
+                        }
+                    }
+                });
+            });
+            //节点删除
+            $(".node_delete").click(function(){
+                var tr = $(this).parents('tr');
+                $.ajax({
+                    url:"{:U('Admin/User/node_manage')}",
+                    type:"POST",
+                    data:{operate:'delete_node',node_id:tr.data("id")},
+                    success:function(msg){
+                        if(msg==1){
+                            location.reload();
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                });
+            });
         });
     </script>
 </block>
@@ -25,14 +89,77 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         节点列表
-                        <span class="pull-right"><a href="">添加节点</a></span>
+                        <span class="pull-right"><a id="add_node">添加节点</a></span>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div id="opt_node_div">
+                            <form id="opt_node_form" class="form-horizontal overflow_hidden" method="post"
+                                  action="{:U('Admin/User/node_manage')}">
+                                <input type="hidden" name="operate">
+                                <div class="form-group">
+                                    <label for="id" class="col-sm-2 control-label">编号</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="id" id="id" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pid" class="col-sm-2 control-label">父级</label>
+                                    <div class="col-sm-6">
+                                        <select id="pid" name="pid" class="form-control">
+                                            <option value="0">0(默认0)</option>
+                                            <?php foreach($p_node_list as $k => $v): ?>
+                                            <option value="{$v['id']}">{$v['name']}({$v['title']})</option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="col-sm-2 control-label">标志</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="name" id="name" placeholder="标志">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="title" class="col-sm-2 control-label">标题</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="title" id="title"
+                                               placeholder="标题">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">状态</label>
+                                    <div class="col-sm-8">
+                                        <input type="radio" name="status" value="0"> 禁用
+                                        <input type="radio" name="status" value="1"> 启用
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sort" class="col-sm-2 control-label">排序</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="sort" id="sort" placeholder="排序">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="icon" class="col-sm-2 control-label">图标</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="icon" id="icon" placeholder="图标类">
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-8">
+                                    <a class="btn btn-success" id="group_submit">确认</a>
+                                    <a class="btn btn-warning" id="group_cancel">取消</a>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="dataTable_wrapper">
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
+                                    <th></th>
                                     <th>编号</th>
                                     <th>父级</th>
                                     <th>标志</th>

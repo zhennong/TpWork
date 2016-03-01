@@ -1,5 +1,6 @@
 <?php foreach ($authTree as $k => $v): ?>
-<tr data-id="{$v['id']}">
+<tr data-id="{$v['id']}" data-pid="{$v['pid']}" data-name="{$v['name']}" data-title="{$v['title']}" data-status="{$v['status']}" data-sort="{$v['sort']}" data-icon="{$v['icon']}">
+    <td></td>
     <td scope="row">{$v['id']}</td>
     <td>{$v['pid']}</td>
     <td>{$sign}{$v['name']}</td>
@@ -8,7 +9,10 @@
     <td>{$v['status']}</td>
     <td>{$v['sort']}</td>
     <td>{:date("Y-m-d H:i:s",$v['create_time'])}</td>
-    <td></td>
+    <td>
+        <button class="btn btn-warning node_edit">修改</button>
+        <button class="btn btn-danger node_delete">删除</button>
+    </td>
 </tr>
 <?php if ($v['_child']): ?>
     {:W("Admin/Recursion/showAuth",[$v['_child'],'    ┠─  '])}

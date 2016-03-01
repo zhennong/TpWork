@@ -50,7 +50,7 @@ class AuthController extends AdminController
      */
     protected function getAuthList($user_id){
         $Auth = new Auth();
-        $rules = M('AuthRule')->order("id ASC")->select();
+        $rules = M('AuthRule')->order("sort ASC")->select();
         $this->authAll = $rules;
         foreach($rules as $k => $v){
             $a = $this->admin_user['id'] == C('ADMIN_USER_ID');
