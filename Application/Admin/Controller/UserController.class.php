@@ -216,6 +216,20 @@ class UserController extends AuthController
      */
     public function auth_manage(){
         switch($_POST['operate']){
+
+            case 'change_group':
+                $rules_select = M('AuthGroup')->where(['id'=>I("post.group_id")])->field('rules')->select();
+                $rules = Tools::str2arr($rules_select[0]['rules'],',');
+                echo json_encode($rules);
+                break;
+
+            case 'edit_auth':
+                $group_id = I("post.group_id");
+                $auth = I("post.auth");
+                $data = ['rules'=>Tools::arr2str($auth)];
+                M('AuthGroup')->where(['id'=>$group_id])->save($data);
+                break;
+
             default:
                 $groups = M('AuthGroup')->field(['id','title'])->select();
                 $rules = M('AuthRule')->field(['id','pid','title'])->select();

@@ -2,6 +2,50 @@
 
 <block name="head">
     <script>
+        $(document).ready(function () {
+            $("form#edit_auth_form").ajaxForm({
+                beforeSubmit:function(){
+                    if($("input[name='group_id']").val()==0){
+                        alert("请选择用户组");
+                        return false;
+                    }
+                },
+                success:function(msg){
+                    alert("修改成功");
+                }
+            });
+            $(".level1").on('click',function(){
+                if($(this)[0].checked == false){
+                    $(this).parents(".auth_list").find(".level2")[0].checked = false;
+                    $.each($(this).parents(".auth_list").find(".level2"),function(index, val){
+                        $(this)[0].checked = false;
+                    });
+                }
+            });
+            $(".level2").on('click',function(){
+                $(this).parents(".auth_list").find(".level1")[0].checked = true;
+            });
+            $(".group_select").change(function(){
+                $("input:checkbox").each(function(){
+                    $(this)[0].checked = false;
+                });
+                var group_id = $(this).children('option:selected').val();
+                if(group_id!=0){
+                    $.ajax({
+                        url:"{:U('Admin/User/auth_manage')}",
+                        type:"POST",
+                        data:{operate:'change_group',group_id:group_id},
+                        dataType:"json",
+                        success:function(msg){
+                            $.each(msg,function(index, val){
+                                $("input:checkbox[value='" + val + "']").trigger('click');
+                            });
+                        }
+                    });
+                }
+                $("input[name='group_id']").val(group_id);
+            });
+        });
     </script>
 </block>
 
@@ -20,7 +64,8 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">用户组</div>
-                            <select class="form-control">
+                            <select class="form-control group_select">
+                                <option value="0">请选择</option>
                                 <?php foreach($groups as $k => $v): ?>
                                 <option value="{$v['id']}">{$v['title']}</option>
                                 <?php endforeach; ?>
@@ -34,14 +79,16 @@
         <hr>
         <div class="row">
             <div class="col-lg-12">
-                <form>
+                <form id="edit_auth_form" method="post" action="{:U('Admin/User/auth_manage')}">
+                    <input type="hidden" name="operate" value="edit_auth">
+                    <input type="hidden" name="group_id" value="0">
                     <?php foreach($rules as $k => $v): ?>
-                        <div>
-                            <h3><input type="checkbox" name="auth[]">{$v['title']}</h3>
+                        <div class="auth_list">
+                            <h3><input class="level1" type="checkbox" name="auth[]" value="{$v['id']}">{$v['title']}</h3>
                             <?php if($v['_child']): ?>
                             <div>
                                 <?php foreach($v['_child'] as $k1 => $v1): ?>
-                                <input type="checkbox" name="auth[]">{$v1['title']}
+                                <input class="level2" type="checkbox" name="auth[]" value="{$v1['id']}">{$v1['title']}
                                 <?php endforeach; ?>
                             </div>
                             <?php endif; ?>
