@@ -1,0 +1,8 @@
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (100, 'Admin/Index/index', '首页面板', 1, 1, '', 0, 0, 145300000, 'fa fa-dashboard fa-fw');
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (121, 'Admin/User/admin_user_index', '后台用户管理', 1, 1, '', 0, 0, 1452835299, 'fa fa-sitemap fa-fw');
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (122, 'Admin/User/user_manage', '用户管理', 1, 1, '', 121, 0, 1452835464, NULL);
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (123, 'Admin/User/group_manage', '分组管理', 1, 1, '', 121, 0, 1452835496, NULL);
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (124, 'Admin/User/node_manage', '节点管理', 1, 1, '', 121, 0, 1452835528, NULL);
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (134, 'Admin/Test/index', '后台测试', 1, 1, '', 0, 0, 1456815861, 'fa fa-th');
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (136, 'Admin/Test/test1', '后台测试1', 1, 1, '', 134, 0, 1456824757, '');
+INSERT INTO `destoon_appknow_auth_rule` (`id`, `name`, `title`, `type`, `status`, `condition`, `pid`, `sort`, `create_time`, `icon`) VALUES (138, 'Admin/User/auth_manage', '权限管理', 1, 1, '', 121, 0, 1456825594, '');
