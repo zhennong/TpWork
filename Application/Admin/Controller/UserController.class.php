@@ -80,7 +80,6 @@ class UserController extends AuthController
                     }
                 }
                 $this->assign(['user_id' => $user_id, 'user_group_list' => $user_group_list]);
-//                Tools::_vp($user_group_list);
                 $this->display("User/group_distribution");
                 break;
 
