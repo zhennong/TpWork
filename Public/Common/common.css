@@ -20,8 +20,16 @@ a{
     word-wrap: break-word;
 }
 
-.max_wight_800{
+.max_width_800{
     max-width: 800px;
+}
+
+.max_width_100{
+    max-width: 100px;
+}
+
+.max_height_100{
+    max-height: 100px;
 }
 
 .overflow_hidden{

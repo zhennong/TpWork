@@ -1,0 +1,33 @@
+<?php foreach($cate_tree as $k => $v): ?>
+<tr data-id="{$v['id']}" data-pid="{$v['pid']}" data-cat_name="{$v['cat_name']}" data-cat_index="{$v['cat_index']}" data-status="{$v['status']}">
+    <td></td>
+    <td><img src="{:C('WEB_URL')}{:C('UPLOADS')}{$v['cat_img']}" class="img img-responsive max_width_100 max_height_100"></td>
+    <td>{$sign}{$v['cat_name']}</td>
+    <td>{$v['id']}</td>
+    <td>{$v['pid']}</td>
+    <td>{$v['cat_index']}</td>
+    <td>
+        <?php
+        if ($v['status']==0){
+            echo "禁用" ;
+        }elseif($v['status']==1){
+            echo "启用";
+        }elseif($v['status']==2){
+            echo "热门";
+        }
+        ?>
+    </td>
+    <td>
+        <?php if ($v['_child']||$v['pid']==0): ?>
+        <button class="btn btn-success add_cate">添加</button>
+        <?php endif; ?>
+        <button class="btn btn-warning edit_cate">修改</button>
+        <?php if (!$v['_child']): ?>
+        <button class="btn btn-danger delete_cate">删除</button>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php if($v['_child']): ?>
+{:W('Admin/Recursion/cate_a_m_list',[$v['_child'],$sign.' --'])}
+<?php endif; ?>
+<?php endforeach; ?>

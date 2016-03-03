@@ -1,36 +1,192 @@
 <extend name="Layout:ly1"/>
 
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            $("#opt_cate_div").hide();
+            var Table = $("table");
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 100
+            });
+            DataTable.on('order.dt search.dt', function () {
+                DataTable.column(0, {
+                    search: 'applied',
+                    order: 'applied'
+                }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+            // 添加
+            $("#add_cate").click(function(){
+                $("#opt_cate_div").show();
+                $("#opt_form_reset").trigger('click');
+                $("input[name='operate']").val('add_cate');
+                $("input[name='id']").val('').parents('.form-group').hide();
+                $("input[name='status']:eq(1)").trigger('click');
+                $("select[name='pid']").get(0).value = 0;
+                location.href = "#opt_cate_div";
+            });
+            $(".add_cate").click(function(){
+                tr = $(this).closest('tr');
+                $("#opt_cate_div").show();
+                $("#opt_form_reset").trigger('click');
+                $("input[name='operate']").val('add_cate');
+                $("input[name='id']").val('').parents('.form-group').hide();
+                $("select[name='pid']").get(0).value = tr.data('id');
+                $("input[name='status'][value='" + tr.data('status') + "']").trigger('click');
+                location.href = "#opt_cate_div";
+            });
+            // 修改
+            $(".edit_cate").click(function(){
+                tr = $(this).closest('tr');
+                $("#opt_cate_div").show();
+                $("#opt_form_reset").trigger('click');
+                $("input[name='operate']").val('edit_cate');
+                $("input[name='id']").val(tr.data('id')).parents('.form-group').show();
+                $("input[name='cat_index']").val(tr.data('cat_index'));
+                $("input[name='cat_name']").val(tr.data('cat_name'));
+                $("select[name='pid']").get(0).value = tr.data('pid');
+                $("input[name='status'][value='" + tr.data('status') + "']").trigger('click');
+                location.href = "#opt_cate_div";
+            });
+            // 表单处理
+            $("#cate_submit").click(function(){
+                $("form#opt_cate_form").ajaxSubmit({
+                    success:function(msg){
+                        if(msg==1){
+                            location.reload();
+                        }else{
+                            alert(msg);
+                        }
+                    }
+                });
+            });
+            // 取消
+            $("#cate_cancel").click(function(){
+                $("#opt_cate_div").hide();
+            });
+            // 删除
+            $(".delete_cate").click(function(){
+                if(confirm("确认删除?")) {
+                    tr = $(this).closest('tr');
+                    $.ajax({
+                        url: "{:U('Admin/Category/cate_agricultural_medicine')}",
+                        type: "POST",
+                        data: {operate: 'delete_cate', cate_id: tr.data("id")},
+                        success: function (msg) {
+                            if (msg == 1) {
+                                location.reload();
+                            } else {
+                                alert("删除失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</block>
+
 <block name="body">
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">农医问药分类管理</h1>
+                <h1 class="page-header">用户组管理</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
         <!-- /.row -->
         <div class="row">
             <div class="col-lg-12">
-                <div class="dataTable_wrapper">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                        <tr>
-                            <th>编号</th>
-                            <th>父级</th>
-                            <th>标志</th>
-                            <th>标题</th>
-                            <th>图标</th>
-                            <th>状态</th>
-                            <th>排序</th>
-                            <th>添加时间</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        分类列表
+                        <span class="pull-right"><a id="add_cate">添加分类</a></span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div id="opt_cate_div">
+                            <form enctype="multipart/form-data" id="opt_cate_form" class="form-horizontal overflow_hidden" method="post" action="{:U('Admin/Category/cate_agricultural_medicine')}">
+                                <input type="hidden" name="operate">
+                                <div class="form-group">
+                                    <label for="id" class="col-sm-2 control-label">编号</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="id" id="id" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pid" class="col-sm-2 control-label">父级</label>
+                                    <div class="col-sm-6">
+                                        <select id="pid" name="pid" class="form-control">
+                                            <option value="0">0(默认0)</option>
+                                            <?php foreach($p_cate as $k => $v): ?>
+                                            <option value="{$v['id']}">{$v['cat_index']}({$v['cat_name']})</option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">图片</label>
+                                    <div class="col-sm-6">
+                                        <input type="file" name="cat_img">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cat_index" class="col-sm-2 control-label">索引</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="cat_index" id="cat_index" placeholder="索引">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cat_name" class="col-sm-2 control-label">名称</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="cat_name" id="cat_name" placeholder="名称">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">状态</label>
+                                    <div class="col-sm-8">
+                                        <input type="radio" name="status" value="0"> 禁用
+                                        <input type="radio" name="status" value="1"> 启用
+                                        <input type="radio" name="status" value="2"> 热门
+                                    </div>
+                                </div>
+                                <input type="reset" class="hidden" id="opt_form_reset">
+                            </form>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-8">
+                                    <a class="btn btn-success" id="cate_submit">确认</a>
+                                    <a class="btn btn-warning" id="cate_cancel">取消</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dataTable_wrapper">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>图片</th>
+                                    <th>名称</th>
+                                    <th>编号</th>
+                                    <th>父级</th>
+                                    <th>索引</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {:W('Admin/Recursion/cate_a_m_list',[$cate_tree])}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
                 </div>
+                <!-- /.panel -->
             </div>
+            <!-- /.col-lg-12 -->
         </div>
     </div>
     <!-- /#page-wrapper -->

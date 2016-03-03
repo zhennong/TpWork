@@ -57,19 +57,21 @@
             });
             //节点删除
             $(".node_delete").click(function(){
-                var tr = $(this).parents('tr');
-                $.ajax({
-                    url:"{:U('Admin/User/node_manage')}",
-                    type:"POST",
-                    data:{operate:'delete_node',node_id:tr.data("id")},
-                    success:function(msg){
-                        if(msg==1){
-                            location.reload();
-                        }else{
-                            alert("删除失败");
+                if(confirm("确认删除?")) {
+                    var tr = $(this).parents('tr');
+                    $.ajax({
+                        url: "{:U('Admin/User/node_manage')}",
+                        type: "POST",
+                        data: {operate: 'delete_node', node_id: tr.data("id")},
+                        success: function (msg) {
+                            if (msg == 1) {
+                                location.reload();
+                            } else {
+                                alert("删除失败");
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         });
     </script>

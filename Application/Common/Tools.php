@@ -252,6 +252,20 @@ class Tools
     }
 
     /**
+     * 获取有子元素的列
+     */
+    public static function get_p_list($tree,$child = '_child',$order='id',&$list=[]){
+        foreach($tree as $k => $v){
+            if($v[$child]){
+                unset($v[$child]);
+                $list[] = $v;
+                self::get_p_list($tree[$k][$child],$child,$order,$list);
+            }
+        }
+        return $list;
+    }
+
+    /**
      * 获取节点排序
      * @param array $tree 数据
      * @param int $node_id 节点id
@@ -267,7 +281,7 @@ class Tools
             $p[$k] = $v;
             $p[$k][$sort_name] = $start-1;
             if ($v['_child']) {
-                get_tree_node_sort($v['_child'],$start,$sort_name,$p[$k]['_child']);
+                self::get_tree_node_sort($v['_child'],$start,$sort_name,$p[$k]['_child']);
             }
         }
         return $p;

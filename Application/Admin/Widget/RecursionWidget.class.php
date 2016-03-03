@@ -20,4 +20,9 @@ class RecursionWidget extends AdminWidget
 //        Tools::_vp($authTree,0,2);
         $this->display("Widget:showAuth");
     }
+
+    public function cate_a_m_list($cate_tree,$sign=''){
+        $this->assign(['cate_tree'=>$cate_tree,'sign'=>$sign]);
+        $this->display("Widget:cate_a_m_list");
+    }
 }

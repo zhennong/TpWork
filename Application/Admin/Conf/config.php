@@ -4,4 +4,6 @@ return array(
 
     // Auth 配置
     'ADMIN_USER_ID'=>1,
+
+    'UPLOADS' => './Uploads/',
 );
