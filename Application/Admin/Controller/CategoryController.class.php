@@ -52,7 +52,6 @@ class CategoryController extends AuthController
                     exit();
                 }
                 if($_FILES){
-                    Tools::_vp($_FILES);
                     $upload = new \Think\Upload();// 实例化上传类
                     $upload->maxSize   =     1024*1024*3 ;// 设置附件上传大小
                     $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
