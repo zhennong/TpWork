@@ -125,6 +125,7 @@ class IndexController extends Controller {
             case 'get_area_parent_nodes':
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
+//                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
                 $show['parent_areas'] = $x;
                 break;
 
@@ -142,9 +143,9 @@ class IndexController extends Controller {
                 if (!$show['member_profile']) {
                     $show['status'] = 211;
                 }
-                /*$allArea = $api->getAllArea();
-                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');*/
-                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
+                $allArea = $api->getAllArea();
+                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
+//                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
                 $api->putLog('x',$x);
                 $show['parent_areas'] = $x;
 
