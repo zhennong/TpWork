@@ -1,0 +1,727 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of ApiAppKnow
+ *
+ * @author wodrow
+ */
+
+namespace Home\Common;
+
+use Common\Tools;
+use Home\Common\AppKnowModel;
+
+class ApiAppKnow extends Api
+{
+    public $appid = 2;
+
+    public $favourite_type = array(
+        'ask' => 1,
+        'article' => 2,
+    );
+
+    /*
+     * 专家认证状态
+     */
+    public $expert_status = array(
+        'in_review'=>0,//审核中
+        'review_ok'=>1,//审核成功
+        'review_fail'=>2,//审核失败
+    );
+
+    //积分设置（分值）
+    public $score_arr = array(
+        'sa_login' => 1,        //用户登录
+        'sa_questions' => 2,    //用户提问问题
+        'sa_answer' => 5,       //用户回答问题
+    );
+
+
+    /*
+     * 获取用户详细
+     */
+    public function getUserDetail($uid,$bind=array()){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}";
+        $x = $this->list_query($sql);
+        if(in_array('expert_profile',$bind)){
+            $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile WHERE userid = {$uid} AND status = 1";
+            $a = $this->list_query($sql);
+        }
+        if(in_array('member_profile',$bind)){
+            $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
+            $b = $this->list_query($sql);
+            foreach($b as $k => $v){
+                if($v[nickname]==''){
+                    $y = $this->list_query("SELECT mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}");
+                    $b[$k][nickname] = $y[0][mobile];
+                }
+                $z = $this->getAreaFullNameFromAreaID($v['areaid']);
+                $b[$k]['area_name'] = Tools::arr2str($z,' ');
+            }
+        }
+        foreach($x as $k => $v){
+            if(count($a)>0){
+                $x[$k]['member_type'] = 'expert';
+                $x[$k]['expert_profile'] = $a[0];
+            }else{
+                $x[$k]['member_type'] = 'landlord';
+            }
+            if(count($b)>0){
+                $x[$k]['member_profile'] = $b[0];
+                $x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
+                $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
+            }
+        }
+        return $x;
+    }
+
+    /**
+     * appcan 上传图片
+     */
+    public static function uploadImage($_FSN, $upload_dir = '', $name = '')
+    {
+        if ($upload_dir == '') {
+            $upload_dir = APP_ROOT.C('UPLOADS');
+        }
+        if ($name == '') {
+            $name = time();
+        }
+        $model = new UploadImage($_FSN, $upload_dir, $name);
+        $model->imageStart();
+        if ($model->imageStauts == 1) {
+            $status = 200;
+        } else {
+            $status = 101;
+        }
+        return $status;
+    }
+
+    /**
+     * 根据userid获取用户详细信息
+     */
+    public function getUserDetialByID($userid)
+    {
+        # code...
+    }
+
+    /**
+     * 根据用户手机获取用户信息
+     */
+    public function getUserFromMobile($mobile)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE mobile = '{$mobile}'";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 获取上次访问时间
+     */
+    public function getLastLoginTime($userid){
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member SET last_login_time = {$this->now} WHERE userid = {$userid}";
+        return $this->execute($sql);
+    }
+
+    /**
+     * 注册
+     * @param $info
+     * @return int
+     */
+    public function register($info)
+    {
+        $password = md5(md5($info[password]));
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member (mobile,password,addtime,updatetime,status,appid,last_login_time) VALUES ('{$info[mobile]}','{$password}',{$this->now},{$this->now},1,{$this->appid},{$this->now})";
+        if ($this->execute($sql)) {
+            $status = 200;
+        } else {
+            $status = 203;
+        }
+        return $status;
+    }
+
+    /**
+     * 会员积分
+     * @param $userid 用户ID
+     * @param $module 积分需要添加的模块
+     * @return mixed
+     */
+    public function addScore($userid,$module){
+        if($userid){
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + {$this->score_arr[$module]} WHERE userid = {$userid}";
+            return $this->execute($sql);
+        }
+    }
+
+    /**
+     * 生成记录信息
+     * @param $log_title
+     * @param $log_info
+     */
+    public function putLog($log_title, $log_info)
+    {
+        $log_dir = APP_ROOT.C('UPLOADS')."Log/";
+        $log_file_name = "app_know_api_log.md";
+        Tools::createDir($log_dir);
+        $log_path = $log_dir . "/" . $log_file_name;
+        $now = date("Y-m-d H:i:s", time());
+        $content = "***\r##" . $now . "\r" . $log_title . ":\r\r```php\r" . var_export($log_info, true) . "\r```\r\r";
+        file_put_contents($log_path, $content, FILE_APPEND);
+    }
+
+    /**
+     * 获取地区信息
+     * @param int $pid
+     */
+    public function getAreaInfo($pid = 0)
+    {
+        $sql = "SELECT areaid,areaname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."area WHERE parentid = {$pid}";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 获取地区信息
+     * @param int $pid
+     */
+    public function getAskCategoryInfo($pid = 0)
+    {
+        $sql = "SELECT id,cat_name FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category WHERE pid = {$pid}";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 获取农医问药用户资料
+     * @param $userid
+     * @return mixed
+     */
+    public function getAppknowMemberProfile($userid)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$userid}";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 设置农医问药用户头像
+     * @param $userid
+     */
+    public function setAppknowMemberAvatar($info)
+    {
+        if ($this->getAppknowMemberProfile($info[userid])) {
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET avatar='{$info[avatar]}' WHERE userid = {$info[userid]}";
+        } else {
+            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,avatar) VALUES ({$info[userid]},'{$info[avatar]}')";
+        }
+        return $this->execute($sql);
+    }
+
+    /**
+     * 设置农医问药用户资料
+     * @param $userid
+     */
+    public function setAppknowMemberProfile($info)
+    {
+        if ($this->getAppknowMemberProfile($info[userid])) {
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}' WHERE userid = {$info[userid]}";
+        } else {
+            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}')";
+        }
+        return $this->execute($sql);
+    }
+
+    /**
+     * 添加快速提问
+     * @param $userid
+     */
+    public function addQuickAsk($info)
+    {
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask (uid,content,thumb0,thumb1,thumb2,thumb3,thumb4,thumb5,addtime,catid) VALUES ({$info[uid]},'{$info[content]}','{$info[thumb0]}','{$info[thumb1]}','{$info[thumb2]}','{$info[thumb3]}','{$info[thumb4]}','{$info[thumb5]}',{$this->now},{$info[cat_id]})";
+        return $this->execute($sql);
+    }
+
+    /**
+     * 获取提问列表
+     * @param $userid
+     */
+    public function getAskList($start = null, $limit = null,$cat_id = null)
+    {
+        $where = "WHERE 1=1";
+        if($cat_id != null){
+            $where .= " AND catid = {$cat_id}";
+        }
+        $sql = "SELECT ask.*,profile.nickname,profile.areaid,profile.address,profile.avatar,profile.location,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
+            ORDER BY addtime DESC";
+        if ($start !== null && $limit !== null) {
+            $sql = $sql . " LIMIT {$start},{$limit}";
+        }
+        $x = $this->list_query($sql);
+        foreach ($x as $k => $v) {
+            if (!$v['nickname']) {
+                $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
+            }
+            $sql = "SELECT id FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE askid = {$v['id']}";
+            $x[$k]['answer_count'] = count($this->list_query($sql));
+            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            $x[$k]['member_type'] = $y[0]['member_type'];
+        }
+        return $x;
+    }
+
+    /**
+     * 获取问题详情
+     */
+    public function getAskInfo($askid)
+    {
+        $sql = "SELECT ask.*,m_member.mobile,profile.nickname,profile.areaid,profile.address,profile.avatar
+            FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
+            WHERE id = {$askid}";
+        $x = $this->list_query($sql);
+        foreach ($x as $k => $v) {
+            if (!$v['nickname']) {
+                $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
+            }
+            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            $x[$k]['member_type'] = $y[0]['member_type'];
+        }
+        return $x;
+    }
+
+    /**
+     * 获取问题解答
+     */
+    public function getAskAnswers($askid, $start = null, $limit = null)
+    {
+        $sql = "SELECT answer.*,
+            m_member.mobile,profile.nickname,profile.areaid,profile.avatar 
+            FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid
+            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid
+            WHERE askid = {$askid} ORDER BY addtime DESC";
+        if ($start !== null && $limit !== null) {
+            $sql = $sql . " LIMIT {$start},{$limit}";
+        }
+        $x = $this->list_query($sql);
+        foreach ($x as $k => $v) {
+            if (!$v['nickname']) {
+                $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
+            }
+            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            $x[$k]['member_type'] = $y[0]['member_type'];
+        }
+        return $x;
+    }
+
+    /**
+     * 我要回答
+     */
+    public function addQuestionAnswer($info)
+    {
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,askid,content,addtime) VALUES ({$info[userid]},{$info[askid]},'{$info[content]}',{$this->now})";
+        return $this->execute($sql);
+    }
+
+
+    /**
+     * 2016.02.16
+     * 意见反馈
+     */
+    public function addFeedBack($info)
+    {
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_feed_back (feed_content,feed_mail,addtime) VALUES ('{$info[feed_content]}','{$info[feed_mail]}',{$this->now})";
+        return $this->execute($sql);
+    }
+
+    /**
+     * 获取专家信息
+     * @param $userid
+     */
+    public function getExpertProfile($userid)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile WHERE userid = {$userid}";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 2016.02.16
+     * 专家认证
+     */
+    public function addExpertAuthentication($info)
+    {
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile (userid,name,expert_type,good_at_crop,good_at_area,qq,postion,company,id_card_front,id_card_back,content,addtime) VALUES ({$info[userid]},'{$info[name]}',{$info[expert_type]},'{$info[good_at_crop]}',{$info[good_at_area]},'{$info[qq]}','{$info[postion]}','{$info[company]}','{$info[id_card_front]}','{$info[id_card_back]}','{$info[content]}',{$this->now})";
+        return $this->execute($sql);
+    }
+
+    /**
+     * 添加收藏
+     * @param $info
+     */
+    public function addFavourite($info)
+    {
+        if (count($this->getFavourite($info[userid], $info[type], $info[obj_id])) > 0) {
+            return 217;
+            exit();
+        }
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_favourite (uid,type,obj_id,addtime) VALUES ({$info['userid']},{$this->favourite_type[$info['type']]},{$info['obj_id']},{$this->now})";
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 215;
+        }
+    }
+
+    /**
+     * 获取当前用户分组收藏
+     * @param $uid
+     * @param $type
+     */
+    public function getFavourite($uid, $type = null, $obj_id = null)
+    {
+        $where = "fav.uid = {$uid}";
+        if ($type!==null) {
+            $where .= " AND fav.type = {$this->favourite_type[$type]}";
+        }
+        if ($obj_id!==null) {
+            $where .= " AND fav.obj_id = {$obj_id}";
+        }
+        $sql = "SELECT fav.*,m_profile.nickname,m_profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_favourite AS fav
+        LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS m_profile ON fav.uid = m_profile.userid
+        WHERE {$where}";
+        $x = $this->list_query($sql);
+        if ($type == "ask") {
+            $table = $this->tables['appknow_question_ask'];
+        }
+        switch ($type) {
+            case 'ask':
+                $table = $this->tables['appknow_question_ask'];
+                break;
+            case 'article':
+                break;
+            default:
+                return null;
+                exit();
+                break;
+        }
+        foreach ($x as $k => $v) {
+            $sql = "SELECT id,content FROM {$table} WHERE id = {$v[obj_id]}";
+            $y = $this->list_query($sql);
+            $x[$k]['obj_id'] = $y[0]['id'];
+            $x[$k]['obj_content'] = $y[0]['content'];
+            $x[$k]['addtime'] = date("Y-m-d H:i", $v['addtime']);
+        }
+        return $x;
+    }
+
+    /**
+     * 提问历史
+     */
+    public function myAskHistory($userid)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask WHERE uid = {$userid} ORDER BY addtime DESC";
+        $x = $this->list_query($sql);
+        foreach ($x as $k => $v) {
+            $x[$k]['addtime'] = date("Y-m-d H:i", $v['addtime']);
+        }
+        return $x;
+    }
+
+    /**
+     * 回答历史
+     */
+    public function myAnswerHistory($userid)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$userid} ORDER BY addtime DESC";
+        $x = $this->list_query($sql);
+        foreach ($x as $k => $v) {
+            $x[$k]['addtime'] = date("Y-m-d H:i", $v['addtime']);
+        }
+        return $x;
+    }
+
+    /**
+     * 添加关注
+     */
+    public function addAttention($info)
+    {
+        if ($info[attention_uid] == $info[fans_uid]) {
+            return 221;
+            exit();
+        }
+        if (count($this->getAttention($info[attention_uid], $info[fans_uid])) > 0) {
+            return 217;
+            exit();
+        }
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 215;
+        }
+    }
+
+
+    /**
+     * 获取关注
+     */
+    public function getAttention($attention_uid = null, $fans_uid = null,$type = null)
+    {
+        $where = "WHERE id>0 ";
+        if($attention_uid!==null){
+            $where .= " AND attention_uid = {$attention_uid}";
+        }
+        if ($fans_uid!==null) {
+            $where .= " AND fans_uid = {$fans_uid}";
+        }
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
+        $x = $this->list_query($sql);
+        foreach($x as $k => $v){
+            $x[$k]['_id'] = $v[id];
+            $fans_detail = $this->getUserDetail($v[fans_uid],array('member_profile','expert_profile'));
+            $x[$k]['fans_detail'] = $fans_detail[0];
+            $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
+            $x[$k]['attention_detail'] = $attention_detail[0];
+            if($x[$k]['attention_detail']['member_type'] !== $type){
+                unset($x[$k]);
+            }
+        }
+        return $x;
+    }
+
+    /**
+     * 获取粉丝
+     */
+    public function getFans($attention_uid = null, $fans_uid = null,$type = null)
+    {
+        $where = "WHERE id>0 ";
+        if($attention_uid!==null){
+            $where .= " AND attention_uid = {$attention_uid}";
+        }
+        if ($fans_uid!==null) {
+            $where .= " AND fans_uid = {$fans_uid}";
+        }
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
+        $x = $this->list_query($sql);
+        foreach($x as $k => $v){
+            $x[$k]['_id'] = $v[id];
+            $fans_detail = $this->getUserDetail($v[fans_uid],array('member_profile','expert_profile'));
+            $x[$k]['fans_detail'] = $fans_detail[0];
+            $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
+            $x[$k]['attention_detail'] = $attention_detail[0];
+            if($x[$k]['fans_detail']['member_type'] !== $type){
+                unset($x[$k]);
+            }
+        }
+        return $x;
+    }
+
+    /**
+     * 获取栏目子分类
+     * @param $pid
+     * @return mixed
+     */
+    public function getSubCategoryList($pid){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category WHERE pid = {$pid}";
+        $data = $this->list_query($sql);
+        return $data;
+    }
+
+    /**
+     * 获取栏目分类
+     * @param null $id
+     * @param null $pid
+     * @param null $cate_index
+     * @param null $cate_name
+     * @return mixed
+     */
+    public function getCategoryList($id = null,$pid = null,$cate_index = null,$cate_name = null,$status = null){
+        $where = "WHERE 1 = 1";
+        if($id!==null){
+            $where .= " AND id = {$id} ";
+        }
+        if($pid!==null){
+            $where .= " AND pid = {$pid} ";
+        }
+        if($cate_index!==null){
+            $where .= " AND cate_index = {$cate_index} ";
+        }
+        if($cate_name!==null){
+            $where .= " AND cat_name = {$cate_name} ";
+        }
+        if($status!==null){
+            $where .= " AND status = {$status} ";
+        }
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category $where";
+        $data = $this->list_query($sql);
+
+        return $data;
+    }
+
+    /**
+     * 查询是否添加过产品分类
+     */
+    public function getMyCategory($cat_id = null,$userid = null){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE cat_id = {$cat_id} AND uid = {$userid}";
+        $result = $this->list_query($sql);
+        return $result;
+    }
+
+    /**
+     * 添加个人产品分类
+     */
+    public function addSelectCategory($info){
+        $data = $this->getMyCategory($info[cat_id],$info[userid]);
+        if(count($data) > 0){
+            return 217;
+            exit();
+        }
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category (uid,cat_id) VALUES ({$info[userid]},{$info[cat_id]})";
+        if($this->execute($sql)){
+            return 200;
+        }else{
+            return 215;
+        }
+    }
+
+    /**
+     * 获取个人产品分类
+     */
+    public function getMyCategoryList($userid){
+        $sql = "SELECT b.id,b.cat_name,b.cat_img FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category AS b ON a.cat_id=b.id WHERE a.uid = {$userid}";
+        $data = $this->list_query($sql);
+        return $data;
+    }
+
+    /**
+     * 获取圈子成员数
+     */
+    public function getCommunityMemberCount($cat_id){
+        $sql = "SELECT uid FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE cat_id = {$cat_id}";
+        $x = $this->list_query($sql);
+        return count($x);
+    }
+
+    /**
+     * getMemberAttention
+     */
+    public function getMemberAttention($userid){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE fans_uid = {$userid}";
+        $count = $this->list_query($sql);
+        return count($count);
+    }
+
+    /**
+     * 获取粉丝数
+     */
+    public function getMemberFans($userid){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$userid}";
+        $count = $this->list_query($sql);
+        return count($count);
+    }
+
+    /**
+     * getMemberAdopt
+     */
+    public function getMemberAdopt($userid){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$userid}";
+        $count = $this->list_query($sql);
+        return count($count);
+    }
+
+    /**
+     * Cancel Attention
+     */
+    public function cancelAttention($id){
+        $sql = "DELETE FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE id = {$id}";
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 219;
+        }
+    }
+
+    /**
+     * Invite Expert
+     */
+    public function getInviteExpert(){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid WHERE a.status = 1";
+        $data = $this->list_query($sql);
+        return $data;
+    }
+
+    /**
+     * 点赞设置
+     */
+    public function setAgree($userid,$status){
+        if($status == 1){
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
+        }else{
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times - 1 WHERE userid = {$userid}";
+        }
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 220;
+        }
+    }
+
+    /**
+     * 获取会员等级
+     * @return mixed
+     */
+    public function getMemberGradeAll(){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_level";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 设置会员等级
+     * @param $score 会员积分
+     * @return mixed 返回用户等级
+     */
+    public function setMemberGrade($score){
+        $data = $this->getMemberGradeAll();
+        $num = count($data);
+        foreach($data AS $key => $value){
+            if($score >= $data[0]['credit']){
+                if($data[$key]['levelid'] < $num){
+                    if($score > $data[$key]['credit'] && $score <= $data[$key+1]['credit']){
+                        $level['title'] = $data[$key+1]['leveltitle'];
+                        $level['ico'] = $data[$key+1]['ico'];
+                        break;
+                    }else if($score > $data[$num-1]['credit']){
+                        $level['title'] = $data[$num-1]['leveltitle'];
+                        $level['ico'] = $data[$num-1]['ico'];
+                        break;
+                    }
+                }
+            }else{
+                $level['title'] = $data[0]['leveltitle'];
+                $level['ico'] = $data[0]['ico'];
+            }
+        }
+        return $level;
+    }
+
+    /**
+     * send sms mail
+     * @param  string $content send message
+     * @param  string $sendPhone send phone number
+     * @param  int $stop is exit or not
+     * @return int status
+     */
+    function sendSms($content,$sendPhone,$stop = 0){
+        $content = urlencode($content);
+        $cnsmsUrl = 'http://api.cnsms.cn/?ac=send&uid='.C('CNSMS_UID').'&pwd='.md5(C('CNSMS_PWD')).'&mobile='.$sendPhone.'&content='.$content;
+        if ($stop!=0) {
+            exit();
+        }
+        return file_get_contents($cnsmsUrl);
+    }
+
+}
