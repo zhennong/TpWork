@@ -477,13 +477,12 @@ class IndexController extends CommonController {
     //生成二维码
     public function qr_img(){
         //引入二维码类库
-        include '\Application\Home\Api\PhpQrCode.php';
+        require APP_ROOT.'./Application/Home/Api/PhpQrCode.php';
 
         $userid = I('get.userid');
         $value = Tools::think_encrypt($userid);
         $errorCorrectionLevel = 'L';//容错级别
         $matrixPointSize = 8;//生成图片大小
-
         \QRcode::png($value, 'qrcode.png', $errorCorrectionLevel, $matrixPointSize, 2);
         $logo = 'http://www.nongyao001.com/touchknow/logo.png';//准备好的logo图片
         $QR = 'qrcode.png';//已经生成的原始二维码图
