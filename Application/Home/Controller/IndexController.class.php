@@ -18,6 +18,7 @@ class IndexController extends Controller {
         $api = new ApiAppKnow();
 
         $show['status'] = 200;
+//        $api->putLog('data',I());
 
         switch (I('get.action')) {
             // 登陆
@@ -472,7 +473,7 @@ class IndexController extends Controller {
     //生成二维码
     public function qr_img(){
         //引入二维码类库
-        include '\Application\Home\PhpQrCode.class.php';
+        include '\Application\Home\Api\PhpQrCode.php';
 
         $userid = I('get.userid');
         $value = Tools::think_encrypt($userid);

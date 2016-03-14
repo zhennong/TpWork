@@ -255,7 +255,7 @@ class ApiAppKnow extends Api
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
             ORDER BY addtime DESC";
-        if ($start !== null && $limit !== null) {
+        if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
         $x = $this->list_query($sql);
@@ -303,7 +303,7 @@ class ApiAppKnow extends Api
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid
             WHERE askid = {$askid} ORDER BY addtime DESC";
-        if ($start !== null && $limit !== null) {
+        if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
         $x = $this->list_query($sql);
@@ -383,10 +383,10 @@ class ApiAppKnow extends Api
     public function getFavourite($uid, $type = null, $obj_id = null)
     {
         $where = "fav.uid = {$uid}";
-        if ($type!==null) {
+        if ($type!=null) {
             $where .= " AND fav.type = {$this->favourite_type[$type]}";
         }
-        if ($obj_id!==null) {
+        if ($obj_id!=null) {
             $where .= " AND fav.obj_id = {$obj_id}";
         }
         $sql = "SELECT fav.*,m_profile.nickname,m_profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_favourite AS fav
@@ -471,10 +471,10 @@ class ApiAppKnow extends Api
     public function getAttention($attention_uid = null, $fans_uid = null,$type = null)
     {
         $where = "WHERE id>0 ";
-        if($attention_uid!==null){
+        if($attention_uid!=null){
             $where .= " AND attention_uid = {$attention_uid}";
         }
-        if ($fans_uid!==null) {
+        if ($fans_uid!=null) {
             $where .= " AND fans_uid = {$fans_uid}";
         }
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
@@ -485,7 +485,7 @@ class ApiAppKnow extends Api
             $x[$k]['fans_detail'] = $fans_detail[0];
             $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
             $x[$k]['attention_detail'] = $attention_detail[0];
-            if($x[$k]['attention_detail']['member_type'] !== $type){
+            if($x[$k]['attention_detail']['member_type'] != $type){
                 unset($x[$k]);
             }
         }
@@ -498,10 +498,10 @@ class ApiAppKnow extends Api
     public function getFans($attention_uid = null, $fans_uid = null,$type = null)
     {
         $where = "WHERE id>0 ";
-        if($attention_uid!==null){
+        if($attention_uid!=null){
             $where .= " AND attention_uid = {$attention_uid}";
         }
-        if ($fans_uid!==null) {
+        if ($fans_uid!=null) {
             $where .= " AND fans_uid = {$fans_uid}";
         }
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
@@ -512,7 +512,7 @@ class ApiAppKnow extends Api
             $x[$k]['fans_detail'] = $fans_detail[0];
             $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
             $x[$k]['attention_detail'] = $attention_detail[0];
-            if($x[$k]['fans_detail']['member_type'] !== $type){
+            if($x[$k]['fans_detail']['member_type'] != $type){
                 unset($x[$k]);
             }
         }
@@ -540,22 +540,23 @@ class ApiAppKnow extends Api
      */
     public function getCategoryList($id = null,$pid = null,$cate_index = null,$cate_name = null,$status = null){
         $where = "WHERE 1 = 1";
-        if($id!==null){
+        if($id!=null){
             $where .= " AND id = {$id} ";
         }
-        if($pid!==null){
+        if($pid!=null){
             $where .= " AND pid = {$pid} ";
         }
-        if($cate_index!==null){
+        if($cate_index!=null){
             $where .= " AND cate_index = {$cate_index} ";
         }
-        if($cate_name!==null){
+        if($cate_name!=null){
             $where .= " AND cat_name = {$cate_name} ";
         }
-        if($status!==null){
+        if($status!=null){
             $where .= " AND status = {$status} ";
         }
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category $where";
+        $this->putLog('sql',$sql);
         $data = $this->list_query($sql);
 
         return $data;

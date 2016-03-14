@@ -9,14 +9,18 @@
 namespace Home\Api;
 
 
+use Common\Tools;
+
 class Model
 {
     public $now,$mod;
     public function __construct(){
-        $this->now = time();
         //实例化空模型
-        $this->mod = D();
-        $this->mod->db(1,C('DATABASE_MALL'));
+        if($this->mod&&$this->now){}else{
+            $this->now = time();
+            $this->mod = D();
+            $this->mod->db(1,C('DATABASE_MALL'));
+        }
     }
 
     //查询SQL(SELECT)

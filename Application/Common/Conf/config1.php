@@ -72,6 +72,8 @@ return [
     'DATABASE_MALL' => 'mysql://root:root@192.168.0.99:3306/nongyao001_com',
     'DATABASE_MALL_TABLE_PREFIX' => 'destoon_',
 
+    //上传目录
+    'UPLOADS' => './Uploads/',
     //上传二级目录
     'UPLOAD2DIR' => 'wodrow/',
 ];
@@ -142,6 +144,8 @@ return [
     'DATABASE_MALL' => 'mysql://nongyao001_com:nongyao001_com_zantingdenglu@127.0.0.1:3306/nongyao001_com',
     'DATABASE_MALL_TABLE_PREFIX' => 'destoon_',
 
+    //上传目录
+    'UPLOADS' => './Uploads/',
     //上传二级目录
 //    'UPLOAD2DIR' => 'wodrow/',
 ];
