@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 //加密函数
@@ -20,6 +19,3 @@ function think_encrypt($data, $key = '', $expire = 0) {
     }
     return str_replace(array('+','/','='),array('-','_',''),base64_encode($str));
 }
-=======
-<?php
->>>>>>> a49182571c15c2aed96f6c562b3c60c1dcb58b4d
