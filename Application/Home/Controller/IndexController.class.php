@@ -105,7 +105,7 @@ class IndexController extends Controller {
             case 'reset_password':
                 $password = md5(md5(I('get.password')));
                 $mobile = I('get.mobile');
-                $sql = "UPDATE {$api->tables['ucenter_member']} SET password = '{$password}' WHERE mobile = '{$mobile}'";
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member SET password = '{$password}' WHERE mobile = '{$mobile}'";
                 if ($api->execute($sql)) {
                 } else {
                     $show['status'] = 208;
