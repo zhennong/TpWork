@@ -17,7 +17,7 @@ abstract class Api extends Model{
 
     public function __construct(){
         parent::__construct();
-        $this->list_query('SET NAMES UTF8');
+        $this->execute("SET NAMES UTF8");
     }
 
     // 状态值=>状态信息
