@@ -418,7 +418,7 @@ class IndexController extends Controller {
 
             //获取圈子信息
             case "get_community":
-                $show['category_list_info'] = $api->getCategoryList(I('get.cat_id'), I('get.pid'));
+                $show['category_list_info'] = $api->getCategoryList(I('get.cat_id'));
                 $show['member_count'] = $api->getCommunityMemberCount(I('get.cat_id'));
                 break;
 

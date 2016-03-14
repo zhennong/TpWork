@@ -556,7 +556,7 @@ class ApiAppKnow extends Api
         if($status!==null){
             $where .= " AND status = {$status} ";
         }
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category $where";
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category {$where}";
         $data = $this->list_query($sql);
 
         return $data;
