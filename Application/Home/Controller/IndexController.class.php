@@ -385,6 +385,7 @@ class IndexController extends CommonController {
             case 'my_attention':
                 $info = I('get.');
                 $show['attention_list'] = $api->getAttention(null, $info['userid'], $info['type']);
+                $api->putLog($show);
                 break;
 
             //我的粉丝（2016.02.17）

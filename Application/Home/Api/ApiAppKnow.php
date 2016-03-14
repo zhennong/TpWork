@@ -55,13 +55,15 @@ class ApiAppKnow extends Api
         if(in_array('member_profile',$bind)){
             $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
             $b = $this->list_query($sql);
-            foreach($b as $k => $v){
-                if($v[nickname]==''){
-                    $y = $this->list_query("SELECT mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}");
-                    $b[$k][nickname] = $y[0][mobile];
+            if($b){
+                foreach($b as $k => $v){
+                    if($v[nickname]==''){
+                        $y = $this->list_query("SELECT mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}");
+                        $b[$k][nickname] = $y[0][mobile];
+                    }
+                    $z = $this->getAreaFullNameFromAreaID($v['areaid']);
+                    $b[$k]['area_name'] = Tools::arr2str($z,' ');
                 }
-                $z = $this->getAreaFullNameFromAreaID($v['areaid']);
-                $b[$k]['area_name'] = Tools::arr2str($z,' ');
             }
         }
         foreach($x as $k => $v){
