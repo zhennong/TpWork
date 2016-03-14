@@ -167,6 +167,7 @@ class IndexController extends Controller {
                 $_dir = C('UPLOADS').'avatar/';
                 $extend_type = Tools::get_extend($_FILES['filename']['name']);
                 $upload_dir = APP_ROOT . $_dir;
+                Tools::createDir($upload_dir);
                 $upload_name = "user_" . I('get.userid') . "_" . date("Y_m_d__H_i_s", time());
                 $show['status'] = ApiAppKnow::uploadImage($_FILES['filename'], $upload_dir, $upload_name);
                 if ($show['status'] == 200) {
@@ -183,8 +184,12 @@ class IndexController extends Controller {
             case 'upload_ask_image':
                 if (I('get.userid')) {
                     $_dir = C('UPLOADS').'ask/';
+                    $api->putLog(' $_dir', $_dir);
                     $extend_type = Tools::get_extend($_FILES['filename']['name']);
+                    $api->putLog('$extend_type', $extend_type);
                     $upload_dir = APP_ROOT . $_dir;
+                    $api->putLog('up',$upload_dir);
+//                    Tools::createDir($upload_dir);
                     $upload_name = "user_" . I('get.userid') . "_" . date("Y_m_d__H_i_s", time());
                     $show['status'] = ApiAppKnow::uploadImage($_FILES['filename'], $upload_dir, $upload_name);
                     if ($show['status'] == 200) {
@@ -470,7 +475,7 @@ class IndexController extends Controller {
     //生成二维码
     public function qr_img(){
         //引入二维码类库
-        include '\Application\Home\Common\PhpQrCode.class.php';
+        include '\Application\Home\PhpQrCode.class.php';
 
         $userid = I('get.userid');
         $value = Tools::think_encrypt($userid);

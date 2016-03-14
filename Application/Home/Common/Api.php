@@ -13,9 +13,9 @@
  */
 namespace Home\Common;
 
-use Home\Common\AppKnowModel;
+use Home\Common\AppKnow;
 
-abstract class Api extends AppKnowModel{
+abstract class Api extends AppKnow{
 
     public function __construct(){
         parent::__construct();

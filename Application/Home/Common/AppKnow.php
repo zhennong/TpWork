@@ -1,9 +1,9 @@
 <?php
 namespace Home\Common;
 
-use Think\Model;
+use Home\Model;
 
-class AppKnowModel extends Model{
+class AppKnow extends Model{
     public $now,$mod;
     public function __construct(){
         $this->now = time();

@@ -399,6 +399,71 @@ class Tools
     }
 
     /**
+     * gbk转utf8
+     * @param array $arr 要编码的数组(一维数组)
+     * @return array 编码后的数组
+     * @author wodrow <wodrow451611cv@gmail.com | 1173957281@qq.com>
+     */
+    public static function gbk2utf8($arr,$dimension=1){
+        if($dimension == 1){
+            $keys = array_keys($arr);
+            foreach($keys as $k => $v){
+//                $x[$v] = mb_convert_encoding($arr[$v],'utf-8','gbk');
+                $x[$v] = iconv ("GBK", "UTF-8", $arr[$v]);
+            }
+            return $x;
+        }else{
+            $dimension--;
+            foreach($arr as $k => $v){
+                $y[$k] = self::gbk2utf8($v,$dimension);
+            }
+            return $y;
+        }
+    }
+
+    /**
+     * utf8转gbk
+     * @param array $arr 要编码的数组(一维数组)
+     * @return array 编码后的数组
+     * @author wodrow <wodrow451611cv@gmail.com | 1173957281@qq.com>
+     */
+    public static function utf82gbk($arr,$dimension=1){
+        if($dimension == 1){
+            $keys = array_keys($arr);
+            foreach($keys as $k => $v){
+//                $x[$v] = mb_convert_encoding($arr[$v],'gbk','utf-8');
+                $x[$v] = iconv ("UTF-8", "GBK", $arr[$v]);
+            }
+            return $x;
+        }else{
+            $dimension--;
+            foreach($arr as $k => $v){
+                $y[$k] = self::utf82gbk($v,$dimension);
+            }
+            return $y;
+        }
+    }
+
+    /**
+     * 格式化手机号
+     * @param string $mobile 手机号
+     * @return string 加密手机号
+     */
+    public static function substr_mobile($mobile){
+        return substr($mobile,0,3)."********";
+    }
+
+    /**
+     * 获取后缀
+     */
+    public static function get_extend($file_name)
+    {
+        $extend  = explode ("."  ,  $file_name);
+        $va = count ($extend) - 1;
+        return   $extend[$va];
+    }
+
+    /**
      * 调试输出|调试模式下
      * @param  mixed $test 调试变量
      * @param  int $style 模式
