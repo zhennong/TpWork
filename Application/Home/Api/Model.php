@@ -18,8 +18,9 @@ class Model
         //实例化空模型
         if($this->mod&&$this->now){}else{
             $this->now = time();
-            $this->mod = D();
+            $this->mod = M();
             $this->mod->db(1,C('DATABASE_MALL'));
+//            $this->mod->execute("SET NAMES UTF8");
         }
     }
 

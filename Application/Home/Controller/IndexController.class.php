@@ -3,13 +3,13 @@ namespace Home\Controller;
 
 header('Access-Control-Allow-Origin: *');
 
+use Common\Controller\CommonController;
 use Common\Tools;
-use Think\Controller;
 use Home\Api\ApiAppKnow;
 
 
 
-class IndexController extends Controller {
+class IndexController extends CommonController {
 
     //农医问药接口
     public function index(){
@@ -125,7 +125,6 @@ class IndexController extends Controller {
             case 'get_area_parent_nodes':
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
-//                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
                 $show['parent_areas'] = $x;
                 break;
 
@@ -143,11 +142,13 @@ class IndexController extends Controller {
                 if (!$show['member_profile']) {
                     $show['status'] = 211;
                 }
+
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
-//                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
-                $api->putLog('x',$x);
                 $show['parent_areas'] = $x;
+
+//                $x = $api->getAreaFullNameFromAreaID(I('get.areaid'));
+//                $show['area_name'] = $x;
 
                 //登录积分设置 每天累加一分
                 $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
@@ -458,7 +459,10 @@ class IndexController extends Controller {
 
             // 测试
             case 'test':
-//                echo 'test';
+                $allArea = $api->getAllArea();
+                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
+                $show['parent_areas'] = $x;
+                dump($x);
                 break;
 
             default:
@@ -469,6 +473,7 @@ class IndexController extends Controller {
         $show['msg'] = $api->status[$show['status']];
         $show_msgs = $jsoncallback . "(" . json_encode($show) . ")";
         //$show_msgs = json_encode($show);
+        //$api->putLog($show_msgs);
         echo $show_msgs;
         exit();
     }

@@ -161,7 +161,7 @@ class ApiAppKnow extends Api
      * @param $log_title
      * @param $log_info
      */
-    public function putLog($log_title, $log_info)
+    public function putLog($log_info, $log_title='log')
     {
         $log_dir = APP_ROOT.C('UPLOADS')."Log/";
         $log_file_name = "app_know_api_log.md";
@@ -394,11 +394,11 @@ class ApiAppKnow extends Api
         WHERE {$where}";
         $x = $this->list_query($sql);
         if ($type == "ask") {
-            $table = $this->tables['appknow_question_ask'];
+            $table = C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask";
         }
         switch ($type) {
             case 'ask':
-                $table = $this->tables['appknow_question_ask'];
+                $table = C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask";
                 break;
             case 'article':
                 break;

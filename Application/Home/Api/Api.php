@@ -15,11 +15,6 @@ namespace Home\Api;
 
 abstract class Api extends Model{
 
-    public function __construct(){
-        parent::__construct();
-        $this->execute("SET NAMES UTF8");
-    }
-
     // 状态值=>状态信息
     public $status = array(
         '101'=>"未知异常",
@@ -52,7 +47,7 @@ abstract class Api extends Model{
      * @return mixed
      */
     public function getAllArea(){
-        $sql = "SELECT * FROM {$this->tables['area']}";
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."area";
         $x = $this->list_query($sql);
         return $x;
     }
@@ -66,7 +61,7 @@ abstract class Api extends Model{
     }
     private function getAreaInfoFromAreaID($areaid,&$areaInfo)
     {
-        $tb_area = $this->tables['area'];
+        $tb_area = C('DATABASE_MALL_TABLE_PREFIX')."area";
         $sql = "SELECT * FROM {$tb_area} WHERE areaid = {$areaid}";
         $x = $this->list_query($sql);
 
