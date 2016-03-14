@@ -7,8 +7,6 @@ use Common\Controller\CommonController;
 use Common\Tools;
 use Home\Api\ApiAppKnow;
 
-
-
 class IndexController extends CommonController {
 
     //农医问药接口
@@ -146,9 +144,6 @@ class IndexController extends CommonController {
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
                 $show['parent_areas'] = $x;
-
-//                $x = $api->getAreaFullNameFromAreaID(I('get.areaid'));
-//                $show['area_name'] = $x;
 
                 //登录积分设置 每天累加一分
                 $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
