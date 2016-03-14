@@ -478,6 +478,7 @@ class ApiAppKnow extends Api
             $where .= " AND fans_uid = {$fans_uid}";
         }
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
+        $this->putLog($sql);
         $x = $this->list_query($sql);
         foreach($x as $k => $v){
             $x[$k]['_id'] = $v[id];
