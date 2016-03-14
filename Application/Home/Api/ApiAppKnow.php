@@ -81,7 +81,6 @@ class ApiAppKnow extends Api
                 $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'image/defaultx20.jpg'];
             }
         }
-        $this->putLog($x);
         return $x;
     }
 
