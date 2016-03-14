@@ -454,6 +454,7 @@ class IndexController extends Controller {
 
             // 测试
             case 'test':
+//                echo 'test';
                 break;
 
             default:
