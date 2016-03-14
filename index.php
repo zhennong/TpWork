@@ -23,7 +23,7 @@ define('APP_DEBUG',True);
 define('APP_ROOT',dirname(__FILE__)."/");
 
 // 定义默认模块
-define('BIND_MODULE','Admin');
+//define('BIND_MODULE','Home');
 
 // 定义应用目录
 define('APP_PATH',APP_ROOT.'/Application/');
