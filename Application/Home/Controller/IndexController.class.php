@@ -142,8 +142,10 @@ class IndexController extends Controller {
                 if (!$show['member_profile']) {
                     $show['status'] = 211;
                 }
-                $allArea = $api->getAllArea();
-                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
+                /*$allArea = $api->getAllArea();
+                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');*/
+                $x = Tools::arr2str($api->getAreaFullNameFromAreaID(I('get.areaid')));
+                $api->putLog('x',$x);
                 $show['parent_areas'] = $x;
 
                 //登录积分设置 每天累加一分
