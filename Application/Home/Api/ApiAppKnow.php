@@ -77,8 +77,11 @@ class ApiAppKnow extends Api
                 $x[$k]['member_profile'] = $b[0];
                 $x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
                 $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
+            }else{
+                $x[$k]['member_profile'] = null;
             }
         }
+        $this->putLog($x);
         return $x;
     }
 
