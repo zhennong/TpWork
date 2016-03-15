@@ -31,7 +31,7 @@ class TestController extends AdminController
     public function test2()
     {
         $all_area = D('Area')->field(['areaid', 'areaname'])->limit(10)->select();
-        $count = count($all_area);
+        $count = count(D('Area')->field(['areaid', 'areaname'])->select());
         //获取Datatables发送的参数 必要
         $draw = $_GET['draw'];//这个值作者会直接返回给前台
         foreach($all_area as $k => $v){
