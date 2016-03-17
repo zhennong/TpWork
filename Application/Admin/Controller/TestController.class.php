@@ -30,7 +30,9 @@ class TestController extends AdminController
 
     public function test2()
     {
-        $all_area = D('Area')->field(['areaid', 'areaname'])->limit(10)->select();
+        $start = $_GET['start'];
+        $length = $_GET['length'];
+        $all_area = D('Area')->field(['areaid', 'areaname'])->limit($start,$length)->select();
         $count = count(D('Area')->field(['areaid', 'areaname'])->select());
         //获取Datatables发送的参数 必要
         $draw = $_GET['draw'];//这个值作者会直接返回给前台
@@ -44,8 +46,8 @@ class TestController extends AdminController
             "recordsFiltered" => $count,
             "data" => $z,
         ];
-        Tools::_vp($_GET,0,2);
         $y = json_encode($x);
+        Tools::_vp($y,0,2);
         echo $y;
     }
 }
