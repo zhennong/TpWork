@@ -76,6 +76,9 @@ return [
     'UPLOADS' => './Uploads/',
     //上传二级目录
     'UPLOAD2DIR' => 'wodrow/',
+    // sms
+    'SMS_UID' => '114294',
+    'SMS_PASSWORD' => 'n********1_**m_**s_s**d',
 ];
 
 return [
@@ -148,4 +151,8 @@ return [
     'UPLOADS' => './Uploads/',
     //上传二级目录
 //    'UPLOAD2DIR' => 'wodrow/',
+    // sms
+    'SMS_UID' => '114294',
+    'SMS_PASSWORD' => 'n********1_**m_**s_s**d',
+
 ];

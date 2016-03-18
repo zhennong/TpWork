@@ -720,7 +720,7 @@ class ApiAppKnow extends Api
      */
     function sendSms($content,$sendPhone,$stop = 0){
         $content = urlencode($content);
-        $cnsmsUrl = 'http://api.cnsms.cn/?ac=send&uid=114294&pwd='.md5(626123).'&mobile='.$sendPhone.'&content='.$content;
+        $cnsmsUrl = 'http://api.cnsms.cn/?ac=send&uid='.C('SMS_UID').'&pwd='.md5(C('SMS_PASSWORD')).'&mobile='.$sendPhone.'&content='.$content;
         if ($stop!=0) {
             exit();
         }
