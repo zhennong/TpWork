@@ -43,7 +43,7 @@ class IndexController extends CommonController {
                         $show['status'] = 209;
                     } else {
                         $x = rand(100000, 999999);
-                        S($k, $x, 24 * 3600);
+                        S($k, $x, 60);
                         if ($y = $api->sendSms($x, I('get.mobile'))) {
 
                         } else {
