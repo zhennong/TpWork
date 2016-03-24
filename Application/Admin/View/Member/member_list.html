@@ -1,0 +1,57 @@
+<extend name="Layout:ly1"/>
+
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            var url = "{:U('Admin/Test/test2')}";
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 10,
+                "processing": true,
+                "serverSide": true,
+                "ajax": url
+            });
+        });
+    </script>
+</block>
+
+<block name="body">
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">test</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        area列表
+                        <a id="add_one_row" class="pull-right">add</a>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>areaid</th>
+                                    <th>areaname</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+</block>
