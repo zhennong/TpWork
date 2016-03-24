@@ -394,3 +394,27 @@ function _vp($test,$stop=0,$style=0)
     }
 }
 # write by wodrow end
+
+/**
+ * 根据地区id获取地区详细
+ */
+function getAreaFullNameFromAreaID($areaid){
+    $y = getAreaInfoFromAreaID($areaid,$x);
+    return array_reverse($y);
+}
+
+function getAreaInfoFromAreaID($areaid,&$areaInfo)
+{
+//    $tb_area = $this->tables['area'];
+//    $sql = "SELECT * FROM {$tb_area} WHERE areaid = {$areaid}";
+//    $x = $this->db->list_query($sql);
+    $x = D('Area')->where(['areaid'=>$areaid])->select();
+
+    if($x[0]['parentid'] == 0){
+        $areaInfo[] = $x[0][areaname];
+    }else{
+        $areaInfo[] = $x[0][areaname];
+        getAreaInfoFromAreaID($x[0]['parentid'],$areaInfo);
+    }
+    return $areaInfo;
+}
