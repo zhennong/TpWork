@@ -14,4 +14,12 @@ class SystemController extends AuthController
     public function index(){
         $this->display();
     }
+
+    /**
+     * 用户设置
+     */
+    public function userSetting()
+    {
+        $this->display();
+    }
 }

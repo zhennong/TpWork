@@ -14,9 +14,11 @@ use Think\Auth;
 
 class AuthController extends AdminController
 {
+    // 不需要验证的方法
     public $not_check = [
-        'Admin/Index/index'
-    ];// 不需要验证的方法
+        'Admin/Index/index',
+        'Admin/Index/userInfo',
+    ];
     public $authAll =[[]]; // 所有节点
     public $authNames =[]; // 允许访问节点名数组
     public $authList = [[]]; // 允许访问节点列表
@@ -36,7 +38,7 @@ class AuthController extends AdminController
         foreach($this->authList as $k => $v){
             $this->authNames[] = $v['name'];
         }
-        if(!in_array($this->route,$this->authNames)){
+        if(!$this->admin_user['id'] == C('ADMIN_USER_ID')&&!in_array($this->route,array_merge($this->authNames,$this->not_check))){
             $this->error('没有权限',U('Admin/Index/index'));
         }
         $this->authTree = Tools::list2tree($this->authList);
