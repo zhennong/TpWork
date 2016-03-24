@@ -37,7 +37,7 @@ class ApiAppKnow extends Api
     //积分设置（分值）
     public $score_arr = array(
         'sa_login' => 1,        //用户登录
-        'sa_questions' => 2,    //用户提问问题
+        'sa_questions' => 3,    //用户提问问题
         'sa_answer' => 5,       //用户回答问题
     );
 

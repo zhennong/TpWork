@@ -230,7 +230,7 @@ class IndexController extends CommonController {
                     $k1 = $k . "_ask_tmp_image";
                     S($k1, null);
                     //提交问题积分设置
-                    $api->addScore(I('get.userid'),'sa_login');
+                    $api->addScore(I('get.userid'),'sa_questions');
 
                 } else {
                     $show['status'] = 215;
@@ -288,7 +288,7 @@ class IndexController extends CommonController {
             case "submit_questions_answer":
                 if ($api->addQuestionAnswer(I('get.'))) {
                     //回答问题积分设置
-                    $api->addScore(I('get.userid'),'sa_login');
+                    $api->addScore(I('get.userid'),'sa_answer');
                 } else {
                     $show['status'] = 215;
                 }
