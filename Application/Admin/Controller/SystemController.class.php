@@ -52,7 +52,8 @@ class SystemController extends AuthController
                 $tables[] = $v[0];
             }
             $backup_dir = APP_ROOT."/Data/sql/".date("Y-m-d H:i:s")."/";
-            Tools\wodrow\TablesBackup::backupTables($tables,$backup_dir);
+            $size = Tools\wodrow\TablesBackup::backupTables($tables,$backup_dir);
+            echo $size;
             exit();
         }
 

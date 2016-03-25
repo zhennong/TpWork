@@ -23,16 +23,20 @@
                     select_tables[index] = data;
                 });
                 if(select_tables.length<1){
-                    alert("请选择至少一个数据库");
+                    layer.alert("请选择至少一个数据库");
                     return false;
                 }
                 var url = "{:U('Admin/System/dataBackup')}";
+                var layer_load = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
                 $.ajax({
                     type:"post",
                     url:url,
                     data:{select_tables:select_tables},
                     success: function (msg) {
-                        console.log(msg);
+                        if(msg>0){
+                            layer.close(layer_load);
+                            layer.alert("备份成功，大小: "+msg+"bts");
+                        }
                     }
                 });
             });

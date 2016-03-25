@@ -66,11 +66,16 @@ class TablesBackup
      */
     public static function backupTables($tables=[],$dir="/")
     {
+        $size = 0;
         foreach($tables as $k => $v){
             $sql = self::getTableBackupSql($v);
             $filename = $dir."{$v}.sql";
             Tools::createDir($dir);
-            file_put_contents($filename, $sql);
+            $size += file_put_contents($filename, $sql);
+            if($size){}else{
+                E('操作异常');
+            }
         }
+        return $size;
     }
 }
