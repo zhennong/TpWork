@@ -32,21 +32,6 @@ class SystemController extends AuthController
         $db_name = C('DB_NAME');
         $D = D();
         if(IS_POST){
-            // 备份
-            /*$connectid = mysql_connect(C('DB_HOST'),C('DB_USER'),C('DB_PWD'));
-            $connectid = $D;
-            $connectid = $D->db(1);
-            mysql_query("set names utf8",$connectid);
-            $backup_dir = APP_ROOT."/Data/sql/".date("Y-m-d H:i:s")."/";
-            $select_tables = I("post.select_tables");
-            $DbBak = new DbBak($connectid,$backup_dir);
-            foreach($select_tables as $k => $v){
-                $tables[] = $v[0];
-            }
-            if(count($tables)>0){
-                $DbBak->backupDb($db_name,$tables);
-            }*/
-
             $select_tables = I("post.select_tables");
             foreach($select_tables as $k => $v){
                 $tables[] = $v[0];
