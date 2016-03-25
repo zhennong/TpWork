@@ -8,7 +8,6 @@
 
 namespace Common;
 
-
 class Tools
 {
     /**
