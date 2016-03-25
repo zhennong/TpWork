@@ -68,6 +68,7 @@ class UserController extends AuthController
                 $user_id = I("post.user_id");
                 $group_all = M('AuthGroup')->select();
                 $group_sel = M('AuthGroupAccess')->where(['uid'=>$user_id])->select();
+
                 foreach($group_sel as $k => $v){
                     $x[] = $v['group_id'];
                 }
@@ -99,6 +100,7 @@ class UserController extends AuthController
                 break;
 
             default:
+
                 $user_list = $this->getAdminUserDetail(null, ['group_detail']);
                 $this->assign(['user_list' => $user_list]);
                 $this->display();
