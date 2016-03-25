@@ -39,3 +39,12 @@ a{
 .margin_top_10{
     margin-top: 10px;
 }
+
+.p90{width:90%;margin: 0 auto;}
+
+.padding20{padding: 20px 0 30px;}
+
+.form-control.width{width: 120px;margin-right: 10px;float: left;}
+
+.form-control.width.city{display: none;}
+.form-control.width.county{display: none;}
