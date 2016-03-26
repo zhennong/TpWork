@@ -35,7 +35,10 @@
                     success: function (msg) {
                         if(msg>0){
                             layer.close(layer_load);
-                            layer.alert("备份成功，大小: "+msg+"bts");
+                            layer.alert("备份成功，大小: "+msg+"bts",{
+                                time:2000
+                            });
+                            location.href = "{:U('Admin/System/dataReduction')}";
                         }
                     }
                 });

@@ -1,5 +1,71 @@
 <extend name="Layout:ly1"/>
 
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 100,
+                order: [[0, "asc"]]
+            });
+            DataTable.on('order.dt search.dt',
+                    function () {
+                        DataTable.column(0, {
+                            search: 'applied',
+                            order: 'applied'
+                        }).nodes().each(function (cell, i) {
+                            cell.innerHTML = i + 1;
+                        });
+                    }).draw();
+
+            // 删除备份
+            $(".delete_backup").on('click', function () {
+                var tr = $(this).closest("tr");
+                var dirname = tr.data('dirname');
+                var reduction_url = "{:U('Admin/System/dataReduction')}";
+                var layer_load = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+                $.ajax({
+                    type: "post",
+                    url: reduction_url,
+                    data: {post: "delete", dirname: dirname},
+                    success: function (msg) {
+                        if (msg == 1) {
+                            layer.close(layer_load);
+                            layer.alert("删除成功", {
+                                time: 2000
+                            });
+                            location.reload();
+                        }
+                    }
+                });
+            });
+
+            // 还原备份
+            $(".reduction_backup").on('click',function(){
+                var tr = $(this).closest("tr");
+                var dirname = tr.data('dirname');
+                var reduction_url = "{:U('Admin/System/dataReduction')}";
+                var layer_load = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+                $.ajax({
+                    type: "post",
+                    url: reduction_url,
+                    data: {post: "reduction", dirname: dirname},
+                    success: function (msg) {
+                        if (msg == 0) {
+                            layer.close(layer_load);
+                            layer.alert("数据还原成功");
+                        }else{
+                            layer.close(layer_load);
+                            layer.alert(msg);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</block>
+
 <block name="body">
     <div id="page-wrapper">
         <div class="row">
@@ -11,13 +77,35 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        备份列表
+                        可还原备份列表
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="dataTable_wrapper">
                             <table class="table table-bordered table-hover">
-
+                                <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>备份文件时间</th>
+                                    <th>备份文件大小</th>
+                                    <th>备份文件数量</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach($backupDir as $k => $v): ?>
+                                <tr data-dirname="{$v['name']}">
+                                    <td></td>
+                                    <td><strong>{$v['name']}</strong></td>
+                                    <td>{$v['size']}</td>
+                                    <td>{$v['file_count']}</td>
+                                    <td>
+                                        <button class="btn btn-primary reduction_backup">还原此备份</button>
+                                        <button class="btn btn-danger delete_backup">删除此备份</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                </tbody>
                             </table>
                         </div>
                         <!-- /.table-responsive -->
