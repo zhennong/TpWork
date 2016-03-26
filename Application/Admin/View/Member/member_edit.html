@@ -3,36 +3,27 @@
 <block name="head">
 <script type="text/javascript">
 $(function(){
-//    if({$data[0]['sex']} == 0){
-//        $('.men').attr('checked','checked');
-//    }else{
-//        $('.women').attr('checked','checked');
-//    }
-//
-//    if({$data[0]['userid']}){
-//        $('#title').text('用户编辑');
-//    }
-
-    //获取省市县
-//    $.ajax({
-//        type: "get",
-//        url: "{:U('Admin/Member/getAreas')}",
-//        data: {areaid:{$data[0]['areaid']}},
-//        dataType : 'json',
-//        success: function(data) {
-//            if(data.parent_areas.length > 0){
-//                $(".provice,.city,.county").empty();
-//                if (data.parent_areas.length <= 2) {
-//                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
-//                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
-//                } else {
-//                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
-//                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
-//                    $(".county").append("<option value='" + data.parent_areas[2]['areaid'] + "'>" + data.parent_areas[2]['areaname'] + "</option>");
-//                }
-//            }
-//        }
-//    });
+    $.ajax({
+        type: "get",
+        url: "{:U('Admin/Member/getAreas')}",
+        data: {areaid:{$data[0]['member_profile']['areaid']}},
+        dataType : 'json',
+        success: function(data) {
+            if(data.parent_areas != null){
+                $(".provice,.city,.county").empty();
+                if (data.parent_areas.length <= 2) {
+                    $(".provice,.city").show();
+                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
+                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
+                } else {
+                    $(".provice,.city,.county").show();
+                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
+                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
+                    $(".county").append("<option value='" + data.parent_areas[2]['areaid'] + "'>" + data.parent_areas[2]['areaname'] + "</option>");
+                }
+            }
+        }
+    });
 
     //加载省
     function getAreaProvince(){
@@ -102,6 +93,33 @@ $(function(){
         $("#areaid").val(id);
     })
 
+    $("#btn-submit").click(function(){
+        var userid = $("input[name='userid']").val();
+        var mobile = $("input[name='mobile']").val();
+        var password = $("input[name='password']").val();
+        var nickname = $("input[name='nickname']").val();
+        var truename = $("input[name='truename']").val();
+        var sex = $("input[name='sex']:checked").val();
+        var qq = $("input[name='qq']").val();
+        var areaid = $("input[name='areaid']").val();
+        var address = $("input[name='address']").val();
+
+        $.get("{:U('Admin/Member/member_edit')}",{'action':'edit','userid':userid,'mobile':mobile,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
+            if(msg == 1){
+                layer.msg("更新成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }else if(msg == 2){
+                layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }else{
+                layer.msg("更新失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }
+        })
+    })
 })
 </script>
 
@@ -109,42 +127,43 @@ $(function(){
 
 <block name="body">
     <div class="container-fluid">
-        <h3 id="title" align="center">用户添加</h3>
+        <h3 id="title" align="center">用户编辑</h3>
         <div class="padding20">
-            <form class="form-horizontal p90">
+            <div class="form-horizontal p90">
+                <input type="hidden" name="userid" value="{$data[0]['userid']}" />
                 <div class="form-group">
                     <label class="col-sm-2 control-label">用户帐号：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="acount" value="{$data[0]['mobile']}" />
+                        <input type="text" name="mobile" class="form-control" id="mobile" value="{$data[0]['mobile']}" readonly />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">用户昵称：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="nickname" value="{$data[0]['nickname']}" />
+                        <input type="text" name="nickname" class="form-control" id="nickname" value="{$data[0]['member_profile']['nickname']}" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">用户真名：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="truename" value="{$data[0]['truename']}" />
+                        <input type="text" name="truename" class="form-control" id="truename" value="{$data[0]['member_profile']['truename']}" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">性别：</label>
                     <div class="col-sm-10">
                         <label class="radio-inline">
-                            <input type="radio" name="sex" class="men" checked value="0"> 男
+                            <input type="radio" name="sex" class="men" <if condition="$data[0]['member_profile']['sex'] eq 0">checked</if> value="0"> 男
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="sex" class="women" value="1"> 女
+                            <input type="radio" name="sex" class="women" <if condition="$data[0]['member_profile']['sex'] eq 1">checked</if> value="1"> 女
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">QQ：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="qq" value="{$data[0]['qq']}" />
+                        <input type="text" name="qq" class="form-control" id="qq" value="{$data[0]['member_profile']['qq']}" />
                     </div>
                 </div>
 
@@ -171,16 +190,16 @@ $(function(){
                 <div class="form-group">
                     <label class="col-sm-2 control-label">详细地址：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address" value="{$data[0]['address']}" />
+                        <input type="text" name="address" class="form-control" id="address" value="{$data[0]['member_profile']['address']}" />
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
                         <button type="reset" class="btn btn-default">重置</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 

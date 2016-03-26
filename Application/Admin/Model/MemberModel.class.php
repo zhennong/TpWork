@@ -16,9 +16,9 @@ class MemberModel extends MallRelationModel
     protected $_link = array(
         'MemberProfile'=>array(
             'mapping_type'=>self::HAS_ONE,//HAS_ONE查询出一条
-            'class_name'=>'MemberProfile',
-            'mapping_name'=>'MemberProfile',
-            'foreign_key'=>'userid'
+            'class_name'=>'member_profile',
+            'mapping_name'=>'member_profile',
+            'foreign_key'=>'userid',
         ),
     );
 }

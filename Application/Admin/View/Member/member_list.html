@@ -13,11 +13,11 @@
             $('#add').click(function(){
                 layer.open({
                     type: 2,
-                    title: '用户管理',
+                    title: '添加用户',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '530px'],
-                    content: '{:U("Admin/Member/member_manage")}'
+                    area: ['50%', '580px'],
+                    content: '{:U("Admin/Member/member_add")}'
                 });
             })
 
@@ -34,15 +34,28 @@
                 });
             })
 
-            //查看信息
+            //编辑信息
             $('.update').click(function(){
                 var url = $(this).parents('tr').data('edit');
                 layer.open({
                     type: 2,
-                    title: '查看详情',
+                    title: '编辑用户',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '80%'],
+                    area: ['50%', '530px'],
+                    content: url
+                });
+            })
+
+            //修改密码
+            $('.acount').click(function(){
+                var url = $(this).parents('tr').data('edit_pwd');
+                layer.open({
+                    type: 2,
+                    title: '编辑用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['450px', '420px'],
                     content: url
                 });
             })
@@ -59,8 +72,10 @@
                             layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                                 $('table tr#id_'+id).remove();
                             })
+                        }else if(msg == 2){
+                            layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000});
                         }else{
-                            layer.msg("删除失败，1秒后自动关闭~~",{ico:2,time:1000});
+                            layer.msg("删除失败，1秒后自动关闭~~",{ico:1,time:1000});
                         }
                     })
                 }, function(){
@@ -95,6 +110,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>帐号</th>
+                                        <th>会员头像</th>
                                         <th>昵称</th>
                                         <th>用户姓名</th>
                                         <th>会员积分</th>
@@ -106,12 +122,15 @@
                                 </thead>
                                 <tbody>
                                     <foreach name="data" item="v" key="k" >
-                                        <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Member/member_manage',['userid'=>$v['userid']])}" data-view="{:U('Admin/Member/member_profile',['userid'=>$v['userid']])}">
+                                        <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Member/member_edit',['userid'=>$v['userid']])}" data-view="{:U('Admin/Member/member_profile',['userid'=>$v['userid']])}" data-edit_pwd="{:U('Admin/Member/member_edit_pwd',['userid'=>$v['userid']])}">
                                             <td>{$v.userid}</td>
-                                            <td>{$v.mobile}</td>
-                                            <td>{$v.nickname}</td>
-                                            <td>{$v.turename}</td>
-                                            <td>{$v.score}</td>
+                                            <td id="acount" class="acount">{$v.mobile}</td>
+                                            <td align="center">
+                                            <img src="{$v.avatar}" width="36" height="36" />
+                                            </td>
+                                            <td>{$v.member_profile.nickname}</td>
+                                            <td>{$v.member_profile.truename}</td>
+                                            <td>{$v.member_profile.score}</td>
                                             <td>{$v.area}</td>
                                             <td>{$v.last_login_time}</td>
                                             <td>{$v.addtime}</td>

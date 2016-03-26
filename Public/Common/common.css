@@ -48,3 +48,12 @@ a{
 
 .form-control.width.city{display: none;}
 .form-control.width.county{display: none;}
+
+.form-control.nobg{background: #fff;border-radius: 0;border: 0;}
+
+.form-group span.tips{position: relative;top:6px;color:red;}
+
+.table-bordered>tbody>tr>td{line-height: 35px;}
+.table-bordered>tbody>tr>td img{border-radius: 50%;}
+.table-bordered>tbody>tr>td .btn{margin: 0 5px;}
+.table-bordered>tbody>tr>td.acount{cursor: pointer;font-weight:bold;}

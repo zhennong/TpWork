@@ -5,7 +5,7 @@
 <script type="text/javascript">
 $(function(){
     $('input').attr('readonly','readonly');
-    if({$data[0]['sex']} == 0){
+    if({$data[0]['member_profile']['sex']} == 0){
         $('.men').attr('checked','checked');
     }else{
         $('.women').attr('checked','checked');
@@ -24,19 +24,19 @@ $(function(){
             <div class="form-group">
                 <label class="col-sm-2 control-label">用户帐号：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="acount" value="{$data[0]['mobile']}" />
+                    <input type="text" class="form-control nobg" id="acount" value="{$data[0]['mobile']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">用户昵称：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="nickname" value="{$data[0]['nickname']}" />
+                    <input type="text" class="form-control nobg" id="nickname" value="{$data[0]['member_profile']['nickname']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">用户真名：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="truename" value="{$data[0]['truename']}" />
+                    <input type="text" class="form-control nobg" id="truename" value="{$data[0]['member_profile']['truename']}" />
                 </div>
             </div>
             <div class="form-group">
@@ -53,65 +53,65 @@ $(function(){
             <div class="form-group">
                 <label class="col-sm-2 control-label">QQ：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="qq" value="{$data[0]['qq']}" />
+                    <input type="text" class="form-control nobg" id="qq" value="{$data[0]['member_profile']['qq']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">用户积分：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="score" value="{$data[0]['score']}" />
+                    <input type="text" class="form-control nobg" id="score" value="{$data[0]['member_profile']['score']}" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">所在地区：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="area" value="{$data[0]['area']}" />
+                    <input type="text" class="form-control nobg" id="area" value="{$data[0]['area']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">详细地址：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="address" value="{$data[0]['address']}" />
+                    <input type="text" class="form-control nobg" id="address" value="{$data[0]['member_profile']['address']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">GPS定位：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="location" value="{$data[0]['location']}" />
+                    <input type="text" class="form-control nobg" id="location" value="{$data[0]['member_profile']['location']}" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">登录时间：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="logintimes" value="{$data[0]['logintimes']}" />
+                    <input type="text" class="form-control nobg" id="logintimes" value="{$data[0]['member_profile']['logintimes']}" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">上次登录IP：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="last_login_ip" value="{$data[0]['last_login_ip']}" />
+                    <input type="text" class="form-control nobg" id="last_login_ip" value="{$data[0]['member_profile']['last_login_ip']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">上次登录时间：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="last_login_time" value="{$data[0]['last_login_time']}" />
+                    <input type="text" class="form-control nobg" id="last_login_time" value="{$data[0]['member_profile']['last_login_time']}" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">注册IP：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="reg_ip" value="{$data[0]['reg_ip']}" />
+                    <input type="text" class="form-control nobg" id="reg_ip" value="{$data[0]['member_profile']['reg_ip']}" />
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">注册时间：</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="reg_time" value="{$data[0]['reg_time']}" />
+                    <input type="text" class="form-control nobg" id="reg_time" value="{$data[0]['reg_time']}" />
                 </div>
             </div>
         </form>
