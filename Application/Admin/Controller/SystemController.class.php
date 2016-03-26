@@ -30,6 +30,25 @@ class SystemController extends AuthController
      */
     public function userSetting()
     {
+        $userInfo = $this->admin_user;
+        if(IS_POST){
+            $msg = "success";
+            if($userInfo['password']!=md5(I("post.oldpassword"))){
+                $msg = "原密码错误";
+            }else{
+                $AdminUser = D('AdminUser');
+                if($data = $AdminUser->create(I("post."))){
+                    if($AdminUser->data($data)->save()){}else{
+                        $msg = "修改失败";
+                    }
+                }else{
+                    $msg = $AdminUser->getError();
+                }
+            }
+            echo $msg;
+            exit();
+        }
+        $this->assign(['userInfo'=>$userInfo]);
         $this->display();
     }
 
