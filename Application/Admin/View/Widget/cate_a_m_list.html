@@ -1,7 +1,14 @@
 <?php foreach($cate_tree as $k => $v): ?>
 <tr data-id="{$v['id']}" data-pid="{$v['pid']}" data-cat_name="{$v['cat_name']}" data-cat_index="{$v['cat_index']}" data-status="{$v['status']}">
     <td></td>
-    <td><img src="{:C('WEB_URL')}{:C('UPLOADS')}{$v['cat_img']}" class="img img-responsive max_width_100 max_height_100"></td>
+    <td>
+        <?php if($v['cat_img']){
+            $src = C('WEB_URL').C('UPLOADS').$v['cat_img'];
+        }else{
+            $src = "__UPLOADS__/cat_img/nopic.jpg";
+        } ?>
+        <img src="{$src}" class="img img-responsive max_width_100 max_height_100">
+    </td>
     <td>{$sign}{$v['cat_name']}</td>
     <td>{$v['id']}</td>
     <td>{$v['pid']}</td>

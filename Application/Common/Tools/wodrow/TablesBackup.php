@@ -47,7 +47,7 @@ class TablesBackup
             }
             $arrAll[] = "INSERT INTO `{$table}` VALUES (".implode(',',$arrValues).");";
         }
-        return implode("\r\n",$arrAll);
+        return implode("\r\n",$arrAll)."\r\n\r\n";
     }
 
     /**
