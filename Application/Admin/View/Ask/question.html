@@ -6,110 +6,78 @@
             margin-top: 10px;
         }
     </style>
+
     <script>
         $(document).ready(function () {
-            $("#add_admin_user_page").hide();
-            $("#opt_admin_user").ajaxForm({
-                success:function(msg){
-                    if(isNaN(msg)){
-                        alert(msg);
-                    }else{
-                        location.reload();
-                    }
-                }
-            });
-            var Table = $("table");
+            var Table = $('table');
             var DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
-                pageLength: 100
+                pageLength: 10
             });
-            //关闭
-            $("#admin_user_cancel").click(function(){
-                $("#add_admin_user_page").hide();
-            });
+
             //添加
-            $("#add_admin_user").click(function(){
-                $("input[name='operate']").val('add_admin_user');
-                $("#opt_admin_user").find(".form-group").first().hide().find('#id').val('');
-                $("#admin_user_reset").trigger('click');
-                $("input[name='status'][value='1']").trigger('click');
-                $("#add_admin_user_page").show();
-            });
-            //编辑
-            Table.on('click','.admin_user_edit',function(){
-                $("input[name='operate']").val('edit_admin_user');
-                var tr = $(this).parents('tr');
-                $("#add_admin_user").trigger('click');
-                $("#opt_admin_user").find(".form-group").first().show().find('#id').val(tr.data('id'));
-                $("input[name='account']").val(tr.data('account'));
-                $("input[name='mobile']").val(tr.data('mobile'));
-                $("input[name='email']").val(tr.data('email'));
-                if(tr.data('status')){
-                    $("input[name='status'][value='" + tr.data('status') + "']").trigger('click');
-                }else{
-                    $("input[name='status'][value='1']").trigger('click');
-                }
-            });
-            //重置
-            $("#admin_user_reset").click(function(){
-                $("input[name='account']").val('');
-                $("input[name='password']").val('');
-                $("input[name='repassword']").val('');
-                $("input[name='mobile']").val('');
-                $("input[name='email']").val('');
-            });
-            //删除
-            Table.on('click','.admin_user_delete',function(){
-                if(confirm("确认删除?")){
-                    var tr = $(this).parents('tr');
-                    var url = "{:U('Admin/User/user_manage')}";
-                    $.ajax({
-                        url: url,
-                        method: "POST",
-                        data: {operate:'delete_admin_user',delete_id: tr.data("id")},
-                        success: function (msg) {
-                            if(msg == 1){
-                                alert("删除成功");
-                                location.reload();
-                            }else{
-                                alert("删除失败");
-                            }
-                        }
-                    });
-                }
-            });
-            //设置用户组
-            Table.on('click','.admin_user_group_edit',function(){
-                var tr = $(this).closest('tr');
-                var row = DataTable.row( tr );
-                if ( row.child.isShown() ) {
-                    row.child.hide();
-                    tr.removeClass('shown');
-                }
-                else {
-                    row.child( format(row.data()) ).show();
-                    tr.addClass('shown');
-                }
-            });
-            function format(d){
-                var x;
-                $.ajax({
-                    url: '{:U("Admin/User/user_manage")}',
-                    type: 'POST',
-                    dataType: 'html',
-                    data: {operate:'display_user_group_list','user_id': d['0']},
-                    async:false,
-                    complete: function(xhr, textStatus) {},
-                    success: function(data, textStatus, xhr) {
-                        x = data
-                    },
-                    error: function(xhr, textStatus, errorThrown) {}
+            $('#add_question').click(function(){
+                layer.open({
+                    type: 2,
+                    title: '添加用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '580px'],
+                    content: '{:U("Admin/Ask/question_add")}'
                 });
-                return x;
-            }
+            })
+
+            //查看信息
+            $('.view').click(function(){
+                var url = $(this).parents('tr').data('edit');
+                layer.open({
+                    type: 2,
+                    title: '查看提问',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '80%'],
+                    content: url
+                });
+            })
+
+            //编辑信息
+            $('.edit').click(function(){
+                var url = $(this).parents('tr').data('edit');
+                layer.open({
+                    type: 2,
+                    title: '编辑用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '520px'],
+                    content: url
+                });
+            })
+
+
+            //删除信息
+            $('.delete').click(function(){
+                var id = $(this).parents('tr').data('id');
+                layer.confirm('你确定要删除吗？', {
+                    btn: ['确定','取消'], //按钮
+                    shade: [0.4, '#393D49'] //显示遮罩
+                }, function(){
+                    $.get("{:U('Admin/Ask/delete_question')}",{"id": id},function(msg){
+                        if(msg == 1){
+                            layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                                $('table tr#id_'+id).remove();
+                            })
+                        }else if(msg == 2){
+                            layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000});
+                        }else{
+                            layer.msg("删除失败，1秒后自动关闭~~",{ico:1,time:1000});
+                        }
+                    })
+                });
+            })
         });
     </script>
-</block>/
+
+</block>
 
 <block name="body">
     <div id="page-wrapper">
@@ -125,75 +93,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         提问列表
-                        <span class="pull-right"><a id="add_admin_user">提问管理</a></span>
+                        <span class="pull-right"><a id="add_question">添加提问</a></span>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="dataTable_wrapper">
-                            <div id="add_admin_user_page">
-                                <div class="word_wrap" id="user_edit">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <form class="form-horizontal" method="post" id="opt_admin_user" action="{:U('Admin/User/user_manage')}">
-                                                    <input type="hidden" name="operate">
-                                                    <div class="form-group">
-                                                        <label for="id" class="col-sm-2 control-label">编号</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" name="id" id="id" readonly>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="account" class="col-sm-2 control-label">帐号</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" name="account" id="account" placeholder="帐号">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="password" class="col-sm-2 control-label">密码</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="password" class="form-control" name="password" id="password" placeholder="密码">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="repassword" class="col-sm-2 control-label">确认密码</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="password" class="form-control" name="repassword" id="repassword" placeholder="再次输入密码">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="mobile" class="col-sm-2 control-label">手机号</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" maxlength="11" name="mobile" id="mobile" placeholder="手机号">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="email" class="col-sm-2 control-label">邮箱</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="email" class="form-control" name="email" id="email" placeholder="邮箱">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-2 control-label">状态</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="radio" name="status" value="0"> 禁用
-                                                            <input type="radio" name="status" value="1"> 启用
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-sm-offset-2 col-sm-8">
-                                                            <button class="btn btn-success" id="admin_user_submit">确认</button>
-                                                            <a id="admin_user_reset" class="btn btn-warning">重置</a>
-                                                            <a id="admin_user_cancel" class="btn btn-warning">取消</a>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
                             <table class="table table-bordered table-hover table-responsive">
                                 <thead>
                                 <tr>
@@ -201,26 +105,22 @@
                                     <th>用户名</th>
                                     <th>问题内容</th>
                                     <th>发问时间</th>
-                                    <th>最佳答案</th>
-                                    <th>发问地区</th>
                                     <th>问题分类</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                               <foreach name="question_list" item="vo">
-                                <tr>
-                                    <td>{$vo.id }</td>
-                                    <td>{$vo.nickname }</td>
-                                    <td style="width:25%">{$vo.content}</td>
-                                    <td>{$vo.addtime}</td>
-                                    <td>{$vo.perfect_answer_id}</td>
-                                    <td>{$vo.areaid}</td>
-                                    <td>{$vo.cat_name}</td>
+                               <foreach name="question_list" item="v">
+                                <tr id="id_{$v.id}" data-id="{$v.id}" data-edit="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/delete_question',['id'=>$v['id']])}">
+                                    <td>{$v.id }</td>
+                                    <td>{$v.nickname }</td>
+                                    <td style="width:25%">{$v.content}</td>
+                                    <td>{$v.addtime}</td>
+                                    <td>{$v.cat_name}</td>
                                     <td>
-                                        <a class="btn btn-warning admin_user_edit">编辑</a>
-                                        <a class="btn btn-warning admin_user_group_edit">分组</a>
-                                        <a class="btn btn-danger admin_user_delete">删除</a>
+                                        <a class="btn btn-primary admin_user view">查看</a>
+                                        <a class="btn btn-warning admin_user edit">编辑</a>
+                                        <a class="btn btn-danger admin_user delete">删除</a>
                                     </td>
                                 </tr>
                                </foreach>
