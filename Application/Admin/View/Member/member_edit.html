@@ -1,0 +1,210 @@
+<extend name="Layout:ly2"/>
+
+<block name="head">
+<script type="text/javascript">
+$(function(){
+    $.ajax({
+        type: "get",
+        url: "{:U('Admin/Member/getAreas')}",
+        data: {areaid:{$data[0]['member_profile']['areaid']}},
+        dataType : 'json',
+        success: function(data) {
+            if(data.parent_areas != null){
+                $(".provice,.city,.county").empty();
+                if (data.parent_areas.length <= 2) {
+                    $(".provice,.city").show();
+                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
+                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
+                } else {
+                    $(".provice,.city,.county").show();
+                    $(".provice").append("<option value='" + data.parent_areas[0]['areaid'] + "'>" + data.parent_areas[0]['areaname'] + "</option>");
+                    $(".city").append("<option value='" + data.parent_areas[1]['areaid'] + "'>" + data.parent_areas[1]['areaname'] + "</option>");
+                    $(".county").append("<option value='" + data.parent_areas[2]['areaid'] + "'>" + data.parent_areas[2]['areaname'] + "</option>");
+                }
+            }
+        }
+    });
+
+    //加载省
+    function getAreaProvince(){
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:0},
+            dataType : 'json',
+            success: function(data) {
+                $.each(data.area_info,function(name,value){
+                    $(".provice").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    }
+
+    //加载市
+    $(".provice").change(function() {
+        var id = $(this).val();
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:id},
+            dataType : 'json',
+            success: function(data) {
+                $(".city").show().empty();
+                $(".county").hide().empty();
+                $(".city").append("<option value=''>请选择市</option>");
+                $.each(data.area_info,function(name,value){
+                    $(".city").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    });
+
+    //加载县区
+    $(".city").change(function() {
+        var id = $(this).val();
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:id},
+            dataType : 'json',
+            success: function(data) {
+                if(data.area_info != ''){
+                    $(".county").show().empty();
+                }
+                $(".county").append("<option value=''>请选择县/区</option>")
+                $.each(data.area_info,function(name,value){
+                    $(".county").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    });
+
+    //首次加载省
+    getAreaProvince();
+
+    $("#update_area").click(function(){
+        $(".city,.county").hide();
+        getAreaProvince();
+    })
+
+    //赋值地区ID
+    $("select").change(function(){
+        var id = $(this).val();
+        $("#areaid").val(id);
+    })
+
+    $("#btn-submit").click(function(){
+        var userid = $("input[name='userid']").val();
+        var mobile = $("input[name='mobile']").val();
+        var nickname = $("input[name='nickname']").val();
+        var truename = $("input[name='truename']").val();
+        var sex = $("input[name='sex']:checked").val();
+        var qq = $("input[name='qq']").val();
+        var areaid = $("input[name='areaid']").val();
+        var address = $("input[name='address']").val();
+
+        if (nickname == '') {layer.msg('昵称不能为空');return false;}
+        if (truename == '') {layer.msg('真名不能为空');return false;}
+        if (qq == '') {layer.msg('QQ不能为空');return false;}
+        if (address == '') {layer.msg('请填写详细地址');return false;}
+
+        $.get("{:U('Admin/Member/member_edit')}",{'action':'edit','userid':userid,'mobile':mobile,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
+            if(msg == 1){
+                layer.msg("更新成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }else if(msg == 2){
+                layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }else{
+                layer.msg("更新失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }
+        })
+    })
+})
+</script>
+
+</block>
+
+<block name="body">
+    <div class="container-fluid">
+        <h3 id="title" align="center">用户编辑</h3>
+        <div class="padding20">
+            <div class="form-horizontal p90">
+                <input type="hidden" name="userid" value="{$data[0]['userid']}" />
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户帐号：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="mobile" class="form-control" id="mobile" value="{$data[0]['mobile']}" readonly />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户昵称：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="nickname" class="form-control" id="nickname" value="{$data[0]['member_profile']['nickname']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户真名：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="truename" class="form-control" id="truename" value="{$data[0]['member_profile']['truename']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">性别：</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" class="men" <if condition="$data[0]['member_profile']['sex'] eq 0">checked</if> value="0"> 男
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" class="women" <if condition="$data[0]['member_profile']['sex'] eq 1">checked</if> value="1"> 女
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">QQ：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="qq" class="form-control" id="qq" value="{$data[0]['member_profile']['qq']}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所在地区：</label>
+                    <div class="col-sm-10">
+
+                        <select class="form-control width provice">
+                            <option>请选择省</option>
+                        </select>
+
+                        <select class="form-control width city">
+                            <option>请选择市</option>
+                        </select>
+
+                        <select class="form-control width county">
+                            <option>请选择县</option>
+                        </select>
+                        <input type="hidden" name="areaid" id="areaid" value="{$data[0]['member_profile']['areaid']}"/>
+                        <button type="reset" id="update_area" class="btn btn-default">更改地区</button>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">详细地址：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="address" class="form-control" id="address" value="{$data[0]['member_profile']['address']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="reset" class="btn btn-default">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</block>

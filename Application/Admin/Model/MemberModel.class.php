@@ -9,7 +9,16 @@
 namespace Admin\Model;
 
 
-class MemberModel extends MallModel
+class MemberModel extends MallRelationModel
 {
-    protected $tableName = 'member';
+    protected $tableName = 'ucenter_member';
+
+    protected $_link = array(
+        'MemberProfile'=>array(
+            'mapping_type'=>self::HAS_ONE,//HAS_ONE查询出一条
+            'class_name'=>'member_profile',
+            'mapping_name'=>'member_profile',
+            'foreign_key'=>'userid',
+        ),
+    );
 }

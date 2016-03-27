@@ -9,15 +9,90 @@
                 pageLength: 10
             });
 
-            //查看详情
+            //添加
+            $('#add').click(function(){
+                layer.open({
+                    type: 2,
+                    title: '添加用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '580px'],
+                    content: '{:U("Admin/Member/member_add")}'
+                });
+            })
+
+            //查看信息
             $('.view').click(function(){
+                var url = $(this).parents('tr').data('view');
                 layer.open({
                     type: 2,
                     title: '查看详情',
                     shadeClose: true,
                     shade: 0.8,
                     area: ['50%', '80%'],
-                    content: '{:U("Admin/Ask/perguntas")}' //iframe的url
+                    content: url
+                });
+            })
+
+            //编辑信息
+            $('.update').click(function(){
+                var url = $(this).parents('tr').data('edit');
+                layer.open({
+                    type: 2,
+                    title: '编辑用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '520px'],
+                    content: url
+                });
+            })
+
+            //修改密码
+            $('.acount').click(function(){
+                var url = $(this).parents('tr').data('edit_pwd');
+                layer.open({
+                    type: 2,
+                    title: '编辑用户',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['450px', '420px'],
+                    content: url
+                });
+            })
+
+            //修改头像
+            $('.avatar').click(function(){
+                var url = $(this).parents('tr').data('avatar');
+                layer.open({
+                    type: 2,
+                    title: '修改头像',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['450px', '330px'],
+                    content: url
+                });
+            })
+
+            //删除信息
+            $('.delete').click(function(){
+                var id = $(this).parents('tr').data('id');
+                layer.confirm('你确定要删除吗？', {
+                    btn: ['确定','取消'], //按钮
+                    shade: [0.4, '#393D49'] //显示遮罩
+                }, function(){
+                    $.get("{:U('Admin/Member/member_delete')}",{"userid": id},function(msg){
+                        if(msg == 1){
+                            layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                                $('table tr#id_'+id).remove();
+                            })
+                        }else if(msg == 2){
+                            layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000});
+                        }else{
+                            layer.msg("删除失败，1秒后自动关闭~~",{ico:1,time:1000});
+                        }
+                    })
+                }, function(){
+
                 });
             })
         });
@@ -38,7 +113,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         会员列表
-                        <a id="add_one_row" class="pull-right">add</a>
+                        <a id="add" class="pull-right">用户添加</a>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -46,8 +121,9 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th align="center">ID</th>
                                         <th>帐号</th>
+                                        <th>会员头像</th>
                                         <th>昵称</th>
                                         <th>用户姓名</th>
                                         <th>会员积分</th>
@@ -59,12 +135,15 @@
                                 </thead>
                                 <tbody>
                                     <foreach name="data" item="v" key="k" >
-                                        <tr data-id="{$v.userid}">
-                                            <td>{$v.userid}</td>
-                                            <td>{$v.mobile}</td>
-                                            <td>{$v.nickname}</td>
-                                            <td>{$v.turename}</td>
-                                            <td>{$v.score}</td>
+                                        <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Member/member_edit',['userid'=>$v['userid']])}" data-view="{:U('Admin/Member/member_profile',['userid'=>$v['userid']])}" data-edit_pwd="{:U('Admin/Member/member_edit_pwd',['userid'=>$v['userid']])}" data-avatar="{:U('Admin/Member/member_avatar',['userid'=>$v['userid']])}">
+                                            <td align="center">{$v.userid}</td>
+                                            <td id="acount" class="acount"><span title="点击修改密码">{$v.mobile}</span></td>
+                                            <td id="avatar" class="avatar" align="center">
+                                                <img src="{$v.avatar}" width="36" height="36" style="border:1px solid #dbdbdb;padding: 2px;" title="点击修改头像" />
+                                            </td>
+                                            <td>{$v.member_profile.nickname}</td>
+                                            <td>{$v.member_profile.truename}</td>
+                                            <td>{$v.member_profile.score}</td>
                                             <td>{$v.area}</td>
                                             <td>{$v.last_login_time}</td>
                                             <td>{$v.addtime}</td>

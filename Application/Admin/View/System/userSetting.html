@@ -1,5 +1,29 @@
 <extend name="Layout:ly1"/>
 
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            var form_error_msg = {
+                oldpassword:"原密码错误"
+            }
+            $("#form_user_setting").ajaxForm({
+                beforeSubmit:function(){
+                    // $(".form-group").removeClass("has-error");
+                },
+                success:function(msg){
+                    console.log(msg);
+                    if(msg!="success"){
+                        layer.alert(msg);
+                    }else{
+                        layer.alert("修改成功");
+                        location.href = "{:U('Admin/Index/userInfo')}";
+                    }
+                }
+            });
+        });
+    </script>
+</block>
+
 <block name="body">
     <div id="page-wrapper">
         <div class="row">
@@ -9,7 +33,65 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <a href="{:U('Admin/Test/index')}">test</a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        请填写一下表单并确认
+                        <span class="pull-right"><a href="{:U('Admin/Index/userInfo')}">个人中心</a></span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form id="form_user_setting" class="form-horizontal" method="post" action="{:U('Admin/System/userSetting')}">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">编号</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="id" value="{$userInfo['id']}" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">原密码</label>
+                                <div class="col-sm-4">
+                                    <input type="password" name="oldpassword" class="form-control" placeholder="原密码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">新密码</label>
+                                <div class="col-sm-4">
+                                    <input type="password" name="password" class="form-control" placeholder="新密码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">确认密码</label>
+                                <div class="col-sm-4">
+                                    <input type="password" name="repassword" class="form-control" placeholder="确认密码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">帐号</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="account" value="{$userInfo['account']}" class="form-control" placeholder="帐号">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">邮箱</label>
+                                <div class="col-sm-8">
+                                    <input type="email" class="form-control" value="{$userInfo['email']}" placeholder="邮箱">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">手机</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="mobile" class="form-control" value="{$userInfo['mobile']}" placeholder="手机">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" id="button_user_setting_submit" class="btn btn-primary">确定</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
             </div>
         </div>
     </div>

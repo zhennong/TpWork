@@ -1,0 +1,215 @@
+<extend name="Layout:ly2"/>
+
+<block name="head">
+<script type="text/javascript">
+$(function(){
+
+    //加载省
+    function getAreaProvince(){
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:0},
+            dataType : 'json',
+            success: function(data) {
+                $.each(data.area_info,function(name,value){
+                    $(".provice").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    }
+
+    //加载市
+    $(".provice").change(function() {
+        var id = $(this).val();
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:id},
+            dataType : 'json',
+            success: function(data) {
+                $(".city").show().empty();
+                $(".county").hide().empty();
+                $(".city").append("<option value=''>请选择市</option>");
+                $.each(data.area_info,function(name,value){
+                    $(".city").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    });
+
+    //加载县区
+    $(".city").change(function() {
+        var id = $(this).val();
+        $.ajax({
+            type: "get",
+            url: "{:U('Admin/Member/get_area_info')}",
+            data: {pid:id},
+            dataType : 'json',
+            success: function(data) {
+                if(data.area_info != ''){
+                    $(".county").show().empty();
+                }
+                $(".county").append("<option value=''>请选择县/区</option>")
+                $.each(data.area_info,function(name,value){
+                    $(".county").append("<option value='" + data.area_info[name]['areaid'] + "'>" + data.area_info[name]['areaname'] + "</option>");
+                })
+            }
+        });
+    });
+
+    //首次加载省
+    getAreaProvince();
+
+    //赋值地区ID
+    $("select").change(function(){
+        var id = $(this).val();
+        $("#areaid").val(id);
+    })
+
+    $('#mobile').keyup(function(){
+        var mobile = $("input[name='mobile']").val();
+        if(mobile.length == 11){
+            $.get("{:U('Admin/Member/check_account')}",{"mobile":mobile},function(data){
+                if(data == 1){
+                    $('.tips').html(' × 账号已存在');
+                    $('#mobile').html().focus();
+                }else{
+                    $('.tips').html(' √ 账号可用');
+                }
+            }, "json");
+        }else{
+            $('.tips').html('必须为手机号码');
+        }
+    });
+
+    $("#btn-submit").click(function(){
+        var mobile = $("input[name='mobile']").val();
+        var password = $("input[name='password']").val();
+        var nickname = $("input[name='nickname']").val();
+        var truename = $("input[name='truename']").val();
+        var sex = $("input[name='sex']:checked").val();
+        var qq = $("input[name='qq']").val();
+        var areaid = $("input[name='areaid']").val();
+        var address = $("input[name='address']").val();
+
+        if (mobile == '') {layer.msg('手机号码不能为空');return false;}
+        if (!/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/i.test(mobile)) {
+            layer.msg('手机号码格式不正确');
+            return false;
+        }
+        if (password == '') {layer.msg('密码不能为空');return false;}
+        if (password.length < 6) {layer.msg('密码长度不能小于6位');return false;}
+        if (nickname == '') {layer.msg('昵称不能为空');return false;}
+        if (truename == '') {layer.msg('真名不能为空');return false;}
+        if (qq == '') {layer.msg('QQ不能为空');return false;}
+        if (areaid == '') {layer.msg('请选择所在地区');return false;}
+        if (address == '') {layer.msg('请填写详细地址');return false;}
+
+        $.get("{:U('Admin/Member/member_add')}",{'action':'add','mobile':mobile,'password':password,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
+            if(msg == 1){
+                layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }else{
+                layer.msg("添加失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    parent.window.location.reload();    //刷新父页面
+                })
+            }
+        })
+    })
+})
+</script>
+
+</block>
+
+<block name="body">
+    <div class="container-fluid">
+        <h3 id="title" align="center">添加用户</h3>
+        <div class="padding20">
+            <div class="form-horizontal p90">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户帐号：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="mobile" class="form-control" id="mobile" required value="" />
+                    </div>
+                    <div class="col-sm-2"><span class="tips">必须为手机号码</span></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户密码：</label>
+                    <div class="col-sm-8">
+                        <input type="password" name="password" class="form-control" id="password" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户昵称：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="nickname" class="form-control" id="nickname" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户真名：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="truename" class="form-control" id="truename" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">性别：</label>
+                    <div class="col-sm-8">
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" class="men" checked value="0"> 男
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="sex" class="women" value="1"> 女
+                        </label>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">QQ：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="qq" class="form-control" id="qq" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所在地区：</label>
+                    <div class="col-sm-8">
+
+                        <select class="form-control width provice">
+                            <option>请选择省</option>
+                        </select>
+
+                        <select class="form-control width city">
+                            <option>请选择市</option>
+                        </select>
+
+                        <select class="form-control width county">
+                            <option>请选择县</option>
+                        </select>
+                        <input type="hidden" name="areaid" id="areaid" value=""/>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">详细地址：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="address" class="form-control" id="address" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="reset" class="btn btn-default">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</block>

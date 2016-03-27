@@ -8,7 +8,6 @@
 
 namespace Common;
 
-
 class Tools
 {
     /**
@@ -503,5 +502,199 @@ class Tools
         if ($stop!=0) {
             exit("<hr/>");
         }
+    }
+
+    // 获取文件夹大小
+    public static function getDirSize($dir)
+    {
+        $handle = opendir($dir);
+        $sizeResult = 0;
+        while (false!==($FolderOrFile = readdir($handle)))
+        {
+            if($FolderOrFile != "." && $FolderOrFile != "..")
+            {
+                if(is_dir("$dir/$FolderOrFile"))
+                {
+                    $sizeResult += getDirSize("$dir/$FolderOrFile");
+                }
+                else
+                {
+                    $sizeResult += filesize("$dir/$FolderOrFile");
+                }
+            }
+        }
+        closedir($handle);
+        return $sizeResult;
+    }
+
+    // 单位自动转换函数
+    public static function getRealSize($size)
+    {
+        $kb = 1024;         // Kilobyte
+        $mb = 1024 * $kb;   // Megabyte
+        $gb = 1024 * $mb;   // Gigabyte
+        $tb = 1024 * $gb;   // Terabyte
+
+        if($size < $kb)
+        {
+            return $size." B";
+        }
+        else if($size < $mb)
+        {
+            return round($size/$kb,2)." KB";
+        }
+        else if($size < $gb)
+        {
+            return round($size/$mb,2)." MB";
+        }
+        else if($size < $tb)
+        {
+            return round($size/$gb,2)." GB";
+        }
+        else
+        {
+            return round($size/$tb,2)." TB";
+        }
+    }
+
+    /**
+     * @path 路径，支持相对和绝对
+     * @absolute 返回的文件数组，是否包含完整路径
+     */
+    public static function get_files($path, $absolute=1) {
+        $files = array();
+        $_path = realpath($path);
+        if (!file_exists($_path)) return false;
+        if (is_dir($_path)) {
+            $list = scandir($_path);
+            foreach ($list as $v) {
+                if ($v == '.' || $v == '..') continue;
+                $_paths = $_path.'/'.$v;
+                if (is_dir($_paths)) {
+                    //递归
+                    $files = array_merge($files, get_files($_paths,$absolute));
+                } else {
+                    $files[] = $absolute>0 ? $_paths : $v;
+                }
+            }
+        } else {
+            if (!is_file($_path)) return false;
+            $files[] = $_path;
+        }
+        return $files;
+    }
+
+    /**
+     * 对2维数组或者多维数组排序
+     * @param $arrays
+     * @param $sort_key
+     * @param int $sort_order
+     *    SORT_ASC - 默认，按升序排列。(A-Z)
+     *    SORT_DESC - 按降序排列。(Z-A)
+     * @param int $sort_type
+     *    SORT_REGULAR - 默认。将每一项按常规顺序排列。
+     *    SORT_NUMERIC - 将每一项按数字顺序排列。
+     *    SORT_STRING - 将每一项按字母顺序排列
+     * @return array|bool
+     */
+    public static function my_sort($arrays,$sort_key,$sort_order=SORT_ASC,$sort_type=SORT_NUMERIC ){
+        if(is_array($arrays)){
+            foreach ($arrays as $array){
+                if(is_array($array)){
+                    $key_arrays[] = $array[$sort_key];
+                }else{
+                    return false;
+                }
+            }
+        }else{
+            return false;
+        }
+        array_multisort($key_arrays,$sort_order,$sort_type,$arrays);
+        return $arrays;
+    }
+
+    /**
+     * 根据指定的键对数组排序
+     *
+     * @endcode
+     *
+     * @param array $array 要排序的数组
+     * @param string $keyname 排序的键
+     * @param int $dir 排序方向
+     *
+     * @return array 排序后的数组
+     */
+    public static function sortByCol($array, $keyname, $dir = SORT_ASC)
+    {
+        return self::sortByMultiCols($array, array($keyname => $dir));
+    }
+
+    /**
+     * 将一个二维数组按照多个列进行排序，类似 SQL 语句中的 ORDER BY
+     *
+     * 用法：
+     * @code php
+     * $rows = ArrayHelper::sortByMultiCols($rows, array(
+     *     'parent' => SORT_ASC,
+     *     'name' => SORT_DESC,
+     * ));
+     * @endcode
+     *
+     * @param array $rowset 要排序的数组
+     * @param array $args 排序的键
+     *
+     * @return array 排序后的数组
+     */
+    public static function sortByMultiCols($rowset, $args)
+    {
+        $sortArray = array();
+        $sortRule = '';
+        foreach ($args as $sortField => $sortDir) {
+            foreach ($rowset as $offset => $row) {
+                $sortArray[$sortField][$offset] = $row[$sortField];
+            }
+            $sortRule .= '$sortArray[\'' . $sortField . '\'], ' . $sortDir . ', ';
+        }
+        if (empty($sortArray) || empty($sortRule)) {
+            return $rowset;
+        }
+        eval('array_multisort(' . $sortRule . '$rowset);');
+        return $rowset;
+    }
+
+    /**
+    +-----------------------------------------------------------------------------------------
+     * 删除目录及目录下所有文件或删除指定文件
+    +-----------------------------------------------------------------------------------------
+     * @param str $path   待删除目录路径
+     * @param int $delDir 是否删除目录，1或true删除目录，0或false则只删除文件保留目录（包含子目录）
+    +-----------------------------------------------------------------------------------------
+     * @return bool 返回删除状态
+    +-----------------------------------------------------------------------------------------
+     */
+    public static function delDirAndFile($path, $delDir = FALSE) {
+        if (is_array($path)) {
+            foreach ($path as $subPath)
+                delDirAndFile($subPath, $delDir);
+        }
+        if (is_dir($path)) {
+            $handle = opendir($path);
+            if ($handle) {
+                while (false !== ( $item = readdir($handle) )) {
+                    if ($item != "." && $item != "..")
+                        is_dir("$path/$item") ? delDirAndFile("$path/$item", $delDir) : unlink("$path/$item");
+                }
+                closedir($handle);
+                if ($delDir)
+                    return rmdir($path);
+            }
+        } else {
+            if (file_exists($path)) {
+                return unlink($path);
+            } else {
+                return FALSE;
+            }
+        }
+        clearstatcache();
     }
 }

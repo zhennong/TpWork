@@ -1,5 +1,26 @@
 <extend name="Layout:ly1"/>
 
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            var url = "{:U('Admin/Test/test2')}";
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 100
+            });
+            DataTable.on('order.dt search.dt',function () {
+                DataTable.column(0, {
+                    search: 'applied',
+                    order: 'applied'
+                }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        });
+    </script>
+</block>
+
 <block name="body">
     <div id="page-wrapper">
         <div class="row">
@@ -9,7 +30,73 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <a href="{:U('Admin/System/userSetting')}">用户设置</a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        你的信息
+                        <span class="pull-right"><a href="{:U('Admin/System/userSetting')}">设置</a></span>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>标签</th>
+                                <th>信息</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td></td>
+                                <td>编号</td>
+                                <td>{$userInfo['id']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>帐号</td>
+                                <td>{$userInfo['account']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>邮箱</td>
+                                <td>{$userInfo['email']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>手机</td>
+                                <td>{$userInfo['mobile']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>状态</td>
+                                <td>{$userInfo['status']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>登录次数</td>
+                                <td>{$userInfo['login_count']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>最后登录时间</td>
+                                <td>{$userInfo['login_time']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>最后登录ip</td>
+                                <td>{$userInfo['login_ip']}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>创建时间</td>
+                                <td>{:date("Y-m-d H:i:s",$userInfo['create_time'])}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+                        {:date("Y-m-d H:i", time())}<span class="pull-right">powered by <strong>中国农药第一网</strong> [ <a href="http://www.nongyao001.com">http://www.nongyao001.com</a> ]</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
