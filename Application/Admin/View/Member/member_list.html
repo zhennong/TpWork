@@ -42,7 +42,7 @@
                     title: '编辑用户',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '530px'],
+                    area: ['50%', '520px'],
                     content: url
                 });
             })
@@ -56,6 +56,19 @@
                     shadeClose: true,
                     shade: 0.8,
                     area: ['450px', '420px'],
+                    content: url
+                });
+            })
+
+            //修改头像
+            $('.avatar').click(function(){
+                var url = $(this).parents('tr').data('avatar');
+                layer.open({
+                    type: 2,
+                    title: '修改头像',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['450px', '330px'],
                     content: url
                 });
             })
@@ -122,11 +135,11 @@
                                 </thead>
                                 <tbody>
                                     <foreach name="data" item="v" key="k" >
-                                        <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Member/member_edit',['userid'=>$v['userid']])}" data-view="{:U('Admin/Member/member_profile',['userid'=>$v['userid']])}" data-edit_pwd="{:U('Admin/Member/member_edit_pwd',['userid'=>$v['userid']])}">
+                                        <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Member/member_edit',['userid'=>$v['userid']])}" data-view="{:U('Admin/Member/member_profile',['userid'=>$v['userid']])}" data-edit_pwd="{:U('Admin/Member/member_edit_pwd',['userid'=>$v['userid']])}" data-avatar="{:U('Admin/Member/member_avatar',['userid'=>$v['userid']])}">
                                             <td>{$v.userid}</td>
-                                            <td id="acount" class="acount">{$v.mobile}</td>
-                                            <td align="center">
-                                            <img src="{$v.avatar}" width="36" height="36" />
+                                            <td id="acount" class="acount"><span title="点击修改密码">{$v.mobile}</span></td>
+                                            <td id="avatar" class="avatar" align="center">
+                                                <img src="{$v.avatar}" width="36" height="36" title="点击修改头像" />
                                             </td>
                                             <td>{$v.member_profile.nickname}</td>
                                             <td>{$v.member_profile.truename}</td>

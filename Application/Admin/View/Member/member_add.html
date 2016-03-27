@@ -92,6 +92,20 @@ $(function(){
         var qq = $("input[name='qq']").val();
         var areaid = $("input[name='areaid']").val();
         var address = $("input[name='address']").val();
+
+        if (mobile == '') {layer.msg('手机号码不能为空');return false;}
+        if (!/^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\d{8}$/i.test(mobile)) {
+            layer.msg('手机号码格式不正确');
+            return false;
+        }
+        if (password == '') {layer.msg('密码不能为空');return false;}
+        if (password.length < 6) {layer.msg('密码长度不能小于6位');return false;}
+        if (nickname == '') {layer.msg('昵称不能为空');return false;}
+        if (truename == '') {layer.msg('真名不能为空');return false;}
+        if (qq == '') {layer.msg('QQ不能为空');return false;}
+        if (areaid == '') {layer.msg('请选择所在地区');return false;}
+        if (address == '') {layer.msg('请填写详细地址');return false;}
+
         $.get("{:U('Admin/Member/member_add')}",{'action':'add','mobile':mobile,'password':password,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
             if(msg == 1){
                 layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
@@ -104,7 +118,6 @@ $(function(){
             }
         })
     })
-
 })
 </script>
 
