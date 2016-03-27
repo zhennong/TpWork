@@ -1,0 +1,67 @@
+<extend name="Layout:ly1"/>
+
+<block name="head">
+    <script>
+        $(document).ready(function () {
+            var url = "{:U('Admin/Test/test2')}";
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 10
+            });
+        });
+    </script>
+</block>
+
+<block name="body">
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">会员粉丝</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        粉丝列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>被关注者编号</th>
+                                    <th>被关注者手机</th>
+                                    <th>粉丝编号</th>
+                                    <th>粉丝手机</th>
+                                    <th>关注时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach($fansList as $k => $v): ?>
+                                <tr>
+                                    <td>{$v.attention_uid}</td>
+                                    <td>{$v['attention_info']['mobile']}</td>
+                                    <td>{$v.fans_uid}</td>
+                                    <td>{$v['fans_info']['mobile']}</td>
+                                    <td>{:date("Y-m-d H:i:s", $v['addtime'])}</td>
+                                </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+</block>
