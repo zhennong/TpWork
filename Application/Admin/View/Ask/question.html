@@ -19,7 +19,7 @@
             $('#add_question').click(function(){
                 layer.open({
                     type: 2,
-                    title: '添加用户',
+                    title: '添加提问',
                     shadeClose: true,
                     shade: 0.8,
                     area: ['50%', '580px'],
@@ -29,7 +29,7 @@
 
             //查看信息
             $('.view').click(function(){
-                var url = $(this).parents('tr').data('edit');
+                var url = $(this).parents('tr').data('view');
                 layer.open({
                     type: 2,
                     title: '查看提问',
@@ -41,16 +41,16 @@
             })
 
             //编辑信息
-            $('.edit').click(function(){
-                var url = $(this).parents('tr').data('edit');
-                layer.open({
-                    type: 2,
-                    title: '编辑用户',
-                    shadeClose: true,
-                    shade: 0.8,
-                    area: ['50%', '520px'],
-                    content: url
-                });
+                $('.edit').click(function(){
+                    var url = $(this).parents('tr').data('edit');
+                    layer.open({
+                        type: 2,
+                        title: '编辑提问',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['50%', '520px'],
+                        content: url
+                    });
             })
 
 
@@ -111,7 +111,7 @@
                                 </thead>
                                 <tbody>
                                <foreach name="question_list" item="v">
-                                <tr id="id_{$v.id}" data-id="{$v.id}" data-edit="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/delete_question',['id'=>$v['id']])}">
+                                <tr id="id_{$v.id}" data-id="{$v.id}" data-edit="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/view_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/delete_question',['id'=>$v['id']])}">
                                     <td>{$v.id }</td>
                                     <td>{$v.nickname }</td>
                                     <td style="width:25%">{$v.content}</td>
