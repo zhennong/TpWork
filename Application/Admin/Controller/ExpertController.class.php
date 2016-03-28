@@ -123,8 +123,8 @@ class ExpertController extends AuthController
                 $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
             }
             $this->assign(['data'=>$data]);
-            $this->display();
         }
+        $this->display();
     }
 
     /**
@@ -200,7 +200,7 @@ class ExpertController extends AuthController
         if(!empty($userid)){
             $data = D('Expert')->where(['userid'=>$userid])->select();
         }else{
-            $data = D('Expert')->where(['stauts'=>1])->select();
+            $data = D('Expert')->where(['stauts'=>1])->order('addtime desc')->select();
         }
         return $data;
     }
