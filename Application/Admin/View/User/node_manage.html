@@ -7,6 +7,7 @@
             var Table = $("table");
             DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
+                bSort:false,
                 pageLength: 100
             });
             DataTable.on('order.dt search.dt', function () {

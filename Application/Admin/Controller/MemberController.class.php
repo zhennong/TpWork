@@ -14,7 +14,11 @@ class MemberController extends AuthController {
         $this->display();
     }
 
-    //获取用户详细信息
+    /**
+     * 获取用户详细信息
+     * @param $userid
+     * @return mixed
+     */
     protected function getMemberInfo($userid){
         if(!empty($userid)){
             $map['userid'] = $userid;
@@ -26,7 +30,7 @@ class MemberController extends AuthController {
             $data[$k] = $v;
             $avatar = $v['member_profile']['avatar'];
             if(!is_null($avatar)){
-                $data[$k]['avatar'] = __ROOT__.$avatar;
+                $data[$k]['avatar'] = __ROOT__.'/Uploads/'.$avatar;
             }else{
                 $data[$k]['avatar'] = C('TMPL_PARSE_STRING.__ADMIN__')."images/thumb.jpg";
             }
@@ -39,7 +43,9 @@ class MemberController extends AuthController {
         return $data;
     }
 
-    //检查账号是否已注册
+    /**
+     * 检查账号是否已注册
+     */
     public function check_account(){
         $map['mobile'] = I('get.mobile');	//账号
         $result = D('Member')->field('userid')->where($map)->count();
@@ -68,9 +74,9 @@ class MemberController extends AuthController {
                 "nickname" => I('get.nickname'),
                 "sex" => I('get.sex'),
                 "qq" => I('get.qq'),
-                "truename" => 1,
+                "truename" => I('get.truename'),
                 "areaid" => I('get.areaid'),
-                "address" => 1,
+                "address" => I('get.address'),
             );
             $result = D('Member')->relation(true)->add($data);
             if($result){
@@ -148,6 +154,54 @@ class MemberController extends AuthController {
     }
 
     /**
+     * 修改头像
+     */
+    public function member_avatar(){
+        $opt = I('post.action');
+        if($opt == 'avatar'){
+            $uid = I('post.userid');
+            if(!empty($uid)){
+                $data = array();
+                if($_FILES){
+                    $upload = new \Think\Upload();// 实例化上传类
+                    $upload->maxSize   =     1024*1024*3 ;// 设置附件上传大小
+                    $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+                    $upload->rootPath  =      APP_ROOT.C('UPLOADS'); // 设置附件上传根目录
+                    $upload->savePath  =      'avatar/'; // 设置附件上传（子）目录
+                    $upload->autoSub = false;
+                    // 上传文件
+                    $info   =   $upload->upload();
+                    if(!$info) {// 上传错误提示错误信息
+                        echo $upload->getError();
+                    }else{// 上传成功 获取上传文件信息
+                        foreach($info as $file){
+                            $data['avatar'] = $file['savepath'].$file['savename'];
+                        }
+                    }
+                }
+
+                $map['userid'] = $uid;
+                $result = D('MemberProfile')->where($map)->save($data);
+                if($result){
+                    $status = 1;
+                }else{
+                    $status = 0;
+                }
+            }else{
+                $status = 2; //参数异常
+            }
+
+            $this->assign('status',$status);
+        }
+
+        $userid = I('get.userid');
+        $data = $this->getMemberInfo($userid);
+        $this->assign(['data'=>$data]);
+        $this->display();
+    }
+
+
+    /**
      * 会员删除
      */
     public function member_delete(){
@@ -174,6 +228,12 @@ class MemberController extends AuthController {
             $data = D('Member')->relation(true)->where($map)->select();
             foreach($data AS $k=>$v){
                 $data[$k] = $v;
+                $avatar = $v['member_profile']['avatar'];
+                if(!is_null($avatar)){
+                    $data[$k]['avatar'] = __ROOT__.'/Uploads/'.$avatar;
+                }else{
+                    $data[$k]['avatar'] = C('TMPL_PARSE_STRING.__ADMIN__')."images/thumb.jpg";
+                }
                 $data[$k]['score'] = $v['score'] != ''?$v['score']:0;
                 $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
                 $data[$k]['logintimes'] = date('Y-m-d h:i:s',$v['logintimes']);
@@ -187,7 +247,9 @@ class MemberController extends AuthController {
         $this->display();
     }
 
-    //获取所在地区
+    /**
+     * 获取所在地区
+     */
     public function getAreas(){
         $areaList = D('Area')->select();
         $area = Tools::get_list_parents($areaList, I('get.areaid'), 'areaid', 'parentid');
@@ -195,7 +257,9 @@ class MemberController extends AuthController {
         $this->ajaxReturn($show);
     }
 
-    //获取省市县
+    /**
+     * 获取省市县
+     */
     public function get_area_info(){
         $pid = I('get.pid');
         $areaList = D('Area')->where(['parentid'=>$pid])->select();

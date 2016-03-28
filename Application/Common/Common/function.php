@@ -403,17 +403,13 @@ function getAreaFullNameFromAreaID($areaid){
     return array_reverse($y);
 }
 
-function getAreaInfoFromAreaID($areaid,&$areaInfo)
-{
-//    $tb_area = $this->tables['area'];
-//    $sql = "SELECT * FROM {$tb_area} WHERE areaid = {$areaid}";
-//    $x = $this->db->list_query($sql);
+function getAreaInfoFromAreaID($areaid,&$areaInfo){
     $x = D('Area')->where(['areaid'=>$areaid])->select();
 
     if($x[0]['parentid'] == 0){
-        $areaInfo[] = $x[0][areaname];
+        $areaInfo[] = $x[0]['areaname'];
     }else{
-        $areaInfo[] = $x[0][areaname];
+        $areaInfo[] = $x[0]['areaname'];
         getAreaInfoFromAreaID($x[0]['parentid'],$areaInfo);
     }
     return $areaInfo;

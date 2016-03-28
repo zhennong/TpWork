@@ -96,13 +96,17 @@ $(function(){
     $("#btn-submit").click(function(){
         var userid = $("input[name='userid']").val();
         var mobile = $("input[name='mobile']").val();
-        var password = $("input[name='password']").val();
         var nickname = $("input[name='nickname']").val();
         var truename = $("input[name='truename']").val();
         var sex = $("input[name='sex']:checked").val();
         var qq = $("input[name='qq']").val();
         var areaid = $("input[name='areaid']").val();
         var address = $("input[name='address']").val();
+
+        if (nickname == '') {layer.msg('昵称不能为空');return false;}
+        if (truename == '') {layer.msg('真名不能为空');return false;}
+        if (qq == '') {layer.msg('QQ不能为空');return false;}
+        if (address == '') {layer.msg('请填写详细地址');return false;}
 
         $.get("{:U('Admin/Member/member_edit')}",{'action':'edit','userid':userid,'mobile':mobile,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
             if(msg == 1){
@@ -182,7 +186,7 @@ $(function(){
                         <select class="form-control width county">
                             <option>请选择县</option>
                         </select>
-                        <input type="hidden" name="areaid" id="areaid" value=""/>
+                        <input type="hidden" name="areaid" id="areaid" value="{$data[0]['member_profile']['areaid']}"/>
                         <button type="reset" id="update_area" class="btn btn-default">更改地区</button>
 
                     </div>
