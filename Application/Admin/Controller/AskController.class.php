@@ -67,30 +67,25 @@ class AskController extends AuthController
     /*
      *添加问题
      */
-    function question_add(){
+    function question_add()
+    {
         $opt = I('get.action');
-        if ($opt == 'edit') {
-            $id = I('get.id');
-            if (!empty($id)) {
-                $data_list = array();
-                $data_list["id"] = I('get.id');
-                $data_list["uid"] = I('get.uid');
-                $data_list["content"] = I('get.content');
-                $data_list["addtime"] = strtotime(I('get.addtime'));
-                $data_list["catid"] = I('get.catid');
-                $map['id'] = $id;
-                $result = D('Ask')->where($map)->add($data_list);
-                if ($result) {
-                    $this->ajaxReturn(1);
-                } else {
-                    $this->ajaxReturn(0);
-                }
+        if ($opt == 'add') {
+            $data_list = array();
+            $data_list["id"] = I('get.id');
+            $data_list["uid"] = I('get.uid');
+            $data_list["content"] = I('get.content');
+            $data_list["catid"] = I('get.catid');
+            $result = D('Ask')->add($data_list);
+            if ($result) {
+                $this->ajaxReturn(1);
             } else {
-                $this->ajaxReturn(2); //参数异常
+                $this->ajaxReturn(0);
             }
         }
         $this->display();
     }
+
     /*
      * 问题修改
      */
@@ -142,6 +137,7 @@ class AskController extends AuthController
         $this->assign(['edit_list' => $edit_list]);
         $this->display();
     }
+
     /*
      * 删除
      */

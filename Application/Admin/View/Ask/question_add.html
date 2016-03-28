@@ -1,28 +1,25 @@
 <extend name="Layout:ly2"/>
+
 <block name="head">
-    <script>
+    <script type="text/javascript">
         $(function(){
+
             $("#btn-submit").click(function(){
                 var id = $("input[name='id']").val();
                 var uid = $("input[name='uid']").val();
                 var content = $("textarea").val();
-                var addtime = $("input[name='addtime']").val();
                 var catid = $("input[name='catid']").val();
-                if (content == '') {layer.msg('内容不能为空');return false;
+                if (uid == '') {layer.msg('用户id不能为空');return false;}
+                if (content =='') {layer.msg('内容不能为空');return false;}
                 if (catid == '') {layer.msg('问题分类不能为空');return false;}
 
-                $.get("{:U('Admin/Ask/question_edit')}",{'action':'edit','id':id,'uid':uid,'content':content,'addtime':addtime,'catid':catid},function(msg){
-//                alert(JSON.stringify(msg));
+                $.get("{:U('Admin/Ask/question_add')}",{'action':'add','uid':uid,'content':content,'catid':catid},function(msg){
                     if(msg == 1){
-                        layer.msg("更新成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
-                            parent.window.location.reload();    //刷新父页面
-                        })
-                    }else if(msg == 2){
-                        layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                             parent.window.location.reload();    //刷新父页面
                         })
                     }else{
-                        layer.msg("更新失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        layer.msg("添加失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
                             parent.window.location.reload();    //刷新父页面
                         })
                     }
@@ -30,7 +27,9 @@
             })
         })
     </script>
+
 </block>
+
 <block name="body">
     <div class="container-fluid">
         <h3 id="title" align="center">修改问题</h3>
@@ -81,7 +80,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" id="btn-submit" class="btn btn-success">修改</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
                         <button type="reset" class="btn btn-default">重置</button>
                     </div>
                 </div>
