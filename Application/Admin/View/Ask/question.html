@@ -16,6 +16,7 @@
             });
 
             //添加
+
             $('#add_question').click(function(){
                 layer.open({
                     type: 2,
@@ -28,7 +29,7 @@
             })
 
             //查看信息
-            $('.view').click(function(){
+            $('body').delegate('table tr td .view','click',function(){
                 var url = $(this).parents('tr').data('view');
                 layer.open({
                     type: 2,
@@ -41,7 +42,7 @@
             })
 
             //编辑信息
-                $('.edit').click(function(){
+            $('body').delegate('table tr td .edit','click',function(){
                     var url = $(this).parents('tr').data('edit');
                     layer.open({
                         type: 2,
@@ -55,13 +56,13 @@
 
 
             //删除信息
-            $('.delete').click(function(){
+            $('body').delegate('table tr td .delete','click',function(){
                 var id = $(this).parents('tr').data('id');
                 layer.confirm('你确定要删除吗？', {
                     btn: ['确定','取消'], //按钮
                     shade: [0.4, '#393D49'] //显示遮罩
                 }, function(){
-                    $.get("{:U('Admin/Ask/delete_question')}",{"id": id},function(msg){
+                    $.get("{:U('Admin/Ask/question_delete')}",{"id": id},function(msg){
                         if(msg == 1){
                             layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                                 $('table tr#id_'+id).remove();
@@ -111,7 +112,7 @@
                                 </thead>
                                 <tbody>
                                <foreach name="question_list" item="v">
-                                <tr id="id_{$v.id}" data-id="{$v.id}" data-edit="{:U('Admin/Ask/edit_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/view_question',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/delete_question',['id'=>$v['id']])}">
+                                <tr id="id_{$v.id}" data-id="{$v.id}" data-edit="{:U('Admin/Ask/question_edit',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/question_view',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/question_delete',['id'=>$v['id']])}">
                                     <td>{$v.id }</td>
                                     <td>{$v.nickname }</td>
                                     <td style="width:25%">{$v.content}</td>

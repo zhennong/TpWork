@@ -95,7 +95,6 @@ class MemberController extends AuthController {
         $opt = I('get.action');
         if($opt == 'edit'){
             $uid = I('get.userid');
-
             if(!empty($uid)){
                 $data = array();
                 $data["updatetime"] = time();
