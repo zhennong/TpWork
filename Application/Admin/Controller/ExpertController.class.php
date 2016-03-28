@@ -53,6 +53,7 @@ class ExpertController extends AuthController
             $data['postion'] = I('get.postion');
             $data['company'] = I('get.company');
             $data['content'] = I('get.content');
+            $data['addtime'] = time();
             $result = D('Expert')->add($data);
             if($result){
                 $this->ajaxReturn(1);

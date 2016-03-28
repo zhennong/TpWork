@@ -1,19 +1,69 @@
 <extend name="Layout:ly1"/>
 
+<block name="head"></block>
+
 <block name="body">
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">mb</h1>
+                <h1></h1>
             </div>
-            <!-- /.col-lg-12 -->
         </div>
-        <!-- /.row -->
         <div class="row">
             <div class="col-lg-12">
-                <a href="{:U('Admin/Test/index')}">test</a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        信息概要
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th width="15%" style="text-align: center;">标题</th>
+                                <th width="85%" style="text-align: center;">内容</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td align="right">会员数量：</td>
+                                <td align="left">{$info.mem_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">今日注册会员：</td>
+                                <td align="left">{$info.mem_t_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">专家数量：</td>
+                                <td align="left">{$info.exp_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">今日注册专家数量：</td>
+                                <td align="left">{$info.exp_t_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">问答总数：</td>
+                                <td align="left">{$info.ask_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">今日问答总数：</td>
+                                <td align="left">{$info.ask_t_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">意见反馈：</td>
+                                <td align="left">{$info.fee_count}</td>
+                            </tr>
+                            <tr>
+                                <td align="right">今日意见反馈：</td>
+                                <td align="left">{$info.fee_t_count}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+                        {:date("Y-m-d H:i", time())}<span class="pull-right">powered by <strong>中国农药第一网</strong> [ <a href="http://www.nongyao001.com">http://www.nongyao001.com</a> ]</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- /#page-wrapper -->
 </block>

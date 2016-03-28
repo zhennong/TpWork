@@ -124,7 +124,7 @@
                                     <foreach name="data" item="v" key="k" >
                                         <tr id="id_{$v.userid}" data-id="{$v.userid}" data-edit="{:U('Admin/Expert/expert_edit',['userid'=>$v['userid']])}" data-view="{:U('Admin/Expert/expert_profile',['userid'=>$v['userid']])}" data-upload="{:U('Admin/Expert/expert_upload',['userid'=>$v['userid']])}">
                                             <td align="center">{$v.userid}</td>
-                                            <td id="acount" class="acount">{$v.name}</td>
+                                            <td id="acount" class="acount" title="上传身份证照片">{$v.name}</td>
                                             <td>{$v.good_at_crop}</td>
                                             <td>{$v.good_at_area}</td>
                                             <td>{$v.qq}</td>
