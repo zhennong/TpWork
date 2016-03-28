@@ -30,7 +30,7 @@ class MemberController extends AuthController {
             $data[$k] = $v;
             $avatar = $v['member_profile']['avatar'];
             if(!is_null($avatar)){
-                $data[$k]['avatar'] = __ROOT__.'/Uploads/'.$avatar;
+                $data[$k]['avatar'] = C('WEB_URL').$avatar;
             }else{
                 $data[$k]['avatar'] = C('TMPL_PARSE_STRING.__ADMIN__')."images/thumb.jpg";
             }
@@ -166,8 +166,8 @@ class MemberController extends AuthController {
                     $upload = new \Think\Upload();// 实例化上传类
                     $upload->maxSize   =     1024*1024*3 ;// 设置附件上传大小
                     $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
-                    $upload->rootPath  =      APP_ROOT.C('UPLOADS'); // 设置附件上传根目录
-                    $upload->savePath  =      'avatar/'; // 设置附件上传（子）目录
+                    $upload->rootPath  =      APP_ROOT; // 设置附件上传根目录
+                    $upload->savePath  =      C('UPLOADS').'avatar/'; // 设置附件上传（子）目录
                     $upload->autoSub = false;
                     // 上传文件
                     $info   =   $upload->upload();
@@ -230,7 +230,7 @@ class MemberController extends AuthController {
                 $data[$k] = $v;
                 $avatar = $v['member_profile']['avatar'];
                 if(!is_null($avatar)){
-                    $data[$k]['avatar'] = __ROOT__.'/Uploads/'.$avatar;
+                    $data[$k]['avatar'] = C('WEB_URL').$avatar;
                 }else{
                     $data[$k]['avatar'] = C('TMPL_PARSE_STRING.__ADMIN__')."images/thumb.jpg";
                 }
