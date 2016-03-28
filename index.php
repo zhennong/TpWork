@@ -23,7 +23,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<'))  die('require PHP > 5.4.0 !');
 define('APP_ROOT',dirname(__FILE__)."/");
 
 // 定义默认模块
-//define('BIND_MODULE','Admin');
+// define('BIND_MODULE','Admin');
 
 // 定义应用目录
 define('APP_PATH',APP_ROOT.'/Application/');
