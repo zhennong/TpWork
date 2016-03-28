@@ -22,7 +22,7 @@
             })
 
             //查看信息
-            $('.view').click(function(){
+             $('body').delegate('table tr td .view','click',function(){
                 var url = $(this).parents('tr').data('view');
                 layer.open({
                     type: 2,
@@ -35,20 +35,20 @@
             })
 
             //编辑信息
-            $('.update').click(function(){
+            $('body').delegate('table tr td .update','click',function(){
                 var url = $(this).parents('tr').data('edit');
                 layer.open({
                     type: 2,
                     title: '编辑用户',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '520px'],
+                    area: ['50%', '540px'],
                     content: url
                 });
             })
 
             //修改密码
-            $('.acount').click(function(){
+            $('body').delegate('table tr td.acount','click',function(){
                 var url = $(this).parents('tr').data('edit_pwd');
                 layer.open({
                     type: 2,
@@ -61,7 +61,7 @@
             })
 
             //修改头像
-            $('.avatar').click(function(){
+            $('body').delegate('table tr td.avatar','click',function(){
                 var url = $(this).parents('tr').data('avatar');
                 layer.open({
                     type: 2,
@@ -74,7 +74,7 @@
             })
 
             //删除信息
-            $('.delete').click(function(){
+            $('body').delegate('table tr td .delete','click',function(){
                 var id = $(this).parents('tr').data('id');
                 layer.confirm('你确定要删除吗？', {
                     btn: ['确定','取消'], //按钮

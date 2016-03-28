@@ -13,16 +13,16 @@
             $('#add').click(function(){
                 layer.open({
                     type: 2,
-                    title: '添加用户',
+                    title: '添加专家',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '580px'],
-                    content: '{:U("Admin/Member/member_add")}'
+                    area: ['50%', '630px'],
+                    content: '{:U("Admin/Expert/expert_add")}'
                 });
             })
 
             //查看信息
-            $('.view').click(function(){
+            $('body').delegate('table tr td .view','click',function(){
                 var url = $(this).parents('tr').data('view');
                 layer.open({
                     type: 2,
@@ -35,20 +35,20 @@
             })
 
             //编辑信息
-            $('.update').click(function(){
+            $('body').delegate('table tr td .update','click',function(){
                 var url = $(this).parents('tr').data('edit');
                 layer.open({
                     type: 2,
                     title: '编辑用户',
                     shadeClose: true,
                     shade: 0.8,
-                    area: ['50%', '520px'],
+                    area: ['50%', '630px'],
                     content: url
                 });
             })
 
             //上传身份证
-            $('.acount').click(function(){
+            $('body').delegate('table tr td.acount','click',function(){
                 var url = $(this).parents('tr').data('upload');
                 layer.open({
                     type: 2,
@@ -62,7 +62,7 @@
 
 
             //删除信息
-            $('.delete').click(function(){
+            $('body').delegate('table tr td .delete','click',function(){
                 var id = $(this).parents('tr').data('id');
                 layer.confirm('你确定要删除吗？', {
                     btn: ['确定','取消'], //按钮

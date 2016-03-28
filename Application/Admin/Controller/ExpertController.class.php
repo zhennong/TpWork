@@ -25,6 +25,79 @@ class ExpertController extends AuthController
     }
 
     /**
+     * 获取会员ID
+     */
+    public function getMemberID(){
+        $map['mobile'] = I('get.mobile');	//账号
+        $result = D('Member')->field('userid')->where($map)->select();
+        if(!empty($result)){
+            $uid = $result[0]['userid'];
+            $this->ajaxReturn($uid);	//存在
+        }else{
+            $this->ajaxReturn(0);   //不存在
+        }
+    }
+
+    /**
+     * 专家添加
+     */
+    public function expert_add(){
+        $opt = I('get.action');
+        if($opt == 'add'){
+            $data = array();
+            $data['name'] = I('get.name');
+            $data['expert_type'] = I('get.expert_type');
+            $data['good_at_crop'] = I('get.good_at_crop');
+            $data['good_at_area'] = I('get.good_at_area');
+            $data['qq'] = I('get.qq');
+            $data['postion'] = I('get.postion');
+            $data['company'] = I('get.company');
+            $data['content'] = I('get.content');
+            $result = D('Expert')->add($data);
+            if($result){
+                $this->ajaxReturn(1);
+            }else{
+                $this->ajaxReturn(0);
+            }
+        }
+
+        $this->display();
+    }
+
+    /**
+     * 专家编辑
+     */
+    public function expert_edit(){
+        $opt = I('get.action');
+        if($opt == 'edit'){
+            $uid = I('get.userid');
+            if(!empty($uid)){
+                $data = array();
+                $data['name'] = I('get.name');
+                $data['expert_type'] = I('get.expert_type');
+                $data['good_at_crop'] = I('get.good_at_crop');
+                $data['good_at_area'] = I('get.good_at_area');
+                $data['qq'] = I('get.qq');
+                $data['postion'] = I('get.postion');
+                $data['company'] = I('get.company');
+                $data['content'] = I('get.content');
+                $result = D('Expert')->where(['userid'=>$uid])->save($data);
+                if($result){
+                    $this->ajaxReturn(1);
+                }else{
+                    $this->ajaxReturn(0);
+                }
+            }else{
+                $this->ajaxReturn(2);
+            }
+        }
+        $userid = I('get.userid');
+        $data = $this->getExpertInfo($userid);
+        $this->assign(['data'=>$data]);
+        $this->display();
+    }
+
+    /**
      * 专家详情
      */
     public function expert_profile(){
