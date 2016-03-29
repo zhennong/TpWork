@@ -454,7 +454,7 @@ class IndexController extends CommonController {
 
             //点赞
             case 'set_agree':
-                $show['status'] = $api->setAgree(I('get.userid'),I('get.status'));
+                $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
                 break;
 
             // 测试

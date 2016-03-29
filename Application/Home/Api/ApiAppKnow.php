@@ -347,10 +347,7 @@ class ApiAppKnow extends Api
         $sql = "SELECT id FROM {$this->tablePrefix}appknow_question_answer WHERE uid = {$info['userid']} AND askid = {$info[askid]} AND content = '{$info[content]}' AND addtime = {$this->now}";
         $answer_info = $this->list_query($sql);
         $answer_id = $answer_info[0][id];
-        $sql = "SELECT truename FROM {$this->tablePrefix}appknow_member_profile WHERE userid = {$info[userid]}";
-        $user_info = $this->list_query($sql);
-        $user_truename = $user_info[0][truename];
-        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_answer (ask_id,from_uid,addtime,isread,answer_truename,answer_id)VALUES({$info[askid]},{$info[userid]},{$this->now},0,'{$user_truename}',{$answer_id})";
+        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_answer (ask_id,from_uid,addtime,isread,answer_id)VALUES({$info[askid]},{$info[userid]},{$this->now},0,{$answer_id})";
         return $this->execute($sql);
     }
 
@@ -684,17 +681,31 @@ class ApiAppKnow extends Api
     /**
      * 点赞设置
      */
-    public function setAgree($userid,$status){
+    public function setAgree($userid,$status,$from_uid,$answer_id){
         if($status == 1){
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
         }else{
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times - 1 WHERE userid = {$userid}";
         }
         if ($this->execute($sql)) {
-            return 200;
+            $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
+            if($x){
+                return 200;
+            }else{
+                return 215;
+            }
         } else {
             return 220;
         }
+    }
+
+    /**
+     * 添加点赞消息
+     */
+    public function addMessageAgree($from_uid,$to_uid,$answer_id)
+    {
+        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_agree (from_uid,to_uid,answer_id,addtime,isread)VALUES({$from_uid},{$to_uid},{$answer_id},{$this->now},0)";
+        return $this->execute($sql);
     }
 
     /**
