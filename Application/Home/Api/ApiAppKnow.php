@@ -41,6 +41,14 @@ class ApiAppKnow extends Api
         'sa_answer' => 5,       //用户回答问题
     );
 
+    public $tablePrefix;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->tablePrefix = C('DATABASE_MALL_TABLE_PREFIX');
+    }
+
 
     /*
      * 获取用户详细
@@ -327,6 +335,22 @@ class ApiAppKnow extends Api
     public function addQuestionAnswer($info)
     {
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,askid,content,addtime) VALUES ({$info[userid]},{$info[askid]},'{$info[content]}',{$this->now})";
+        return $this->execute($sql);
+    }
+
+    /**
+     * 保存回答消息
+     */
+    public function addMessageAnswer($answer_info)
+    {
+        $info = $answer_info;
+        $sql = "SELECT id FROM {$this->tablePrefix}appknow_question_answer WHERE uid = {$info['userid']} AND askid = {$info[askid]} AND content = '{$info[content]}' AND addtime = {$this->now}";
+        $answer_info = $this->list_query($sql);
+        $answer_id = $answer_info[0][id];
+        $sql = "SELECT truename FROM {$this->tablePrefix}appknow_member_profile WHERE userid = {$info[userid]}";
+        $user_info = $this->list_query($sql);
+        $user_truename = $user_info[0][truename];
+        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_answer (ask_id,from_uid,addtime,isread,answer_truename,answer_id)VALUES({$info[askid]},{$info[userid]},{$this->now},0,'{$user_truename}',{$answer_id})";
         return $this->execute($sql);
     }
 

@@ -284,11 +284,15 @@ class IndexController extends CommonController {
                 $show['question_answers'] = $x;
                 break;
 
-            // 我要回答
+            // 我要回答 && 保存回答消息
             case "submit_questions_answer":
                 if ($api->addQuestionAnswer(I('get.'))) {
                     //回答问题积分设置
-                    $api->addScore(I('get.userid'),'sa_answer');
+                    $x = $api->addScore(I('get.userid'),'sa_answer');
+                    $y = $api->addMessageAnswer(I('get.'));
+                    if($x&&$y){}else{
+                        $show['status'] = 215;
+                    }
                 } else {
                     $show['status'] = 215;
                 }
@@ -455,10 +459,7 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-                $allArea = $api->getAllArea();
-                $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
-                $show['parent_areas'] = $x;
-                dump($x);
+                dump(123456);
                 break;
 
             default:
