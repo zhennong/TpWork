@@ -10,6 +10,10 @@ class FeedbackController extends AuthController {
      */
     public function feedback_list(){
         $data = M('FeedBack')->order('id desc')->select();
+        foreach($data as $k=>$v){
+            $data[$k] = $v;
+            $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
+        }
         $this->assign('data',$data);
         $this->display();
     }

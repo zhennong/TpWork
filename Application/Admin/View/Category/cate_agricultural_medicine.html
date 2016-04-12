@@ -18,7 +18,7 @@
                 });
             }).draw();
             // 添加
-            $("#add_cate").click(function(){
+            $('body').delegate('table tr td #add_cate','click',function(){
                 $("#opt_cate_div").show();
                 $("#opt_form_reset").trigger('click');
                 $("input[name='operate']").val('add_cate');
@@ -27,7 +27,7 @@
                 $("select[name='pid']").get(0).value = 0;
                 location.href = "#opt_cate_div";
             });
-            $(".add_cate").click(function(){
+            $('body').delegate('table tr td .add_cate','click',function(){
                 tr = $(this).closest('tr');
                 $("#opt_cate_div").show();
                 $("#opt_form_reset").trigger('click');
@@ -38,7 +38,7 @@
                 location.href = "#opt_cate_div";
             });
             // 修改
-            $(".edit_cate").click(function(){
+            $('body').delegate('table tr td .edit_cate','click',function(){
                 tr = $(this).closest('tr');
                 $("#opt_cate_div").show();
                 $("#opt_form_reset").trigger('click');
@@ -67,7 +67,7 @@
                 $("#opt_cate_div").hide();
             });
             // 删除
-            $(".delete_cate").click(function(){
+            $('body').delegate('table tr td .delete_cate','click',function(){
                 if(confirm("确认删除?")) {
                     tr = $(this).closest('tr');
                     $.ajax({

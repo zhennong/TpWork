@@ -504,4 +504,15 @@ class IndexController extends CommonController {
         Header("Content-type: image/png");
         ImagePng($QR);
     }
+
+    //分享后读取内容
+    public function view_arc(){
+        $api = new ApiAppKnow();
+        $ask_id = I('ask_id');
+        if(IS_GET){
+            $data = $api->getAskInfo($ask_id);
+            $this->assign(['data'=>$data]);
+        }
+        $this->display();
+    }
 }
