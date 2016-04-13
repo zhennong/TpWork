@@ -17,7 +17,6 @@ class IndexController extends CommonController {
 
         $show['status'] = 200;
 //        $api->putLog('data',I());
-
         switch (I('get.action')) {
             // 登陆
             case 'login':
@@ -25,8 +24,12 @@ class IndexController extends CommonController {
                 $x = $api->getUserFromMobile(I('get.mobile'));
                 $show['member_info'] = $x;
                 if ($x[0]['password'] == $password) {
-                    $show['member_info'] = $x;
-                    $api->getLastLoginTime($x[0]['userid']);
+                    if($x[0]['status'] != 0){
+                        $show['member_info'] = $x;
+                        $api->getLastLoginTime($x[0]['userid']);
+                    }else{
+                        $show['status'] = 222;
+                    }
                 } else {
                     $show['status'] = 204;
                 }
@@ -229,8 +232,14 @@ class IndexController extends CommonController {
                     $k = "user_ask_image_" . I('get.userid');
                     $k1 = $k . "_ask_tmp_image";
                     S($k1, null);
-                    //提交问题积分设置
-                    $api->addScore(I('get.userid'),'sa_questions');
+
+                    //提交问题积分设置 （每天最多3次提问累加积分）
+                    if(!S('c_a_score')){S('c_a_score',0);}
+                    $count_score = S('c_a_score');
+                    if($count_score < 3){
+                        $api->addScore(I('get.userid'), 'sa_questions');
+                        S('c_a_score',$count_score + 1,60 * 60 * 24);
+                    }
 
                 } else {
                     $show['status'] = 215;
@@ -287,8 +296,15 @@ class IndexController extends CommonController {
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
                 if ($api->addQuestionAnswer(I('get.'))) {
-                    //回答问题积分设置
-                    $x = $api->addScore(I('get.userid'),'sa_answer');
+
+                    //回答问题积分设置 （每次最多3次有积分）
+                    if(!S('c_q_score')){S('c_q_score',0);}
+                    $count_score = S('c_q_score');
+                    if($count_score < 3){
+                        $x = $api->addScore(I('get.userid'),'sa_answer');
+                        S('c_q_score',$count_score + 1,60 * 60 * 24);
+                    }
+
                     $y = $api->addMessageAnswer(I('get.'));
                     if($x&&$y){}else{
                         $show['status'] = 215;
@@ -459,7 +475,7 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-                dump(123456);
+
                 break;
 
             default:

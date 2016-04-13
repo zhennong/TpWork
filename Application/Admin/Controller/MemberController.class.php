@@ -39,6 +39,7 @@ class MemberController extends AuthController {
             $data[$k]['last_login_time'] = date('Y-m-d h:i:s',$v['last_login_time']);
             $area = getAreaFullNameFromAreaID($v['member_profile']['areaid']);
             $data[$k]['area'] = arr2str($area,'');
+            $data[$k]['zt'] = $v['status'];
         }
         return $data;
     }
@@ -98,6 +99,7 @@ class MemberController extends AuthController {
             if(!empty($uid)){
                 $data = array();
                 $data["updatetime"] = time();
+                $data["status"] = I('get.status');
                 $data["member_profile"] = array(
                     "nickname" => I('get.nickname'),
                     "sex" => I('get.sex'),

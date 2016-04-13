@@ -102,13 +102,12 @@ $(function(){
         var qq = $("input[name='qq']").val();
         var areaid = $("input[name='areaid']").val();
         var address = $("input[name='address']").val();
+        var status = $("input[name='status']:checked").val();
 
         if (nickname == '') {layer.msg('昵称不能为空');return false;}
         if (truename == '') {layer.msg('真名不能为空');return false;}
-        if (qq == '') {layer.msg('QQ不能为空');return false;}
-        if (address == '') {layer.msg('请填写详细地址');return false;}
 
-        $.get("{:U('Admin/Member/member_edit')}",{'action':'edit','userid':userid,'mobile':mobile,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address},function(msg){
+        $.get("{:U('Admin/Member/member_edit')}",{'action':'edit','userid':userid,'mobile':mobile,'nickname':nickname,'truename':truename,'sex':sex,'qq':qq,'areaid':areaid,'address':address,'status':status},function(msg){
             if(msg == 1){
                 layer.msg("更新成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                     parent.window.location.reload();    //刷新父页面
@@ -195,6 +194,15 @@ $(function(){
                     <label class="col-sm-2 control-label">详细地址：</label>
                     <div class="col-sm-10">
                         <input type="text" name="address" class="form-control" id="address" value="{$data[0]['member_profile']['address']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态：</label>
+                    <div class="col-sm-10">
+                        <input type="radio" name="status" <if condition="$data[0]['status'] eq 1">checked</if> value="1">
+                        <lavel> 启用 </lavel>&nbsp;&nbsp;
+                        <input type="radio" name="status" <if condition="$data[0]['status'] eq 0">checked</if> value="0">
+                        <lavel> 禁用</lavel>
                     </div>
                 </div>
                 <div class="form-group">

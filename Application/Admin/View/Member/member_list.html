@@ -130,6 +130,7 @@
                                         <th>所在地区</th>
                                         <th>最后登录时间</th>
                                         <th>注册时间</th>
+                                        <th>状态</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -147,6 +148,13 @@
                                             <td>{$v.area}</td>
                                             <td>{$v.last_login_time}</td>
                                             <td>{$v.addtime}</td>
+                                            <td align="center">
+                                                <if condition="$v.status eq 1">
+                                                    正常
+                                                    <else />
+                                                    禁用
+                                                </if>
+                                            </td>
                                             <td align="center">
                                                 <button class="btn btn-primary view">查看</button>
                                                 <button class="btn btn-warning update">修改</button>
