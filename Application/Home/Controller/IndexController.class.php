@@ -486,7 +486,6 @@ class IndexController extends CommonController {
         $show['msg'] = $api->status[$show['status']];
         $show_msgs = $jsoncallback . "(" . json_encode($show) . ")";
         //$show_msgs = json_encode($show);
-        //$api->putLog($show_msgs);
         echo $show_msgs;
         exit();
     }
