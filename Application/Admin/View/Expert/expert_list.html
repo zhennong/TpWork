@@ -117,6 +117,7 @@
                                         <th>职位</th>
                                         <th width="20%">个人简介</th>
                                         <th>注册时间</th>
+                                        <th>状态</th>
                                         <th width="15%">操作</th>
                                     </tr>
                                 </thead>
@@ -131,6 +132,15 @@
                                             <td>{$v.postion}</td>
                                             <td>{$v.content}</td>
                                             <td>{$v.addtime}</td>
+                                            <td align="center">
+                                                <if condition="$v.status eq 0">
+                                                    <font color="blue">待审核</font>
+                                                    <elseif condition="$v.status eq 1"/>
+                                                    <font color="green">已审核</font>
+                                                    <else />
+                                                    <font color="red">未通过</font>
+                                                </if>
+                                            </td>
                                             <td align="center">
                                                 <button class="btn btn-primary view">查看</button>
                                                 <button class="btn btn-warning update">修改</button>
