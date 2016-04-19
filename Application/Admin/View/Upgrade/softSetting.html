@@ -1,0 +1,78 @@
+<extend name="Layout:ly1"/>
+
+<block name="head">
+    <script type="text/javascript">
+        $(function(){
+            $(".btn-primary").click(function() {
+                var softname = $("input[name='softname']").val();
+                var softversion = $("input[name='softversion']").val();
+                var softfilename = $("input[name='softfilename']").val();
+                var softsize = $("input[name='softsize']").val();
+
+                $.get("{:U('Admin/Upgrade/softSetting')}", {
+                    'action': 'edit',
+                    'softname': softname,
+                    'softversion': softversion,
+                    'softfilename': softfilename,
+                    'softsize': softsize
+                }, function (msg) {
+                    alert(msg);
+                })
+            })
+        })
+    </script>
+</block>
+
+<block name="body">
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">版本编辑 (Android)</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        请填写以下表单并确认
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form id="form_user_setting" class="form-horizontal" method="post" action="">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">软件名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="softname" class="form-control" value="{$name}" placeholder="例：农医问药">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">版本信息</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="softversion" class="form-control" value="{$version}" placeholder="例：01.00.00010">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">文件名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="softfilename" class="form-control" value="{$android_filename}" placeholder="例：nywy.apk">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">文件大小</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="softsize" value="{$android_size}" class="form-control" placeholder="例：1690">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" id="button_user_setting_submit" class="btn btn-primary">确定</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</block>

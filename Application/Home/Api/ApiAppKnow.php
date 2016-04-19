@@ -382,6 +382,22 @@ class ApiAppKnow extends Api
         return $this->execute($sql);
     }
 
+
+    /**
+     * 获取收藏
+     * @param $info
+     */
+    public function getFavouriteInfo($info)
+    {
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_favourite WHERE uid = {$info['userid']} AND obj_id = {$info['obj_id']}";
+        $result = $this->execute($sql);
+        if ($result > 0) {
+            return 217;
+        }else{
+            return 200;
+        }
+    }
+
     /**
      * 添加收藏
      * @param $info
@@ -397,6 +413,20 @@ class ApiAppKnow extends Api
             return 200;
         } else {
             return 215;
+        }
+    }
+
+    /**
+     * 取消添加收藏
+     * @param $info
+     */
+    public function removeFavourite($info){
+        $sql = "DELETE FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_favourite WHERE uid = {$info['userid']} AND obj_id = {$info['obj_id']}";
+
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 219;
         }
     }
 

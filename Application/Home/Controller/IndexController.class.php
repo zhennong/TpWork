@@ -372,10 +372,18 @@ class IndexController extends CommonController {
                     $show['status'] = 215;
                 }
                 break;
+            //获取收藏（详情页）
+            case 'get_favouriteinfo':
+                $show['status'] = $api->getFavouriteInfo(I('get.'));
+                break;
 
             //加入收藏
             case 'add_favourite':
                 $show['status'] = $api->addFavourite(I('get.'));
+                break;
+            //（内容页）取消加入收藏
+            case 'remove_favourite':
+                $show['status'] = $api->removeFavourite(I('get.'));
                 break;
 
             //显示收藏
@@ -520,7 +528,9 @@ class IndexController extends CommonController {
         ImagePng($QR);
     }
 
-    //分享后读取内容
+    /**
+     * 分享后读取内容
+     */
     public function view_arc(){
         $api = new ApiAppKnow();
         $ask_id = I('ask_id');
