@@ -697,4 +697,28 @@ class Tools
         }
         clearstatcache();
     }
+
+    /**
+     * 获取远程文件大小
+     * @param $url
+     * @return null|string
+     */
+    public static function getFileSize($url){
+        $url = parse_url($url);
+        if($fp = @fsockopen($url['host'],empty($url['port'])?80:$url['port'],$error)){
+            fputs($fp,"GET ".(empty($url['path'])?'/':$url['path'])." HTTP/1.1\r\n");
+            fputs($fp,"Host:$url[host]\r\n\r\n");
+            while(!feof($fp)){
+                $tmp = fgets($fp);
+                if(trim($tmp) == ''){
+                    break;
+                }else if(preg_match('/Content-Length:(.*)/si',$tmp,$arr)){
+                    return trim($arr[1]);
+                }
+            }
+            return null;
+        }else{
+            return null;
+        }
+    }
 }

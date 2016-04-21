@@ -34,13 +34,14 @@ class UpgradeController extends AuthController {
         $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
         $android_filename=$info->news['android_filename']; //androiad下载文件
         $iphone_size=$info->size['iphone'];//iphone文件大小.
-        $android_size=$info->size['android'];//andoird文件大小.
+        //$android_size=$info->size['android'];//andoird文件大小.
         $version=$info->news['version']; //版本号
         $updateFileName=$info->file['name'];//客户端名称.
 
-        //$android_size = Tools::getRealSize($android_size);
+        //自动抓取文件大小
+        $software = Tools::getFileSize("http://www.nongyao001.com/file/nywy.apk");
 
-        $this->assign(['iphone_filename'=>$iphone_filename,'android_filename'=>$android_filename,'iphone_size'=>$iphone_size,'android_size'=>$android_size,'version'=>$version,'name'=>$updateFileName]);
+        $this->assign(['iphone_filename'=>$iphone_filename,'android_filename'=>$android_filename,'iphone_size'=>$iphone_size,'android_size'=>$software,'version'=>$version,'name'=>$updateFileName]);
         $this->display();
     }
 }
