@@ -13,7 +13,7 @@ class UpgradeController extends AuthController {
             $softsize = I('get.softsize');
 
             $dom = new \DOMDocument();
-            $dom->load(APP_ROOT.'/upgrade.xml');
+            $dom->load(APP_ROOT.'upgrade.xml');
             $file = $dom->getElementsByTagName("file");
             $file->item(0)->setAttribute("name",$softname);
 
@@ -24,16 +24,13 @@ class UpgradeController extends AuthController {
             $size = $dom->getElementsByTagName("size");
             $size->item(0)->setAttribute("android",$softsize);
 
-            $result = $dom->save(APP_ROOT.'/upgrade.xml');
+            $result = $dom->save(APP_ROOT.'upgrade.xml');
             if($result !== false){
                 $this->ajaxReturn(200);
             }
         }
 
-        $info = simplexml_load_file(APP_ROOT.'/upgrade.xml');
-
-        dump(APP_ROOT.'/upgrade.xml');
-
+        $info = simplexml_load_file(APP_ROOT.'upgrade.xml');
         $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
         $android_filename=$info->news['android_filename']; //androiad下载文件
         $iphone_size=$info->size['iphone'];//iphone文件大小.
