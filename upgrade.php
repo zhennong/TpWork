@@ -5,7 +5,7 @@ $oldver = $_REQUEST['ver'];//客户端传过来的版本号
 $platform = $_REQUEST['platform'];//客户端的平台
 $info = simplexml_load_file($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/upgrade.xml');
 
-var_dump($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/upgrade.xml');
+var_dump($info);
 
 $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
 $android_filename=$info->news['android_filename']; //androiad下载文件
