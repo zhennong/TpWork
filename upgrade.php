@@ -1,5 +1,5 @@
 <?php
-//header("Content-type: text/xml");
+header("Content-type: text/xml");
 $apps_url="http://www.nongyao001.com/file/";
 $oldver = $_REQUEST['ver'];//客户端传过来的版本号
 $platform = $_REQUEST['platform'];//客户端的平台
@@ -12,8 +12,8 @@ $android_size=$info->size['android'];//andoird文件大小.
 $version=$info->news['version']; //版本号
 $updateFileName=$info->file['name'];//客户端名称.
 
-$data = "新".$version ."老".$oldver;
-file_put_contents($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/log.txt',$data);
+//$data = "新".$version ."老".$oldver;
+//file_put_contents($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/log.txt',$data);
 
 if ($version > $oldver)
 {
