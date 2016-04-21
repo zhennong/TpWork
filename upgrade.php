@@ -5,14 +5,14 @@ $oldver = $_REQUEST['ver'];//客户端传过来的版本号
 $platform = $_REQUEST['platform'];//客户端的平台
 $info = simplexml_load_file($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/upgrade.xml');
 
-var_dump($info);
-
 $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
 $android_filename=$info->news['android_filename']; //androiad下载文件
 $iphone_size=$info->size['iphone'];//iphone文件大小.
 $android_size=$info->size['android'];//andoird文件大小.
 $version=$info->news['version']; //版本号
 $updateFileName=$info->file['name'];//客户端名称.
+
+var_dump($version);
 
 if ($version > $oldver)
 {
