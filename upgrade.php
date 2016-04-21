@@ -30,7 +30,7 @@ if ($version > $oldver)
             echo "<updateFileName>".$updateFileName."</updateFileName>";//客户端名字
             echo "<updateFileUrl>".$apps_url.$android_filename."</updateFileUrl>";//返回给客户端的下载地址
             echo "<fileSize>".$android_size."</fileSize>";//文件大小
-            echo "<version>新".$version."|老：".$oldver."</version>";//版本信息
+            echo "<version>".$version."|".$oldver."</version>";//版本信息
             echo "</results>";
             break;
     }
