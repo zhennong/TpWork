@@ -31,6 +31,9 @@ class UpgradeController extends AuthController {
         }
 
         $info = simplexml_load_file($_SERVER['DOCUMENT_ROOT'].'/touchknow/upgrade.xml');
+
+        dump($info);
+
         $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
         $android_filename=$info->news['android_filename']; //androiad下载文件
         $iphone_size=$info->size['iphone'];//iphone文件大小.
