@@ -1,5 +1,5 @@
 <?php
-header("Content-type: text/xml");
+//header("Content-type: text/xml");
 $apps_url="http://www.nongyao001.com/file/";
 $oldver = $_REQUEST['ver'];//客户端传过来的版本号
 $platform = $_REQUEST['platform'];//客户端的平台
