@@ -13,7 +13,7 @@ class UpgradeController extends AuthController {
             $softsize = I('get.softsize');
 
             $dom = new \DOMDocument();
-            $dom->load($_SERVER['DOCUMENT_ROOT'].'/touchknow/upgrade.xml');
+            $dom->load(APP_ROOT.'/upgrade.xml');
             $file = $dom->getElementsByTagName("file");
             $file->item(0)->setAttribute("name",$softname);
 
@@ -24,15 +24,15 @@ class UpgradeController extends AuthController {
             $size = $dom->getElementsByTagName("size");
             $size->item(0)->setAttribute("android",$softsize);
 
-            $result = $dom->save($_SERVER['DOCUMENT_ROOT'].'/touchknow/upgrade.xml');
+            $result = $dom->save(APP_ROOT.'/upgrade.xml');
             if($result !== false){
                 $this->ajaxReturn(200);
             }
         }
 
-        $info = simplexml_load_file($_SERVER['DOCUMENT_ROOT'].'/touchknow/upgrade.xml');
+        $info = simplexml_load_file(APP_ROOT.'/upgrade.xml');
 
-        dump($_SERVER['DOCUMENT_ROOT'].'/touchknow/upgrade.xml');
+        dump(APP_ROOT.'/upgrade.xml');
 
         $iphone_filename=$info->news['iphone_filename']; //iphone下载文件
         $android_filename=$info->news['android_filename']; //androiad下载文件
