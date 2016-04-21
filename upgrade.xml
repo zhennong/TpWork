@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root desc="Login">
     <!--客户端名称-->
-    <file name="农医问药"/>
+    <file name="nywy"/>
     <!--版本号，文件名-->
-    <news version="01.00.0010" iphone_filename="" android_filename="nywy.apk"/>
+    <news version="01.00.0015" iphone_filename="nywy.apk" android_filename="nywy.apk" />
     <!--文件大小-->
-    <size iphone="" android="63089682"/>
+    <size iphone="1693330" android="1626333"/>
 </root>
