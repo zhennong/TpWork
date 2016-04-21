@@ -12,6 +12,9 @@ $android_size=$info->size['android'];//andoird文件大小.
 $version=$info->news['version']; //版本号
 $updateFileName=$info->file['name'];//客户端名称.
 
+$data = "新".$version ."老".$oldver;
+file_put_contents($_SERVER['DOCUMENT_ROOT'].'/others/touchknow/log.txt',$data);
+
 if ($version > $oldver)
 {
     switch ($platform)
