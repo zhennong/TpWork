@@ -792,4 +792,15 @@ class ApiAppKnow extends Api
         return file_get_contents($cnsmsUrl);
     }
 
+    /*
+     * 消息统计封装
+     * @param $table 表名
+     * @param $uid   用户ID
+     * @return mixed 返回sql语句
+     */
+    function mess_count($table = "",$uid = ""){
+        $sql = "select count(*) as count from ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} where to_uid = {$uid} and isread = 0";
+        return $this->list_query($sql);
+    }
+
 }
