@@ -799,7 +799,7 @@ class ApiAppKnow extends Api
      * @return mixed 返回sql语句
      */
     function mess_count($table = "",$uid = ""){
-        $sql = "select count(*) as count from ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} where to_uid = {$uid} and isread = 0";
+        $sql = "select count(*) as count from ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} where to_uid = {$uid} and isread = 0 limit 10";
         return $this->list_query($sql);
     }
 
