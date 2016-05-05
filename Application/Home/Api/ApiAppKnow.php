@@ -507,15 +507,15 @@ class ApiAppKnow extends Api
             return 217;
             exit();
         }
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
-        if ($this->execute($sql)) {
-            return 200;
-        } else {
-            return 215;
-        }
 
-        //会员关注消息
+        //关注消息设置
         $this->addMessageAttention($info[fans_uid],$info[attention_uid]);
+
+        //粉丝
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
+        $this->execute($sql);
+
+
 
     }
 
@@ -524,11 +524,8 @@ class ApiAppKnow extends Api
      */
     public function addMessageAttention($from_uid,$to_uid){
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention (from_uid,to_uid,addtime) VALUES ({$from_uid},{$to_uid},{$this->now})";
-        if ($this->execute($sql)) {
-            return 200;
-        } else {
-            return 215;
-        }
+        $this->putLog('sql',$sql);
+        $this->execute($sql);
     }
 
 
