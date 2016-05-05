@@ -1,9 +1,9 @@
 <?php
 namespace Home\Controller;
 
-//header('Access-Control-Allow-Origin: *');
-//header('Content-Type: text/event-stream');
-//header('Cache-Control: no-cache');
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
 
 use Common\Controller\CommonController;
 use Common\Tools;
@@ -21,20 +21,19 @@ class MessageController extends CommonController {
 
         //消息处理
         switch ($action){
-            case 'mess_tips';
-                $count = $api->mess_count();
+            case 'mess_tips':
+                $count = $api->mess_count("appknow_message_reply",$uid);
                 $status = $count[0]['count'];
                 break;
-            case 'mess_invite';
-
-                //专家邀请
-
+            case 'mess_invite':
+                $count = $api->mess_count("appknow_message_invite",$uid);
+                $status = $count[0]['count'];
                 break;
-            case 'mess_agree';
+            case 'mess_agree':
                 $count = $api->mess_count("appknow_message_agree",$uid);
                 $status = $count[0]['count'];
                 break;
-            case 'mess_attention';
+            case 'mess_attention':
                 $count = $api->mess_count("appknow_message_attention",$uid);
                 $status = $count[0]['count'];
                 break;

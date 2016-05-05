@@ -481,6 +481,64 @@ class IndexController extends CommonController {
                 $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
                 break;
 
+            //添加邀请专家
+            case 'add_invite_message':
+                $show['status'] = $api->addInviteExpert(I('get.'));
+                break;
+
+            //获取回复消息
+            case 'get_mess_tips':
+                $info = $_GET;
+                $data = $api->getMessList($info);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                    $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
+                    $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
+                }
+                $show['mess_list'] = $data;
+                break;
+
+            //获取邀请消息
+            case 'get_mess_invite':
+                $info = $_GET;
+                $data = $api->getMessList($info);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                    $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
+                    $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
+                }
+                $show['mess_list'] = $data;
+                break;
+
+            //获取点赞消息
+            case 'get_mess_agree':
+                $info = $_GET;
+                $data = $api->getMessList($info);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                    $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
+                    $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
+                }
+                $show['mess_list'] = $data;
+                break;
+
+            //获取关注消息
+            case 'get_mess_attention':
+                $info = $_GET;
+                $data = $api->getMessList($info);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                    $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
+                }
+                $show['mess_list'] = $data;
+                break;
+
+            //是否阅读
+            case 'is_read':
+                $info = I('get.');
+                $show['status'] = $api->isRead($info);
+                break;
+
             // 测试
             case 'test':
 
