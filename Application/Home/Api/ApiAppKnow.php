@@ -342,7 +342,7 @@ class ApiAppKnow extends Api
      * 保存回答消息
      */
     public function addMessageReply($info){
-        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['from_uid']},{$info['to_uid']},{$info['askid']},{$this->now})";
+        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['userid']},{$info['to_uid']},{$info['askid']},{$this->now})";
         $this->putLog('sql',$sql);
         return $this->execute($sql);
     }
@@ -508,6 +508,22 @@ class ApiAppKnow extends Api
             exit();
         }
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
+        if ($this->execute($sql)) {
+            return 200;
+        } else {
+            return 215;
+        }
+
+        //会员关注消息
+        $this->addMessageAttention($info[fans_uid],$info[attention_uid]);
+
+    }
+
+    /**
+     * 关注消息设置
+     */
+    public function addMessageAttention($from_uid,$to_uid){
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention (from_uid,to_uid,addtime) VALUES ({$from_uid},{$to_uid},{$this->now})";
         if ($this->execute($sql)) {
             return 200;
         } else {
@@ -804,7 +820,6 @@ class ApiAppKnow extends Api
      */
     function addInviteExpert($info){
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite(from_uid,to_uid,askid,addtime)VALUES({$info['invitation_uid']},{$info['invite_uid']},{$info['ask_id']},{$this->now})";
-        $this->putLog('sql',$sql);
         if($this->execute($sql)){
             return 200;
         }else{
