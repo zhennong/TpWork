@@ -305,10 +305,9 @@ class IndexController extends CommonController {
                         S('c_q_score',$count_score + 1,60 * 60 * 24);
                     }
 
-//                    $y = $api->addMessageAnswer(I('get.'));
-//                    if($x&&$y){}else{
-//                        $show['status'] = 215;
-//                    }
+                    //回复消息设置
+                    $api->addMessageReply(I('get.'));
+
                 } else {
                     $show['status'] = 215;
                 }
