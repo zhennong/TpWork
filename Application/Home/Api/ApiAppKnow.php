@@ -511,12 +511,9 @@ class ApiAppKnow extends Api
         //关注消息设置
         $this->addMessageAttention($info[fans_uid],$info[attention_uid]);
 
-        //粉丝
+        //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
         $this->execute($sql);
-
-
-
     }
 
     /**
@@ -848,6 +845,7 @@ class ApiAppKnow extends Api
             default:
                 break;
         }
+        //$this->putLog('sql',$sql);
         return $this->list_query($sql);
     }
 
