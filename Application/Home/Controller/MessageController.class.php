@@ -24,11 +24,6 @@ class MessageController extends CommonController {
             case 'mess_tips':
                 $count = $api->mess_count("appknow_message_reply",$uid);
                 $status = $count[0]['count'];
-
-//                $sql = "select * from destoon_appknow_message_answer limit 3";
-//                $data = $api->list_query($sql);
-//                $status = json_encode($data);
-
                 break;
             case 'mess_invite':
                 $count = $api->mess_count("appknow_message_invite",$uid);
