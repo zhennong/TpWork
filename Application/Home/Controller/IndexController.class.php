@@ -545,8 +545,10 @@ class IndexController extends CommonController {
         $api = new ApiAppKnow();
         $ask_id = I('ask_id');
         if(IS_GET){
-            $data = $api->getAskInfo($ask_id);
-            $this->assign(['data'=>$data]);
+            $ask_data = $api->getAskInfo($ask_id);
+            $answer_data = $api->getAskAnswers($ask_id);
+            $count = count($answer_data);
+            $this->assign(['ask_data'=>$ask_data,'answer_data'=>$answer_data,'count'=>$count]);
         }
         $this->display();
     }
