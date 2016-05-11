@@ -83,7 +83,9 @@ class ApiAppKnow extends Api
             }
             if(count($b)>0){
                 $x[$k]['member_profile'] = $b[0];
-                $x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
+                //$x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
+                $x[$k]['money'] = 0.00;
+
                 $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
             }else{
                 $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'image/defaultx20.jpg'];
@@ -310,7 +312,7 @@ class ApiAppKnow extends Api
     public function getAskAnswers($askid, $start = null, $limit = null)
     {
         $sql = "SELECT answer.*,
-            m_member.mobile,profile.nickname,profile.areaid,profile.avatar
+            m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar
             FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid
