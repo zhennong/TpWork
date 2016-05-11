@@ -4,39 +4,79 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="format-detection" content="telephone=no">
-<title>如何判断作物缺肥？</title>
-<link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve2c9cd6.css">
-<!--[if lt IE 9]>
-<link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve_pc2c9cd6.css">
-<![endif]-->
-</head>
-<body id="activity-detail" class="zh_CN mm_appmsg" ontouchstart="">
+<title>{$ask_data.0.content|mb_substr=###,0,60,'utf-8'} - 中国农药第一网</title>
+<link rel="stylesheet" type="text/css" href="__HOME__/css/arc.css">
+<link rel="stylesheet" type="text/css" href="__HOME__/css/css.css">
+<!-- jQuery -->
+<script src="__SB_ADMIN__/bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    //当滚动条的位置处于距顶部100像素以下时，跳转链接出现，否则消失
+    $(function () {
+        $(window).scroll(function(){
+            if ($(window).scrollTop()>100){
+                $("#back-to-top").fadeIn(1000);
+            }else{
+                $("#back-to-top").fadeOut(1000);
+            }
+        });
 
-<foreach name="data" item="vo" >
+        //当点击跳转链接后，回到页面顶部位置
+        $("#back-to-top").click(function(){
+            $('body,html').animate({scrollTop:0},1000);
+            return false;
+        });
+    });
+});
+</script>
+</head>
+<body id="activity-detail" class="zh_CN mm_appmsg">
 <div id="js_article" class="rich_media">
     <div class="rich_media_inner">
         <div id="page-content">
+            <!--文章内容开始-->
             <div id="img-content" class="rich_media_area_primary">
-                <h2 class="rich_media_title" id="activity-name">{$vo.content|mb_substr=###,0,25,'utf-8'}</h2>
+                <div class="ad t">
+                    <a href="http://www.nongyao001.com/file/nywy.apk"><img src="__HOME__/images/view-dl.png" alt=""></a>
+                </div>
+
+                <h2 class="rich_media_title" id="activity-name">{$ask_data.0.content|mb_substr=###,0,15,'utf-8'}...</h2>
                 <div class="rich_media_meta_list">
-                    <em id="post-date" class="rich_media_meta rich_media_meta_text">{$vo.addtime|date="Y-m-d",###}</em>
-                    <a class="rich_media_meta rich_media_meta_link rich_media_meta_nickname" href="javascript:void(0);" id="post-user">中国农药第一网</a>
+                    <em id="post-date" class="rich_media_meta rich_media_meta_text">{$ask_data.0.addtime|date="Y-m-d",###}</em>
+                    <a class="rich_media_meta rich_media_meta_link rich_media_meta_nickname" href="http://www.nongyao001.com/wap/" id="post-user">中国农药第一网</a>
                 </div>
                 <div class="rich_media_content " id="js_content">
-                    <p>{$vo.content}</p>
-
-                    <p align="right"><a class="media_tool_meta meta_primary" id="js_view_source" href="javascript:void(0);">阅读原文</a></p>
+                    <p>{$ask_data.0.content}</p>
                 </div>
+            </div>
+            <!--文章内容结束-->
+
+            <div class="rich_media_area_primary answer">
+                <h3>回答（{$count}）</h3>
+                <if condition="$count gt 0">
+                    <!--问答列表开始-->
+                    <foreach name="answer_data" item="vo" >
+                        <dl>
+                            <dt>
+                                <if condition="$vo.avatar neq ''">
+                                    <img src="{$vo.avatar}" />
+                                <else />
+                                    <img src="__ADMIN__/images/thumb.jpg" />
+                                </if>
+                                <span>{$vo.nickname}</span>
+                                <font>{$vo.addtime|date="Y-m-d",###}</font>
+                            </dt>
+                            <dd><p>{$vo.content}</p></dd>
+                        </dl>
+                    </foreach>
+                    <!--问答列表结束-->
+                <else />
+                    <p>暂无消息~~</p>
+                </if>
             </div>
         </div>
     </div>
 </div>
-</foreach>
-
+<p id="back-to-top"><a href="#top"></a></p>
 </body>
 </html>
-
-

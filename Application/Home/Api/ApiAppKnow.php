@@ -83,7 +83,9 @@ class ApiAppKnow extends Api
             }
             if(count($b)>0){
                 $x[$k]['member_profile'] = $b[0];
-                $x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
+                //$x[$k]['money'] = number_format(intval($b[0]['score'])/10000,2); //用户积分转换 1:10000
+                $x[$k]['money'] = 0.00;
+
                 $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
             }else{
                 $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'image/defaultx20.jpg'];
@@ -310,7 +312,7 @@ class ApiAppKnow extends Api
     public function getAskAnswers($askid, $start = null, $limit = null)
     {
         $sql = "SELECT answer.*,
-            m_member.mobile,profile.nickname,profile.areaid,profile.avatar
+            m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar
             FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid
@@ -341,13 +343,9 @@ class ApiAppKnow extends Api
     /**
      * 保存回答消息
      */
-    public function addMessageAnswer($answer_info)
-    {
-        $info = $answer_info;
-        $sql = "SELECT id FROM {$this->tablePrefix}appknow_question_answer WHERE uid = {$info['userid']} AND askid = {$info[askid]} AND content = '{$info[content]}' AND addtime = {$this->now}";
-        $answer_info = $this->list_query($sql);
-        $answer_id = $answer_info[0][id];
-        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_answer (ask_id,from_uid,addtime,isread,answer_id)VALUES({$info[askid]},{$info[userid]},{$this->now},0,{$answer_id})";
+    public function addMessageReply($info){
+        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['userid']},{$info['to_uid']},{$info['askid']},{$this->now})";
+        $this->putLog('sql',$sql);
         return $this->execute($sql);
     }
 
@@ -511,12 +509,22 @@ class ApiAppKnow extends Api
             return 217;
             exit();
         }
+
+        //关注消息设置
+        $this->addMessageAttention($info[fans_uid],$info[attention_uid]);
+
+        //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
-        if ($this->execute($sql)) {
-            return 200;
-        } else {
-            return 215;
-        }
+        $this->execute($sql);
+    }
+
+    /**
+     * 关注消息设置
+     */
+    public function addMessageAttention($from_uid,$to_uid){
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention (from_uid,to_uid,addtime) VALUES ({$from_uid},{$to_uid},{$this->now})";
+        $this->putLog('sql',$sql);
+        $this->execute($sql);
     }
 
 
@@ -715,7 +723,7 @@ class ApiAppKnow extends Api
         if($status == 1){
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
         }else{
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times - 1 WHERE userid = {$userid}";
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times2 = agreed_times2 + 1 WHERE userid = {$userid}";
         }
         if ($this->execute($sql)) {
             $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
@@ -790,6 +798,82 @@ class ApiAppKnow extends Api
             exit();
         }
         return file_get_contents($cnsmsUrl);
+    }
+
+    /*
+     * 消息统计封装
+     * @param $table 表名
+     * @param $uid   用户ID
+     * @return mixed 返回sql语句
+     */
+    function mess_count($table = "",$uid = ""){
+        $sql = "select count(*) as count from ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} where to_uid = {$uid} and isread = 0 limit 10";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 添加邀请专家
+     */
+    function addInviteExpert($info){
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite(from_uid,to_uid,askid,addtime)VALUES({$info['invitation_uid']},{$info['invite_uid']},{$info['ask_id']},{$this->now})";
+        if($this->execute($sql)){
+            return 200;
+        }else{
+            return 215;
+        }
+    }
+
+    /**
+     * 获取消息列表
+     */
+    public function getMessList($info){
+        switch ($info['action']){
+            case 'get_mess_tips': //通知
+                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_reply AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                break;
+
+            case 'get_mess_invite': //邀请
+                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                break;
+
+            case 'get_mess_agree': //点赞
+                $sql = "SELECT a.id,a.addtime,a.isread,b.content,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_agree AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS b ON b.id = a.answer_id LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                break;
+
+            case 'get_mess_attention': //关注
+                $sql = "SELECT a.id,a.addtime,a.isread,b.mobile,c.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS c ON c.userid = b.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                break;
+
+            default:
+                break;
+        }
+        //$this->putLog('sql',$sql);
+        return $this->list_query($sql);
+    }
+
+    function isRead($info){
+        switch ($info['opt']){
+            case 'get_mess_tips':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_reply SET isread = 1 WHERE id = {$info['id']}";
+                break;
+            case 'get_mess_invite':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite SET isread = 1 WHERE id = {$info['id']}";
+                break;
+            case 'get_mess_agree':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_agree SET isread = 1 WHERE id = {$info['id']}";
+                break;
+            case 'get_mess_attention':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention SET isread = 1 WHERE id = {$info['id']}";
+                break;
+            default:
+                break;
+        }
+
+        if($this->execute($sql)){
+            return 200;
+        }else{
+            return 220;
+        }
     }
 
 }

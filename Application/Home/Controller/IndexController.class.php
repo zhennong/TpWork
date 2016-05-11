@@ -305,10 +305,9 @@ class IndexController extends CommonController {
                         S('c_q_score',$count_score + 1,60 * 60 * 24);
                     }
 
-//                    $y = $api->addMessageAnswer(I('get.'));
-//                    if($x&&$y){}else{
-//                        $show['status'] = 215;
-//                    }
+                    //回复消息设置
+                    $api->addMessageReply(I('get.'));
+
                 } else {
                     $show['status'] = 215;
                 }
@@ -481,6 +480,17 @@ class IndexController extends CommonController {
                 $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
                 break;
 
+            //添加邀请专家
+            case 'add_invite_message':
+                $show['status'] = $api->addInviteExpert(I('get.'));
+                break;
+
+            //是否阅读
+            case 'is_read':
+                $info = I('get.');
+                $show['status'] = $api->isRead($info);
+                break;
+
             // 测试
             case 'test':
 
@@ -535,8 +545,10 @@ class IndexController extends CommonController {
         $api = new ApiAppKnow();
         $ask_id = I('ask_id');
         if(IS_GET){
-            $data = $api->getAskInfo($ask_id);
-            $this->assign(['data'=>$data]);
+            $ask_data = $api->getAskInfo($ask_id);
+            $answer_data = $api->getAskAnswers($ask_id);
+            $count = count($answer_data);
+            $this->assign(['ask_data'=>$ask_data,'answer_data'=>$answer_data,'count'=>$count]);
         }
         $this->display();
     }
