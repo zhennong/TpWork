@@ -723,7 +723,7 @@ class ApiAppKnow extends Api
         if($status == 1){
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
         }else{
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times - 1 WHERE userid = {$userid}";
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times2 = agreed_times2 + 1 WHERE userid = {$userid}";
         }
         if ($this->execute($sql)) {
             $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
