@@ -1,7 +1,7 @@
-.rich_media_area_primary{padding-top: 10px;}
+.rich_media_area_primary{padding: 10px;}
 .rich_media_area_primary.answer{padding-bottom: 30px;}
-.rich_media_area_primary.answer p{color: #666;font-size: 1em;line-height: 35px;text-align: left;}
-.rich_media_area_primary h3{line-height: 40px;font-weight: bold;border-left: 10px solid #f00;text-indent: 0.8em;margin-bottom: 15px;background: #ededed;}
+.rich_media_area_primary.answer p{color: #666;font-size: 0.95em;line-height: 35px;text-align: left;}
+.rich_media_area_primary h3{line-height: 40px;border-left: 10px solid #f00;text-indent: 0.8em;margin-bottom: 15px;background: #ededed;font-weight: normal;}
 .rich_media_area_primary dl{padding: 10px 15px;border-radius: 3px;}
 .rich_media_area_primary dl:nth-child(odd){background:#fefefe;}
 .rich_media_area_primary dl:nth-child(even){background: #ededed;}

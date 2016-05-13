@@ -851,7 +851,7 @@ class ApiAppKnow extends Api
         return $this->list_query($sql);
     }
 
-    function isRead($info){
+    public function isRead($info){
         switch ($info['opt']){
             case 'get_mess_tips':
                 $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_reply SET isread = 1 WHERE id = {$info['id']}";
@@ -873,6 +873,17 @@ class ApiAppKnow extends Api
             return 200;
         }else{
             return 220;
+        }
+    }
+
+    //获取最新版本
+    public function version($ver){
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_version ORDER BY id DESC LIMIT 1 ";
+        $version = $this->list_query($sql);
+        if($version[0]['version'] > $ver){
+            return 1;
+        }else{
+            return 0;
         }
     }
 
