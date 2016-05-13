@@ -491,6 +491,12 @@ class IndexController extends CommonController {
                 $show['status'] = $api->isRead($info);
                 break;
 
+            //判断是否有新版本
+            case 'version':
+                $oldver = I('get.ver');
+                $show['ver'] = $api->version($oldver);
+                break;
+
             // 测试
             case 'test':
 
