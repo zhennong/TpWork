@@ -345,7 +345,6 @@ class ApiAppKnow extends Api
      */
     public function addMessageReply($info){
         $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['userid']},{$info['to_uid']},{$info['askid']},{$this->now})";
-        $this->putLog('sql',$sql);
         return $this->execute($sql);
     }
 
@@ -523,7 +522,6 @@ class ApiAppKnow extends Api
      */
     public function addMessageAttention($from_uid,$to_uid){
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention (from_uid,to_uid,addtime) VALUES ({$from_uid},{$to_uid},{$this->now})";
-        $this->putLog('sql',$sql);
         $this->execute($sql);
     }
 
