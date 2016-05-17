@@ -61,6 +61,16 @@ class MessageController extends CommonController {
                 }
                 $status = $num;
                 break;
+            case 'mess_sys':
+                $data = $api->mess_count("appknow_message_sys",$uid);
+                $num = 0;
+                foreach ($data as $k=>$v){
+                    if($v['isread'] == 0){
+                        $num++;
+                    }
+                }
+                $status = $num;
+                break;
             default:
                 break;
         }
@@ -128,6 +138,17 @@ class MessageController extends CommonController {
                     $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
                 }
                 $mess_data = json_encode($data);
+                break;
+            //获取关注消息
+            case 'get_mess_sys':
+                $info = $_GET;
+                $data = $api->getMessList($info);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                }
+                $mess_data = json_encode($data);
+                break;
+            default:
                 break;
         }
 
