@@ -806,7 +806,6 @@ class ApiAppKnow extends Api
      */
     function mess_count($table = "",$uid = ""){
         $sql = "SELECT isread FROM ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} WHERE to_uid = {$uid} ORDER BY id DESC limit 10";
-        $this->putLog('sql',$sql);
         return $this->list_query($sql);
     }
 
