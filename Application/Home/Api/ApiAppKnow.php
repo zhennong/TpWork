@@ -865,6 +865,9 @@ class ApiAppKnow extends Api
             case 'get_mess_attention':
                 $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention SET isread = 1 WHERE id = {$info['id']}";
                 break;
+            case 'get_mess_sys':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys SET isread = 1 WHERE id = {$info['id']}";
+                break;
             default:
                 break;
         }
