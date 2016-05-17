@@ -2,7 +2,7 @@
 namespace Home\Controller;
 
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: text/event-stream');
+//header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 
 use Common\Controller\CommonController;
@@ -22,20 +22,44 @@ class MessageController extends CommonController {
         //消息处理
         switch ($action){
             case 'mess_tips':
-                $count = $api->mess_count("appknow_message_reply",$uid);
-                $status = $count[0]['count'];
+                $data = $api->mess_count("appknow_message_reply",$uid);
+                $num = 0;
+                foreach ($data as $k=>$v){
+                    if($v['isread'] == 0){
+                        $num++;
+                    }
+                }
+                $status = $num;
                 break;
             case 'mess_invite':
-                $count = $api->mess_count("appknow_message_invite",$uid);
-                $status = $count[0]['count'];
+                $data = $api->mess_count("appknow_message_invite",$uid);
+                $num = 0;
+                foreach ($data as $k=>$v){
+                    if($v['isread'] == 0){
+                        $num++;
+                    }
+                }
+                $status = $num;
                 break;
             case 'mess_agree':
-                $count = $api->mess_count("appknow_message_agree",$uid);
-                $status = $count[0]['count'];
+                $data = $api->mess_count("appknow_message_agree",$uid);
+                $num = 0;
+                foreach ($data as $k=>$v){
+                    if($v['isread'] == 0){
+                        $num++;
+                    }
+                }
+                $status = $num;
                 break;
             case 'mess_attention':
-                $count = $api->mess_count("appknow_message_attention",$uid);
-                $status = $count[0]['count'];
+                $data = $api->mess_count("appknow_message_attention",$uid);
+                $num = 0;
+                foreach ($data as $k=>$v){
+                    if($v['isread'] == 0){
+                        $num++;
+                    }
+                }
+                $status = $num;
                 break;
             default:
                 break;
