@@ -805,7 +805,8 @@ class ApiAppKnow extends Api
      * @return mixed 返回sql语句
      */
     function mess_count($table = "",$uid = ""){
-        $sql = "select count(*) as count from ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} where to_uid = {$uid} and isread = 0 limit 10";
+        $sql = "SELECT isread FROM ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} WHERE to_uid = {$uid} ORDER BY id DESC limit 10";
+        $this->putLog('sql',$sql);
         return $this->list_query($sql);
     }
 
