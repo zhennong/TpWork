@@ -157,4 +157,35 @@ class AskController extends AuthController
         }
     }
 
+    /**
+     * 获取问答回复
+     */
+    public function question_answer(){
+        $id = I('get.id');
+        $sql = "select a.id,a.askid,a.content,a.addtime,b.content as ask_content,c.mobile from destoon_appknow_question_answer as a LEFT JOIN destoon_appknow_question_ask as b on a.askid = b.id LEFT JOIN destoon_ucenter_member as c on c.userid = a.uid WHERE a.askid = $id";
+        $data = M('')->query($sql);
+        foreach ($data as $k=>$v){
+            $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+        }
+        $this->assign(['data'=>$data]);
+        $this->display();
+    }
+
+    /**
+     * 回答删除
+     */
+    public function question_answer_delete(){
+        $id = I('get.id');
+        if (!empty($id)) {
+            $result = D('question_answer')->delete($id);
+            if ($result) {
+                $this->ajaxReturn(1);
+            } else {
+                $this->ajaxReturn(0);
+            }
+        } else {
+            $this->ajaxReturn(2); //参数异常
+        }
+    }
+
 }
