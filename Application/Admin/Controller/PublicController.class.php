@@ -20,11 +20,6 @@ class PublicController extends CommonController
         $Admin = M('Admin');
         if(IS_POST){
             $x = $Admin->where(['account'=>I('post.account'),'password'=>md5(I('post.password'))])->select();
-
-            dump(I('post.account')."-------".I('post.password'));
-
-            dump($Admin);
-
             if(count($x)==1){
                 session('admin_user',$x[0]);
                 header("location:".Tools::get_redirect_url());
