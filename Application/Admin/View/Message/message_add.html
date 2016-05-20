@@ -47,11 +47,11 @@
 
             $.get("{:U('Admin/Message/message_add')}",{'action':'add','title':title,'content':content,'range':range,'to_uid':to_uid},function(msg){
                 if(msg == 1){
-                    layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    layer.msg("推送成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                         parent.window.location.reload();    //刷新父页面
                     })
                 }else{
-                    layer.msg("添加失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                    layer.msg("推送失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
                         parent.window.location.reload();    //刷新父页面
                     })
                 }
