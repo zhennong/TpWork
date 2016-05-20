@@ -23,7 +23,7 @@ class PublicController extends CommonController
 
             dump(I('post.account')."-------".I('post.password'));
 
-            dump($x);
+            dump($Admin);
 
             if(count($x)==1){
                 session('admin_user',$x[0]);
