@@ -709,7 +709,7 @@ class ApiAppKnow extends Api
      * Invite Expert
      */
     public function getInviteExpert(){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1";
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1 GROUP BY a.userid ORDER BY b.score DESC";
         $data = $this->list_query($sql);
         return $data;
     }
@@ -841,7 +841,9 @@ class ApiAppKnow extends Api
             case 'get_mess_attention': //关注
                 $sql = "SELECT a.id,a.addtime,a.isread,b.mobile,c.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS c ON c.userid = b.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
-
+            case 'get_mess_sys': //系统消息
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys WHERE to_uid = {$info['userid']} ORDER BY id DESC LIMIT 10";
+                break;
             default:
                 break;
         }
@@ -862,6 +864,9 @@ class ApiAppKnow extends Api
                 break;
             case 'get_mess_attention':
                 $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention SET isread = 1 WHERE id = {$info['id']}";
+                break;
+            case 'get_mess_sys':
+                $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys SET isread = 1 WHERE id = {$info['id']}";
                 break;
             default:
                 break;
