@@ -23,6 +23,8 @@ class PublicController extends CommonController
 
             dump(I('post.account')."-------".I('post.password'));
 
+            dump($x);
+
             if(count($x)==1){
                 session('admin_user',$x[0]);
                 header("location:".Tools::get_redirect_url());
