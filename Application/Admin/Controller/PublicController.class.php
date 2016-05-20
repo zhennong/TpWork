@@ -21,7 +21,7 @@ class PublicController extends CommonController
         if(IS_POST){
             $x = $Admin->where(['account'=>I('post.account'),'password'=>md5(I('post.password'))])->select();
 
-            dump($x);
+            dump(I('post.account')."-------".I('post.password'));
 
             if(count($x)==1){
                 session('admin_user',$x[0]);
