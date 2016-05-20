@@ -709,7 +709,7 @@ class ApiAppKnow extends Api
      * Invite Expert
      */
     public function getInviteExpert(){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1";
+        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1 GROUP BY a.userid ORDER BY b.score DESC";
         $data = $this->list_query($sql);
         return $data;
     }
