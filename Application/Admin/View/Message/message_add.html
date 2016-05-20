@@ -1,0 +1,95 @@
+<extend name="Layout:ly2"/>
+
+<block name="head">
+<script type="text/javascript">
+    $(function(){
+        $('input:radio[name="range"]').change(function(){
+            var radio = $('input:radio[name="range"]:checked').val();
+            if(radio == 0){
+                $("#simple").slideUp('fast');
+            }else{
+                $("#simple").slideDown('fast');
+            }
+        })
+
+        $("#btn-submit").click(function(){
+            var title = $("input[name='title']").val();
+            var content = $("textarea").val();
+            var range = $('input:radio[name="range"]:checked').val();
+            var to_uid = $("input[name='to_uid']").val();
+
+            if (title == '') {layer.msg('标题不能为空');return false;}
+            if (content =='') {layer.msg('内容不能为空');return false;}
+            if(range == 1){
+                if (to_uid =='') {layer.msg('单点用户不能为空');return false;}
+            }
+
+            $.get("{:U('Admin/Message/message_add')}",{'action':'add','title':title,'content':content,'range':range,'to_uid':to_uid},function(msg){
+                if(msg == 1){
+                    layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        parent.window.location.reload();    //刷新父页面
+                    })
+                }else{
+                    layer.msg("添加失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        parent.window.location.reload();    //刷新父页面
+                    })
+                }
+            })
+        })
+    })
+</script>
+</block>
+
+<block name="body">
+    <div class="container-fluid">
+        <h3 id="title" align="center">推送消息</h3>
+        <div class="padding20">
+            <div class="form-horizontal p90">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">消息标题：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="title" class="form-control" id="uid" value="" />
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">消息内容：</label>
+                    <div class="col-sm-8">
+                        <textarea type="text" name="content" class="form-control" style="height:100px;" id="content" ></textarea>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户范围：</label>
+                    <div class="col-sm-8">
+                        <label class="radio-inline">
+                            <input type="radio" name="range" checked value="0"> 所有用户
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="range" value="1"> 单点用户
+                        </label>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+
+                <div class="form-group" id="simple" style="display: none;">
+                    <label class="col-sm-2 control-label">单点用户：</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="to_uid" class="form-control" id="userid" value=""/>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="reset" class="btn btn-default">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</block>
