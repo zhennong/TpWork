@@ -1,0 +1,128 @@
+<extend name="Layout:ly1"/>
+
+<block name="head">
+    <style>
+        #user_edit{
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 10,
+                aaSorting: [
+                    [0,"desc"]
+                ]
+            });
+
+            //添加
+            $('#add_question').click(function(){
+                layer.open({
+                    type: 2,
+                    title: '推送消息',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '450px'],
+                    content: '{:U("Admin/Message/message_add")}'
+                });
+            })
+
+            //删除信息
+            $('body').delegate('table tr td .delete','click',function(){
+                var id = $(this).parents('tr').data('id');
+                layer.confirm('你确定要删除吗？', {
+                    btn: ['确定','取消'], //按钮
+                    shade: [0.4, '#393D49'] //显示遮罩
+                }, function(){
+                    $.get("{:U('Admin/Message/message_delete')}",{"id": id},function(msg){
+                        if(msg == 1){
+                            layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                                $('table tr#id_'+id).remove();
+                            })
+                        }else if(msg == 2){
+                            layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000});
+                        }else{
+                            layer.msg("删除失败，1秒后自动关闭~~",{ico:1,time:1000});
+                        }
+                    })
+                });
+            })
+        });
+    </script>
+
+</block>
+
+<block name="body">
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">系统消息</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        消息列表
+                        <span class="pull-right"><a id="add_question">添加提问</a></span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-bordered table-hover table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>消息ID</th>
+                                    <th>消息标题</th>
+                                    <th>消息内容</th>
+                                    <th>推送时间</th>
+                                    <th>用户范围</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <foreach name="data" item="v">
+                                    <tr id="id_{$v.id}" data-id="{$v.id}">
+                                        <td style="width:6%;text-align: center;">{$v.id }</td>
+                                        <td style="width:20%;">{$v.title }</td>
+                                        <td style="width:40%" title="{$v.content}">{$v.content|msubstr=0,60}</td>
+                                        <td style="width:10%;text-align: center;">{$v.pubdate|date="Y-m-d",###}</td>
+                                        <td style="width:10%;text-align: center;color: red;">
+                                            <if condition="$v.mobile == 0">
+                                                所有用户
+                                                <else />
+                                                {$v.mobile}
+                                            </if>
+                                        </td>
+                                        <td style="width:6%;text-align: center;color: red;">
+                                            <if condition="$v.isread == 1">
+                                                <font color="green">已读</font>
+                                                <else />
+                                                <font color="red">未读</font>
+                                            </if>
+                                        </td>
+                                        <td style="width:10%;text-align: center;">
+                                            <a class="btn btn-danger admin_user delete">删除</a>
+                                        </td>
+                                    </tr>
+                                </foreach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+</block>
