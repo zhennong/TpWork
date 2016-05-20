@@ -66,4 +66,18 @@ class MessageController extends AuthController
         }
         $this->display();
     }
+
+    /**
+     * 获取会员ID
+     */
+    public function getMemberID(){
+        $map['mobile'] = I('get.mobile');	//账号
+        $result = D('Member')->field('userid')->where($map)->select();
+        if(!empty($result)){
+            $uid = $result[0]['userid'];
+            $this->ajaxReturn($uid);	//存在
+        }else{
+            $this->ajaxReturn(0);   //不存在
+        }
+    }
 }

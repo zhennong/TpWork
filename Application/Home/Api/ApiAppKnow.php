@@ -805,7 +805,7 @@ class ApiAppKnow extends Api
      * @return mixed 返回sql语句
      */
     function mess_count($table = "",$uid = ""){
-        $sql = "SELECT isread FROM ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} WHERE to_uid = {$uid} ORDER BY id DESC limit 10";
+        $sql = "SELECT isread FROM ".C('DATABASE_MALL_TABLE_PREFIX')."{$table} WHERE to_uid = {$uid} OR to_uid = 0 ORDER BY id DESC limit 10";
         return $this->list_query($sql);
     }
 
@@ -842,7 +842,7 @@ class ApiAppKnow extends Api
                 $sql = "SELECT a.id,a.addtime,a.isread,b.mobile,c.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS c ON c.userid = b.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
             case 'get_mess_sys': //系统消息
-                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys WHERE to_uid = {$info['userid']} ORDER BY id DESC LIMIT 10";
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys WHERE to_uid = {$info['userid']} OR to_uid = 0 ORDER BY id DESC LIMIT 10";
                 break;
             default:
                 break;

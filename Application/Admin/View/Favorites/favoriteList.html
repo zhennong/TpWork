@@ -7,7 +7,10 @@
             var Table = $('table');
             var DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
-                pageLength: 10
+                pageLength: 10,
+                aaSorting: [
+                    [0,"desc"]
+                ]
             });
         });
     </script>
