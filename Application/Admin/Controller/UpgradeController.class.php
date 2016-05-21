@@ -44,4 +44,29 @@ class UpgradeController extends AuthController {
         $this->assign(['iphone_filename'=>$iphone_filename,'android_filename'=>$android_filename,'iphone_size'=>$iphone_size,'android_size'=>$software,'version'=>$version,'name'=>$updateFileName]);
         $this->display();
     }
+
+    /**
+     * 软件版本
+     */
+    public function softVersion(){
+        $model = D('version');
+        if(I('get.action') == 'edit'){
+            $data = array();
+            $data['name'] = I('get.name');
+            $data['version'] = I('get.softversion');
+            $data['addtime'] = time();
+            $result = $model->where(['id'=>1])->save($data);
+            if ($result){
+                $this->ajaxReturn(200);
+            }else{
+                $this->ajaxReturn(0);
+            }
+        }
+
+        $data = $model->select();
+        $this->assign(['data'=>$data]);
+
+
+        $this->display();
+    }
 }
