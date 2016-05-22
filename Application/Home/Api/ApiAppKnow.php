@@ -311,12 +311,8 @@ class ApiAppKnow extends Api
      */
     public function getAskAnswers($askid, $start = null, $limit = null)
     {
-        $sql = "SELECT answer.*,
-            m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar
-            FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer
-            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid
-            LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid
-            WHERE answer.askid = {$askid} ORDER BY addtime DESC";
+        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime DESC";
+
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
@@ -719,10 +715,16 @@ class ApiAppKnow extends Api
      */
     public function setAgree($userid,$status,$from_uid,$answer_id){
         if($status == 1){
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
+//            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
+
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer SET agree_times = agree_times + 1 WHERE uid = {$userid} AND id = {$answer_id}";
+
         }else{
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times2 = agreed_times2 + 1 WHERE userid = {$userid}";
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer SET against_times = against_times + 1 WHERE uid = {$userid} AND id = {$answer_id}";
         }
+
+        $this->putLog('sql',$sql);
+
         if ($this->execute($sql)) {
             $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
             if($x){
@@ -877,6 +879,12 @@ class ApiAppKnow extends Api
         }else{
             return 220;
         }
+    }
+
+    //会员中心获取点赞个数
+    public function getAnswerAgree($uid){
+        $sql = "SELECT SUM(agree_times) AS count FROM destoon_appknow_question_answer WHERE uid = {$uid} AND agree_times > 0";
+        return $this->list_query($sql);
     }
 
     //获取最新版本
