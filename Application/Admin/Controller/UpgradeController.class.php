@@ -1,6 +1,5 @@
 <?php
 namespace Admin\Controller;
-
 use Common\Tools;
 
 class UpgradeController extends AuthController {
@@ -65,7 +64,6 @@ class UpgradeController extends AuthController {
 
         $data = $model->select();
         $this->assign(['data'=>$data]);
-
 
         $this->display();
     }
