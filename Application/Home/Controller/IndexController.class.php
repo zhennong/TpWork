@@ -296,7 +296,6 @@ class IndexController extends CommonController {
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
                 if ($api->addQuestionAnswer(I('get.'))) {
-
                     //回答问题积分设置 （每次最多3次有积分）
                     if(!S('c_q_score')){S('c_q_score',0);}
                     $count_score = S('c_q_score');
@@ -477,6 +476,11 @@ class IndexController extends CommonController {
             //点赞
             case 'set_agree':
                 $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
+                break;
+
+            //会员中心获取点赞数
+            case 'get_answer_agree':
+                $show['agree_count'] = $api->getAnswerAgree(I('get.userid'));
                 break;
 
             //添加邀请专家
