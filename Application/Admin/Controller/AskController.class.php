@@ -116,6 +116,7 @@ class AskController extends AuthController
                 $this->ajaxReturn(2); //参数异常
             }
         }
+
         /*
          * 默认显示
          */
@@ -134,8 +135,18 @@ class AskController extends AuthController
             $arealist = getAreaFullNameFromAreaID($v['areaid']);
             $edit_list[$k]['area'] = arr2str($arealist, '');
         }
-        $this->assign(['edit_list' => $edit_list]);
+
+        $sql = "SELECT * FROM destoon_appknow_category WHERE pid = 0";
+        $p_data = M()->query($sql);
+
+        $this->assign(['edit_list' => $edit_list,'p_data'=>$p_data]);
         $this->display();
+    }
+
+    public function getCategory($cat_id = 0){
+        $sql = "SELECT * FROM destoon_appknow_category WHERE pid = ".$cat_id;
+        $p_data = M()->query($sql);
+        $this->ajaxReturn($p_data);
     }
 
     /*
