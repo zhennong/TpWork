@@ -176,9 +176,33 @@ class AskController extends AuthController
         $sql = "select a.id,a.askid,a.content,a.addtime,b.content as ask_content,c.mobile from destoon_appknow_question_answer as a LEFT JOIN destoon_appknow_question_ask as b on a.askid = b.id LEFT JOIN destoon_ucenter_member as c on c.userid = a.uid WHERE a.askid = $id";
         $data = M('')->query($sql);
         foreach ($data as $k=>$v){
-            $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+            $data[$k]['addtime'] = date("Y-m-d H:i:s",$v['addtime']);
         }
         $this->assign(['data'=>$data]);
+        $this->display();
+    }
+
+    //问答添加
+    public function question_answer_add(){
+        $id = I('get.id');
+        if(!empty($id)){
+            $this->assign(['id'=>$id]);
+        }
+        $opt = I('get.action');
+        if ($opt == 'add') {
+            $data_list = array();
+            $data_list["askid"] = I('get.id');
+            $data_list["content"] = I('get.content');
+            $data_list["uid"] = I('get.userid');
+            $data_list["addtime"] = time();
+            $result = D('question_answer')->add($data_list);
+            if ($result) {
+                $this->ajaxReturn(1);
+            } else {
+                $this->ajaxReturn(0);
+            }
+        }
+
         $this->display();
     }
 

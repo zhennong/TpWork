@@ -1,0 +1,95 @@
+<extend name="Layout:ly2"/>
+
+<block name="head">
+<script type="text/javascript">
+    $(function(){
+        $('#mobile').keyup(function(){
+            var mobile = $("input[name='mobile']").val();
+            if(mobile.length == 11){
+                $.get("{:U('Admin/Expert/getMemberID')}",{"mobile":mobile},function(data){
+                    if(data > 0){
+                        $('.tips').html('会员ID：'+data);
+                        $('#userid').val(data);
+                    }else{
+                        $('.tips').html(' × 账号不存在');
+                        $('#userid').val('');
+                    }
+                }, "json");
+            }else{
+                $('.tips').html('必须为手机号码');
+                $('#userid').val('');
+            }
+        });
+
+        $("#btn-submit").click(function(){
+            var id = $("input[name='id']").val();
+            var content = $("textarea").val();
+            var userid = $("input[name='userid']").val();
+
+            if (id =='') {layer.msg('问题ID不能为空');return false;}
+            if (content =='') {layer.msg('内容不能为空');return false;}
+            if (userid =='') {layer.msg('会员ID不能为空');return false;}
+
+            $.get("{:U('Admin/Ask/question_answer_add')}",{'action':'add','id':id,'content':content,'userid':userid},function(msg){
+                if(msg == 1){
+                    layer.msg("添加成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        parent.window.location.reload();    //刷新父页面
+                    })
+                }else{
+                    layer.msg("添加失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                        parent.window.location.reload();    //刷新父页面
+                    })
+                }
+            })
+        })
+    })
+</script>
+</block>
+
+<block name="body">
+    <div class="container-fluid">
+        <h3 id="title" align="center">回复问题</h3>
+        <div class="padding20">
+            <div class="form-horizontal p90">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">问题id：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="id" class="form-control" id="id" value="{$id}" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">回复内容：</label>
+                    <div class="col-sm-10">
+                        <textarea type="text" name="content" class="form-control" rows="8" id="content"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">回复帐号：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control nobg" id="mobile" name="mobile" value="" />
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="tips">必须为手机号码</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">会员ID：</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userid" class="form-control" id="userid" value="" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="btn-submit" class="btn btn-success">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="reset" class="btn btn-default">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</block>
