@@ -311,7 +311,7 @@ class ApiAppKnow extends Api
      */
     public function getAskAnswers($askid, $start = null, $limit = null)
     {
-        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime DESC";
+        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
 
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
@@ -332,7 +332,7 @@ class ApiAppKnow extends Api
      */
     public function addQuestionAnswer($info)
     {
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,askid,content,addtime) VALUES ({$info[userid]},{$info[askid]},'{$info[content]}',{$this->now})";
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime) VALUES ({$info[userid]},'{$info[reply_nickname]}',{$info[askid]},'{$info[content]}',{$this->now})";
         return $this->execute($sql);
     }
 
