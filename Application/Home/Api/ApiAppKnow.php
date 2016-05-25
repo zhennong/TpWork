@@ -332,7 +332,13 @@ class ApiAppKnow extends Api
      */
     public function addQuestionAnswer($info)
     {
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime) VALUES ({$info[userid]},'{$info[reply_nickname]}',{$info[askid]},'{$info[content]}',{$this->now})";
+        if(empty($info[reply_nickname])){
+            $reply_nickname = 0;
+        }else{
+            $reply_nickname = $info[reply_nickname];
+        }
+
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now})";
         return $this->execute($sql);
     }
 
