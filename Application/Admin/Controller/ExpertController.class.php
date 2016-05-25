@@ -25,6 +25,19 @@ class ExpertController extends AuthController
     }
 
     /**
+     * ajax专家列表
+     */
+    public function ajaxExpertList(){
+        $data = $this->getExpertInfo();
+        foreach($data AS $k=>$v){
+            $data[$k] = $v;
+            $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
+        }
+        $arr['data'] = $data;
+        $this->ajaxReturn($arr);
+    }
+
+    /**
      * 获取会员ID
      */
     public function getMemberID(){
