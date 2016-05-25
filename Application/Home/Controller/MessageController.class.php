@@ -158,7 +158,6 @@ class MessageController extends CommonController {
         }else{
             echo "data:0\n\n";
         }
-
         flush();
     }
 }
