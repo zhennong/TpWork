@@ -15,6 +15,19 @@ class MemberController extends AuthController {
     }
 
     /**
+     * ajax会员列表
+     */
+    public function ajaxMemberList(){
+        $data = $this->getMemberInfo();
+        foreach($data AS $k=>$v){
+            $data[$k] = $v;
+            $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
+        }
+        $arr['data'] = $data;
+        $this->ajaxReturn($arr);
+    }
+
+    /**
      * 获取用户详细信息
      * @param $userid
      * @return mixed
