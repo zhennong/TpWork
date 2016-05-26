@@ -500,6 +500,16 @@ class IndexController extends CommonController {
                 $show['ver'] = $api->version($oldver);
                 break;
 
+            //设置邀请码
+            case 'set_apply_code':
+                $show['status'] = $api->setApplyCode(I('get.userid'));
+                break;
+
+            //获取邀请码
+            case 'get_apply_code':
+                $show['code'] = $api->getApplyCode(I('get.userid'));
+                break;
+
             // 测试
             case 'test':
 

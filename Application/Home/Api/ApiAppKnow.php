@@ -864,6 +864,7 @@ class ApiAppKnow extends Api
         return $this->list_query($sql);
     }
 
+    //判断是否已经阅读
     public function isRead($info){
         switch ($info['opt']){
             case 'get_mess_tips':
@@ -909,4 +910,30 @@ class ApiAppKnow extends Api
         }
     }
 
+    //邀请码生成函数
+    public function ApplyCodeRand($length, $chars = '0123456789abcdefghijklmnopqrstuvwxyz'){
+        $hash = '';
+        $max = strlen($chars) - 1;
+        for($i = 0; $i < $length; $i++) {
+            $hash .= $chars[mt_rand(0, $max)];
+        }
+        return $hash;
+    }
+
+    //设置邀请码
+    public function setApplyCode($uid){
+        $code = $this->ApplyCodeRand(10);
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET apply_code = '{$code}' WHERE userid = {$uid}";
+        if($this->execute($sql)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    //获取邀请码
+    public function getApplyCode($uid){
+        $sql = "SELECT apply_code FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
+        return $this->list_query($sql);
+    }
 }
