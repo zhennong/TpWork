@@ -257,7 +257,7 @@ class IndexController extends CommonController {
 
             // 获取问答列表
             case 'get_ask_list':
-                $x = $api->getAskList(I('get.start'), I('get.limit'), I('get.cat_id'));
+                $x = $api->getAskList(I('get.start'), I('get.limit'), I('get.cat_id'), I('get.keyword'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = date("Y-m-d", $v['addtime']);
                     for ($i = 0; $i < 6; $i++) {

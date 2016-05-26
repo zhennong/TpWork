@@ -259,12 +259,16 @@ class ApiAppKnow extends Api
      * 获取提问列表
      * @param $userid
      */
-    public function getAskList($start = null, $limit = null,$cat_id = null)
+    public function getAskList($start = null, $limit = null,$cat_id = null,$keyword = null)
     {
         $where = "WHERE 1=1";
         if($cat_id != null){
             $where .= " AND catid = {$cat_id}";
         }
+        if($keyword != null){
+            $where .= " AND content like '%{$keyword}%'";
+        }
+
         $sql = "SELECT ask.*,profile.nickname,profile.areaid,profile.address,profile.avatar,profile.location,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
@@ -272,6 +276,7 @@ class ApiAppKnow extends Api
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
+
         $x = $this->list_query($sql);
         foreach ($x as $k => $v) {
             if (!$v['nickname']) {
