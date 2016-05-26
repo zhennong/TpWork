@@ -238,9 +238,9 @@ class ApiAppKnow extends Api
     public function setAppknowMemberProfile($info)
     {
         if ($this->getAppknowMemberProfile($info[userid])) {
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}' WHERE userid = {$info[userid]}";
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
         } else {
-            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}')";
+            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location,instro) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}','{$info[instro]}')";
         }
         return $this->execute($sql);
     }
