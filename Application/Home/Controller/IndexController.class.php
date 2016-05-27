@@ -525,6 +525,11 @@ class IndexController extends CommonController {
                 $show['code'] = $api->checkApplyCode(I('get.apply_code'));
                 break;
 
+            //获取我的邀请列表
+            case 'get_my_apply_code':
+                $show['my_apply_list'] = $api->getMyApplyCode(I('get.apply_code'));
+                break;
+
             // 测试
             case 'test':
                 //$show['code'] = $api->addApplyCodeScore('xwppe1i3zf');

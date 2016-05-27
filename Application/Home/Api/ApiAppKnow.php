@@ -957,8 +957,16 @@ class ApiAppKnow extends Api
     //邀请码加积分
     public function addApplyCodeScore($code){
         $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 50 WHERE apply_code = '{$code}'";
-        return $sql;
+        $this->execute($sql);
+    }
 
-        //$this->execute($sql);
+    //获取我的邀请列表
+    public function getMyApplyCode($code){
+        $sql = "SELECT b.mobile,b.addtime FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.uid WHERE a.apply_code = '{$code}'";
+        $data = $this->list_query($sql);
+        foreach ($data AS $key=>$value){
+            $data[$key]['addtime'] = date('Y-m-d',$value['addtime']);
+        }
+        return $data;
     }
 }
