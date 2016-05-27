@@ -67,6 +67,16 @@ class IndexController extends CommonController {
                         $show['status'] = $api->register(I('get.'));
                         if ($show['status'] = 200) {
                             $show['member_info'] = $api->getUserFromMobile(I('get.mobile'));
+
+                            //判断邀请码是否存在
+                            $code = $api->checkApplyCode(I('get.apply_code'));
+                            if($code == 1){
+                                // 推荐会员加 50积分
+                                $api->addApplyCodeScore(I('get.apply_code'));
+
+                                // 邀请信息添加到邀请表
+                                $api->addApplyCode(I('get.apply_code'),$show['member_info'][0]['userid']);
+                            }
                         }
                     }
                 }
@@ -510,9 +520,14 @@ class IndexController extends CommonController {
                 $show['code'] = $api->getApplyCode(I('get.userid'));
                 break;
 
+            //检查邀请码是否存在
+            case 'check_apply_code':
+                $show['code'] = $api->checkApplyCode(I('get.apply_code'));
+                break;
+
             // 测试
             case 'test':
-
+                //$show['code'] = $api->addApplyCodeScore('xwppe1i3zf');
                 break;
 
             default:

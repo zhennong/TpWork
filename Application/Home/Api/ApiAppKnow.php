@@ -936,4 +936,29 @@ class ApiAppKnow extends Api
         $sql = "SELECT apply_code FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
         return $this->list_query($sql);
     }
+
+    //判断邀请码是否存在
+    public function checkApplyCode($code){
+        $sql = "SELECT count(*) AS count FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE apply_code = '{$code}'";
+        $data = $this->list_query($sql);
+        if($data[0]['count'] > 0){
+            return 1;  //已存在
+        }else{
+            return 0;  //未存在
+        }
+    }
+
+    //添加邀请码
+    public function addApplyCode($apply_code,$uid){
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}}',{$uid},{$this->now})";
+        $this->execute($sql);
+    }
+
+    //邀请码加积分
+    public function addApplyCodeScore($code){
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 50 WHERE apply_code = '{$code}'";
+        return $sql;
+
+        //$this->execute($sql);
+    }
 }
