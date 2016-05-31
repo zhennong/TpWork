@@ -517,8 +517,7 @@ class IndexController extends CommonController {
 
             //获取邀请码
             case 'get_apply_code':
-                $api->putLog('userid',I('get.userid'));
-                $show['code'] = $api->getApplyCode(22);
+                $show['code'] = $api->getApplyCode(I('get.userid'));
                 break;
 
             //检查邀请码是否存在

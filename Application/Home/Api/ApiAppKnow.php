@@ -925,7 +925,7 @@ class ApiAppKnow extends Api
 
     //设置邀请码
     public function setApplyCode($uid){
-        $code = $this->ApplyCodeRand(10);
+        $code = $this->ApplyCodeRand(7);
         $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET apply_code = '{$code}' WHERE userid = {$uid}";
         if($this->execute($sql)){
             return 1;
