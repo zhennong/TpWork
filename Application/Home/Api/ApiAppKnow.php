@@ -238,9 +238,9 @@ class ApiAppKnow extends Api
     public function setAppknowMemberProfile($info)
     {
         if ($this->getAppknowMemberProfile($info[userid])) {
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}' WHERE userid = {$info[userid]}";
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
         } else {
-            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}')";
+            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location,instro) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}','{$info[instro]}')";
         }
         return $this->execute($sql);
     }
@@ -521,6 +521,9 @@ class ApiAppKnow extends Api
 
         //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
+
+        $this->putLog('sql',$sql);
+
         $this->execute($sql);
     }
 
@@ -864,6 +867,7 @@ class ApiAppKnow extends Api
         return $this->list_query($sql);
     }
 
+    //判断是否已经阅读
     public function isRead($info){
         switch ($info['opt']){
             case 'get_mess_tips':
@@ -909,4 +913,102 @@ class ApiAppKnow extends Api
         }
     }
 
+    //邀请码生成函数
+    public function ApplyCodeRand($length, $chars = '0123456789abcdefghijklmnopqrstuvwxyz'){
+        $hash = '';
+        $max = strlen($chars) - 1;
+        for($i = 0; $i < $length; $i++) {
+            $hash .= $chars[mt_rand(0, $max)];
+        }
+        return $hash;
+    }
+
+    //设置邀请码
+    public function setApplyCode($uid){
+        $code = $this->ApplyCodeRand(10);
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET apply_code = '{$code}' WHERE userid = {$uid}";
+        if($this->execute($sql)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    //获取邀请码
+    public function getApplyCode($uid){
+        $sql = "SELECT apply_code FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
+        $this->putLog('sql',$sql);
+        return $this->list_query($sql);
+    }
+
+    //判断邀请码是否存在
+    public function checkApplyCode($code){
+        $sql = "SELECT count(*) AS count FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE apply_code = '{$code}'";
+        $data = $this->list_query($sql);
+        if($data[0]['count'] > 0){
+            return 1;  //已存在
+        }else{
+            return 0;  //未存在
+        }
+    }
+
+    //添加邀请码
+    public function addApplyCode($apply_code,$uid){
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}}',{$uid},{$this->now})";
+        $this->execute($sql);
+    }
+
+    //邀请码加积分
+    public function addApplyCodeScore($code){
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 50 WHERE apply_code = '{$code}'";
+        $this->execute($sql);
+    }
+
+    //获取我的邀请列表
+    public function getMyApplyCode($code){
+        $sql = "SELECT b.mobile,b.addtime FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.uid WHERE a.apply_code = '{$code}'";
+        $data = $this->list_query($sql);
+        foreach ($data AS $key=>$value){
+            $data[$key]['addtime'] = date('Y-m-d',$value['addtime']);
+        }
+        return $data;
+    }
+
+    /**
+     * 获取用户信息
+     * @param $uid 用户ID
+     * @param $type 类型  0 关注  1 粉丝
+     * @return mixed
+     */
+    public function getUserInfo($uid,$type){
+        switch($type){
+            case 'attention':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$uid}";
+                break;
+
+            case 'fans':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE fans_uid = {$uid}";
+                break;
+            case 'ask':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask WHERE uid = {$uid}";
+                break;
+
+            case 'answer':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid}";
+                break;
+
+            case 'agree_times':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid} AND agree_times > 0";
+                break;
+
+            case 'against_times':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid} AND against_times > 0";
+                break;
+
+            default:
+                break;
+        }
+
+        return $this->list_query($sql);
+    }
 }

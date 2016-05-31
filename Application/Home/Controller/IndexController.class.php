@@ -67,6 +67,16 @@ class IndexController extends CommonController {
                         $show['status'] = $api->register(I('get.'));
                         if ($show['status'] = 200) {
                             $show['member_info'] = $api->getUserFromMobile(I('get.mobile'));
+
+                            //判断邀请码是否存在
+                            $code = $api->checkApplyCode(I('get.apply_code'));
+                            if($code == 1){
+                                // 推荐会员加 50积分
+                                $api->addApplyCodeScore(I('get.apply_code'));
+
+                                // 邀请信息添加到邀请表
+                                $api->addApplyCode(I('get.apply_code'),$show['member_info'][0]['userid']);
+                            }
                         }
                     }
                 }
@@ -500,9 +510,60 @@ class IndexController extends CommonController {
                 $show['ver'] = $api->version($oldver);
                 break;
 
+            //设置邀请码
+            case 'set_apply_code':
+                $show['status'] = $api->setApplyCode(I('get.userid'));
+                break;
+
+            //获取邀请码
+            case 'get_apply_code':
+                $api->putLog('userid',I('get.userid'));
+                $show['code'] = $api->getApplyCode(22);
+                break;
+
+            //检查邀请码是否存在
+            case 'check_apply_code':
+                $show['code'] = $api->checkApplyCode(I('get.apply_code'));
+                break;
+
+            //获取我的邀请列表
+            case 'get_my_apply_code':
+                $show['my_apply_list'] = $api->getMyApplyCode(I('get.apply_code'));
+                break;
+
+            //获取我的关注 (个人信息展示)
+            case 'get_user_attention':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'attention'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_fans':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'fans'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_ask':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'fans'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_answer':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'answer'));
+                break;
+
+            //获取同意 (个人信息展示)
+            case 'agree_times':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'agree_times'));
+                break;
+
+            //获取不同意 (个人信息展示)
+            case 'against_times':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'against_times'));
+                break;
+
             // 测试
             case 'test':
-
+                //$show['code'] = $api->addApplyCodeScore('xwppe1i3zf');
                 break;
 
             default:
