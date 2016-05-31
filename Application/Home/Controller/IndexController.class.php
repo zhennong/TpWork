@@ -517,7 +517,8 @@ class IndexController extends CommonController {
 
             //获取邀请码
             case 'get_apply_code':
-                $show['code'] = $api->getApplyCode(I('get.userid'));
+                $api->putLog('userid',I('get.userid'));
+                $show['code'] = $api->getApplyCode(22);
                 break;
 
             //检查邀请码是否存在
@@ -528,6 +529,36 @@ class IndexController extends CommonController {
             //获取我的邀请列表
             case 'get_my_apply_code':
                 $show['my_apply_list'] = $api->getMyApplyCode(I('get.apply_code'));
+                break;
+
+            //获取我的关注 (个人信息展示)
+            case 'get_user_attention':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'attention'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_fans':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'fans'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_ask':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'fans'));
+                break;
+
+            //获取我的粉丝 (个人信息展示)
+            case 'get_user_answer':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'answer'));
+                break;
+
+            //获取同意 (个人信息展示)
+            case 'agree_times':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'agree_times'));
+                break;
+
+            //获取不同意 (个人信息展示)
+            case 'against_times':
+                $show['count'] = count($api->getUserInfo(I('get.userid'),'against_times'));
                 break;
 
             // 测试

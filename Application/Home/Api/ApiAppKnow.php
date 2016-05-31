@@ -521,6 +521,9 @@ class ApiAppKnow extends Api
 
         //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
+
+        $this->putLog('sql',$sql);
+
         $this->execute($sql);
     }
 
@@ -934,6 +937,7 @@ class ApiAppKnow extends Api
     //获取邀请码
     public function getApplyCode($uid){
         $sql = "SELECT apply_code FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
+        $this->putLog('sql',$sql);
         return $this->list_query($sql);
     }
 
@@ -968,5 +972,43 @@ class ApiAppKnow extends Api
             $data[$key]['addtime'] = date('Y-m-d',$value['addtime']);
         }
         return $data;
+    }
+
+    /**
+     * 获取用户信息
+     * @param $uid 用户ID
+     * @param $type 类型  0 关注  1 粉丝
+     * @return mixed
+     */
+    public function getUserInfo($uid,$type){
+        switch($type){
+            case 'attention':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$uid}";
+                break;
+
+            case 'fans':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE fans_uid = {$uid}";
+                break;
+            case 'ask':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask WHERE uid = {$uid}";
+                break;
+
+            case 'answer':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid}";
+                break;
+
+            case 'agree_times':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid} AND agree_times > 0";
+                break;
+
+            case 'against_times':
+                $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$uid} AND against_times > 0";
+                break;
+
+            default:
+                break;
+        }
+
+        return $this->list_query($sql);
     }
 }
