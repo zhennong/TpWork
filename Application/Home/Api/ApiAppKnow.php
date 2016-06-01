@@ -719,8 +719,25 @@ class ApiAppKnow extends Api
      * Invite Expert
      */
     public function getInviteExpert(){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1 GROUP BY a.userid ORDER BY b.score DESC";
+//        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1 GROUP BY a.userid ORDER BY b.score DESC";
+//        $data = $this->list_query($sql);
+//        return $data;
+
+        $sql = "SELECT a.userid,a.`name`,a.good_at_crop,b.nickname,b.avatar,c.to_uid FROM destoon_appknow_expert_profile AS a LEFT JOIN destoon_appknow_member_profile AS b ON b.userid = a.userid LEFT JOIN destoon_appknow_message_invite AS c ON c.to_uid = a.userid WHERE a.`status` = 1 GROUP BY a.userid ORDER BY b.score DESC";
         $data = $this->list_query($sql);
+
+        foreach ($data as $k=>$v){
+            $sql2 = "select sum(agree_times) as agreed_times from destoon_appknow_question_answer where uid = {$v['userid']} and agree_times > 0";
+
+            $sql3 = "SELECT count(*) AS fans_nums FROM `destoon_appknow_member_fans` WHERE attention_uid = {$v['userid']};";
+
+            $data2 = $this->list_query($sql2);
+            $data3 = $this->list_query($sql3);
+
+            $data[$k] = $v;
+            $data[$k]['agreed_times'] = $data2[0]['agreed_times'];
+            $data[$k]['fans_nums'] = $data3[0]['fans_nums'];
+        }
         return $data;
     }
 

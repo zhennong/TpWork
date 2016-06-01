@@ -562,7 +562,7 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-                //$show['code'] = $api->addApplyCodeScore('xwppe1i3zf');
+
                 break;
 
             default:
