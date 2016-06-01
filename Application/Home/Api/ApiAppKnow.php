@@ -723,7 +723,7 @@ class ApiAppKnow extends Api
 //        $data = $this->list_query($sql);
 //        return $data;
 
-        $sql = "SELECT a.userid,a.`name`,a.good_at_crop,b.nickname,b.avatar,c.to_uid FROM destoon_appknow_expert_profile AS a LEFT JOIN destoon_appknow_member_profile AS b ON b.userid = a.userid LEFT JOIN destoon_appknow_message_invite AS c ON c.to_uid = a.userid WHERE a.`status` = 1 GROUP BY a.userid ORDER BY b.score DESC";
+        $sql = "SELECT a.userid,a.`name`,a.good_at_crop,b.nickname,b.avatar,b.truename,c.to_uid FROM destoon_appknow_expert_profile AS a LEFT JOIN destoon_appknow_member_profile AS b ON b.userid = a.userid LEFT JOIN destoon_appknow_message_invite AS c ON c.to_uid = a.userid WHERE a.`status` = 1 GROUP BY a.userid ORDER BY b.score DESC";
         $data = $this->list_query($sql);
 
         foreach ($data as $k=>$v){
