@@ -88,7 +88,7 @@ class ApiAppKnow extends Api
 
                 $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
             }else{
-                $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'image/defaultx20.jpg'];
+                $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'Uploads/image/defaultx20.jpg'];
             }
         }
         return $x;
