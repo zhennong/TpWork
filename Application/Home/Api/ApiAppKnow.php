@@ -484,7 +484,7 @@ class ApiAppKnow extends Api
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask WHERE uid = {$userid} ORDER BY addtime DESC";
         $x = $this->list_query($sql);
         foreach ($x as $k => $v) {
-            $x[$k]['addtime'] = date("Y-m-d H:i", $v['addtime']);
+            $x[$k]['addtime'] = date("Y-m-d", $v['addtime']);
         }
         return $x;
     }
