@@ -316,7 +316,7 @@ class ApiAppKnow extends Api
      */
     public function getAskAnswers($askid, $start = null, $limit = null)
     {
-        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.areaid,profile.agreed_times,profile.agreed_times2,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
+        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.areaid,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
 
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
@@ -337,7 +337,7 @@ class ApiAppKnow extends Api
      */
     public function addQuestionAnswer($info)
     {
-        if(empty($info[reply_nickname])){
+        if(empty($info[reply_nickname])||$info[reply_nickname] == null){
             $reply_nickname = 0;
         }else{
             $reply_nickname = $info[reply_nickname];
@@ -511,6 +511,7 @@ class ApiAppKnow extends Api
             return 221;
             exit();
         }
+
         if (count($this->getAttention($info[attention_uid], $info[fans_uid])) > 0) {
             return 217;
             exit();
