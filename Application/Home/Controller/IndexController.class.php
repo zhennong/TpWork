@@ -563,6 +563,9 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
+                $arr = explode(',',$api->scws('小麦黄粉病怎么治疗'));
+                $show['count'] = $arr;
+
                 break;
 
             default:
