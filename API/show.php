@@ -22,8 +22,8 @@ function replace($str){
 	$str = str_replace("window.location.href = \"/","window.location.href = \"http://appserver.nongyaotong.com/",$str);
 	$str = str_replace("action=\"/","action=\"http://appserver.nongyaotong.com/",$str);
 	$str = str_replace("http://www.v-dz.com//res/html/0e58e632-b320-4f4f-9819-cd02fff0c990.html","javascript:void(0)",$str);
-	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/search8","/Snoopy/index.php",$str);
-	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/showBQDtl","/Snoopy/showBQDtl.php",$str);
+	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/search8","javascript:history.back(-1)",$str);
+	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/showBQDtl","showBQDtl.php",$str);
 	
 	$str = str_replace("</head>","<link rel=\"stylesheet\" type=\"text/css\" href=\"css/override.css\" /></head>",$str);
 	
