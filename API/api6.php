@@ -51,7 +51,7 @@ function replace($str){
 	
 	$str = str_replace("href=\"http://www.191.cn/javascript:;","href=\"javascript:;",$str);
 	
-	$str = str_replace("href=\"http://www.191.cn//hack.php","href=\"/Snoopy/show3.php",$str);
+	$str = str_replace("href=\"http://www.191.cn//hack.php","href=\"show3.php",$str);
 	$str = str_replace("data-icon=\"grid\"","style=\"display:none;\"",$str);
 	$str = str_replace("href=\"/Snoopy/show3.php?H_name=registration&c=f_nongyebu\"","href=\"javascript:;\" onclick=\"history.go(-1)\"",$str);
 	
