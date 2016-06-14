@@ -49,9 +49,9 @@ function replace($str){
 	$str = str_replace("data-role=\"footer\"","style=\"display:none;\"",$str);
 	$str = str_replace("window.location.href = \"/","window.location.href = \"http://appserver.nongyaotong.com/",$str);
 	$str = str_replace("action=\"/","action=\"http://appserver.nongyaotong.com/",$str);
-	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/showDtl","/Snoopy/show.php",$str);
-	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/search","/Snoopy/api.php",$str);
-	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/page_8?header=&footer=","/Snoopy/nysz.php",$str);
+	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/showDtl","show.php",$str);
+	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/search","api.php",$str);
+	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/page_8?header=&footer=","nysz.php",$str);
 	$str = str_replace("http://appserver.nongyaotong.com/nyt_wx/page_1_1?header=&footer=","javascript:history.back(-1)",$str);
 	
 	$str = str_replace("#e4c4c4","#f8f8f8",$str);
