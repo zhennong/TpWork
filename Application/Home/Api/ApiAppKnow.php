@@ -36,9 +36,16 @@ class ApiAppKnow extends Api
 
     //积分设置（分值）
     public $score_arr = array(
-        'sa_login' => 1,        //用户登录
-        'sa_questions' => 3,    //用户提问问题
-        'sa_answer' => 5,       //用户回答问题
+        'sa_login' => 1,            //用户登录 +1
+        'sa_questions' => 1,        //用户提问问题 +1
+        'sa_answer' => 2,           //用户回答问题 +2
+
+        'sa_share' => 50,           //每天分享微信、朋友圈、QQ空间 +50
+        'sa_code' => 100,           //推荐好友并填写个人推荐码各得 +100
+        'sa_agree_times' => 1,      //被点赞得积分 同意 +1
+        'sa_against_times' => 1,    //被点赞得积分 不同意 -1
+        'sa_profile' => 10,         //完善个人资料得积分 +10
+        'sa_feedback' => 2          //一键反馈得积分 +2
     );
 
     public $tablePrefix;
@@ -986,10 +993,18 @@ class ApiAppKnow extends Api
         $this->execute($sql);
     }
 
-    //邀请码加积分
-    public function addApplyCodeScore($code){
-        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 50 WHERE apply_code = '{$code}'";
+    /**
+     * 邀请码加积分
+     * @param $userid 新注册会员ID
+     * @param $code   邀请码会员
+     */
+    public function addApplyCodeScore($userid,$code){
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 100 WHERE apply_code = '{$code}'";
+
+        $sql2 = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 100 WHERE userid = '{$userid}'";
+
         $this->execute($sql);
+        $this->execute($sql2);
     }
 
     //获取我的邀请列表

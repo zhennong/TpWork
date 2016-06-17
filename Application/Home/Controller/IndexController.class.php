@@ -71,8 +71,8 @@ class IndexController extends CommonController {
                             //判断邀请码是否存在
                             $code = $api->checkApplyCode(I('get.apply_code'));
                             if($code == 1){
-                                // 推荐会员加 50积分
-                                $api->addApplyCodeScore(I('get.apply_code'));
+                                // 双方各加 100积分
+                                $api->addApplyCodeScore($show['member_info'][0]['userid'],I('get.apply_code'));
 
                                 // 邀请信息添加到邀请表
                                 $api->addApplyCode(I('get.apply_code'),$show['member_info'][0]['userid']);
@@ -172,6 +172,8 @@ class IndexController extends CommonController {
                 $x = $api->setAppknowMemberProfile($info);
                 if (!$x) {
                     $show['status'] = 212;
+                }else{
+                    $api->addScore(I('get.userid'),'sa_profile');
                 }
                 break;
 
@@ -326,6 +328,8 @@ class IndexController extends CommonController {
             case 'submit_feed_back':
                 if (!$api->addFeedBack(I('get.'))) {
                     $show['status'] = 215;
+                }else{
+                    $api->addScore(I('get.userid'),'sa_feedback');
                 }
                 break;
 
@@ -486,6 +490,9 @@ class IndexController extends CommonController {
             //点赞
             case 'set_agree':
                 $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
+                if(I('get.status') == 1){
+                    $api->addScore(I('get.to_uid'),'sa_agree_times');
+                }
                 break;
 
             //会员中心获取点赞数
