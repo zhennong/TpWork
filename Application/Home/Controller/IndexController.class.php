@@ -567,6 +567,17 @@ class IndexController extends CommonController {
                 $show['count'] = count($api->getUserInfo(I('get.userid'),'against_times'));
                 break;
 
+            //分享成功后增加积分
+            case 'add_share_score':
+                $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
+
+                $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
+                $now_time = date('Y-m-d',time());
+                if($now_time != $last_time){
+                    $api->addScore(I('get.userid'),'sa_share');
+                }
+                break;
+
             // 测试
             case 'test':
 
