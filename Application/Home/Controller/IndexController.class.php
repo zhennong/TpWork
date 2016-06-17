@@ -159,11 +159,13 @@ class IndexController extends CommonController {
                 $show['parent_areas'] = $x;
 
                 //登录积分设置 每天累加一分
-                $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
-                $now_time = date('Y-m-d',time());
-                if($now_time != $last_time){
+                $last_time = $show['member_profile'][0]['last_login_time'];
+                $now_time = time();
+                $timestamp = $now_time - $last_time;
+                if($timestamp > 86400){  //24h 后才可以累加积分
                     $api->addScore(I('get.userid'),'sa_login');
                 }
+
                 break;
 
             // 设置个人信息
@@ -173,7 +175,15 @@ class IndexController extends CommonController {
                 if (!$x) {
                     $show['status'] = 212;
                 }else{
-                    $api->addScore(I('get.userid'),'sa_profile');
+                    $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
+
+                    //登录积分设置 每天累加一分
+                    $last_time = $show['member_profile'][0]['last_login_time'];
+                    $now_time = time();
+                    $timestamp = $now_time - $last_time;
+                    if($timestamp > 86400){  //24h 后才可以累加积分
+                        $api->addScore(I('get.userid'),'sa_profile');
+                    }
                 }
                 break;
 
@@ -571,9 +581,10 @@ class IndexController extends CommonController {
             case 'add_share_score':
                 $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
 
-                $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
-                $now_time = date('Y-m-d',time());
-                if($now_time != $last_time){
+                $last_time = $show['member_profile'][0]['last_login_time'];
+                $now_time = time();
+                $timestamp = $now_time - $last_time;
+                if($timestamp > 86400){  //24h 后才可以累加积分
                     $api->addScore(I('get.userid'),'sa_share');
                 }
                 break;
@@ -581,8 +592,7 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
-                $arr = explode(',',$api->scws('小麦黄粉病怎么治疗'));
-                $show['count'] = $arr;
+                //测试
 
                 break;
 

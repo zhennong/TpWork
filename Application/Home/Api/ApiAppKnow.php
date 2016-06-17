@@ -39,7 +39,6 @@ class ApiAppKnow extends Api
         'sa_login' => 1,            //用户登录 +1
         'sa_questions' => 1,        //用户提问问题 +1
         'sa_answer' => 2,           //用户回答问题 +2
-
         'sa_share' => 50,           //每天分享微信、朋友圈、QQ空间 +50
         'sa_code' => 100,           //推荐好友并填写个人推荐码各得 +100
         'sa_agree_times' => 1,      //被点赞得积分 同意 +1
