@@ -99,6 +99,12 @@ class ExpertController extends AuthController
                 $result = D('Expert')->where(['userid'=>$uid])->save($data);
                 if($result){
                     $this->ajaxReturn(1);
+
+                    //审核通过 增加50积分
+                    if(I('get.status') == 1){
+                        D('Member')->where(['userid'=>$uid])->setInc('score',50);
+                    }
+
                 }else{
                     $this->ajaxReturn(0);
                 }
