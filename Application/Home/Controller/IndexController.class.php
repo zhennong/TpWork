@@ -162,6 +162,9 @@ class IndexController extends CommonController {
                 $last_time = $show['member_profile'][0]['last_login_time'];
                 $now_time = time();
                 $timestamp = $now_time - $last_time;
+
+                $api->putLog('last_time',$last_time);
+
                 if($timestamp > 86400){  //24h 后才可以累加积分
                     $api->addScore(I('get.userid'),'sa_login');
                 }
