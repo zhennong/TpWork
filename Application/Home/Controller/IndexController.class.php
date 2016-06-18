@@ -71,8 +71,8 @@ class IndexController extends CommonController {
                             //判断邀请码是否存在
                             $code = $api->checkApplyCode(I('get.apply_code'));
                             if($code == 1){
-                                // 推荐会员加 50积分
-                                $api->addApplyCodeScore(I('get.apply_code'));
+                                // 双方各加 100积分
+                                $api->addApplyCodeScore($show['member_info'][0]['userid'],I('get.apply_code'));
 
                                 // 邀请信息添加到邀请表
                                 $api->addApplyCode(I('get.apply_code'),$show['member_info'][0]['userid']);
@@ -159,11 +159,13 @@ class IndexController extends CommonController {
                 $show['parent_areas'] = $x;
 
                 //登录积分设置 每天累加一分
-                $last_time = date('Y-m-d',$show['member_profile'][0]['last_login_time']);
-                $now_time = date('Y-m-d',time());
-                if($now_time != $last_time){
+                $last_time = $show['member_profile'][0]['last_login_time'];
+                $now_time = time();
+                $timestamp = $now_time - $last_time;
+                if($timestamp > 86400){  //24h 后才可以累加积分
                     $api->addScore(I('get.userid'),'sa_login');
                 }
+
                 break;
 
             // 设置个人信息
@@ -172,6 +174,16 @@ class IndexController extends CommonController {
                 $x = $api->setAppknowMemberProfile($info);
                 if (!$x) {
                     $show['status'] = 212;
+                }else{
+                    $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
+
+                    //登录积分设置 每天累加一分
+                    $last_time = $show['member_profile'][0]['last_login_time'];
+                    $now_time = time();
+                    $timestamp = $now_time - $last_time;
+                    if($timestamp > 86400){  //24h 后才可以累加积分
+                        $api->addScore(I('get.userid'),'sa_profile');
+                    }
                 }
                 break;
 
@@ -326,6 +338,8 @@ class IndexController extends CommonController {
             case 'submit_feed_back':
                 if (!$api->addFeedBack(I('get.'))) {
                     $show['status'] = 215;
+                }else{
+                    $api->addScore(I('get.userid'),'sa_feedback');
                 }
                 break;
 
@@ -486,6 +500,9 @@ class IndexController extends CommonController {
             //点赞
             case 'set_agree':
                 $show['status'] = $api->setAgree(I('get.to_uid'),I('get.status'),I('get.from_uid'),I('get.id'));
+                if(I('get.status') == 1){
+                    $api->addScore(I('get.to_uid'),'sa_agree_times');
+                }
                 break;
 
             //会员中心获取点赞数
@@ -560,11 +577,22 @@ class IndexController extends CommonController {
                 $show['count'] = count($api->getUserInfo(I('get.userid'),'against_times'));
                 break;
 
+            //分享成功后增加积分
+            case 'add_share_score':
+                $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
+
+                $last_time = $show['member_profile'][0]['last_login_time'];
+                $now_time = time();
+                $timestamp = $now_time - $last_time;
+                if($timestamp > 86400){  //24h 后才可以累加积分
+                    $api->addScore(I('get.userid'),'sa_share');
+                }
+                break;
+
             // 测试
             case 'test':
 
-                $arr = explode(',',$api->scws('小麦黄粉病怎么治疗'));
-                $show['count'] = $arr;
+                //测试
 
                 break;
 
