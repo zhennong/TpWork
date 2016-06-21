@@ -18,10 +18,7 @@ $(function(){
         if (name == '') {layer.msg('专家名不能为空');return false;}
 
         $.get("{:U('Admin/Expert/expert_edit')}",{'action':'edit','userid':userid,'name':name,'expert_type':expert_type,'good_at_crop':good_at_crop,'good_at_area':good_at_area,'qq':qq,'postion':postion,'company':company,'content':content,'status':status},function(msg){
-
-            console.log(JSON.stringify(msg));
-
-            /*if(msg == 1){
+            if(msg == 1){
                 layer.msg("更新成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
                     parent.window.location.reload();    //刷新父页面
                 })
@@ -33,7 +30,7 @@ $(function(){
                 layer.msg("更新失败，1秒后自动关闭~~",{ico:1,time:1000},function(){
                     parent.window.location.reload();    //刷新父页面
                 })
-            }*/
+            }
         })
     })
 })
