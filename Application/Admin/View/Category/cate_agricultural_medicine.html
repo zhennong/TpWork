@@ -18,7 +18,8 @@
                 });
             }).draw();
             // 添加
-            $('body').delegate('table tr td #add_cate','click',function(){
+            //$('body').on('click','table tr td #add_cate',function(){
+            $("#add_cate").click(function(){
                 $("#opt_cate_div").show();
                 $("#opt_form_reset").trigger('click');
                 $("input[name='operate']").val('add_cate');
@@ -27,6 +28,7 @@
                 $("select[name='pid']").get(0).value = 0;
                 location.href = "#opt_cate_div";
             });
+
             $('body').delegate('table tr td .add_cate','click',function(){
                 tr = $(this).closest('tr');
                 $("#opt_cate_div").show();
