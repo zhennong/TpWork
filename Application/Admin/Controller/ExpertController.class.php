@@ -9,6 +9,9 @@
 namespace Admin\Controller;
 
 
+use Common\MallDb;
+use Common\Model\MallModel;
+
 class ExpertController extends AuthController
 {
     /**
@@ -98,13 +101,11 @@ class ExpertController extends AuthController
                 $data['status'] = I('get.status');
                 $result = D('Expert')->where(['userid'=>$uid])->save($data);
                 if($result){
-                    $this->ajaxReturn(1);
-
                     //审核通过 增加50积分
                     if(I('get.status') == 1){
-                        D('Member')->where(['userid'=>$uid])->setInc('score',50);
+                        D('MemberProfile')->where(['userid'=>$uid])->setInc('score',50);
                     }
-
+                    $this->ajaxReturn(1);
                 }else{
                     $this->ajaxReturn(0);
                 }
