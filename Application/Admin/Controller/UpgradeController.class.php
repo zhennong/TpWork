@@ -53,6 +53,7 @@ class UpgradeController extends AuthController {
             $data = array();
             $data['name'] = I('get.name');
             $data['version'] = I('get.softversion');
+            $data['intro'] = I('get.softintro');
             $data['addtime'] = time();
             $result = $model->where(['id'=>1])->save($data);
             if ($result){
@@ -63,6 +64,10 @@ class UpgradeController extends AuthController {
         }
 
         $data = $model->select();
+
+//        $order = array("\r\n","\n","\r");
+//        $text=str_replace($order,"<br/>", $intro);
+
         $this->assign(['data'=>$data]);
 
         $this->display();

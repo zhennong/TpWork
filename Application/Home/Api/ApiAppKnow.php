@@ -941,7 +941,7 @@ class ApiAppKnow extends Api
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_version ORDER BY id DESC LIMIT 1 ";
         $version = $this->list_query($sql);
         if($version[0]['version'] > $ver){
-            return 1;
+            return $version;
         }else{
             return 0;
         }
