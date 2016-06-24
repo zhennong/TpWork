@@ -942,8 +942,6 @@ class ApiAppKnow extends Api
         $version = $this->list_query($sql);
         if($version[0]['version'] > $ver){
             return $version;
-        }else{
-            return 0;
         }
     }
 
