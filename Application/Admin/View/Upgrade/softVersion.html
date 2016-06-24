@@ -6,11 +6,13 @@
             $(".btn-primary").click(function() {
                 var name = $("input[name='name']").val();
                 var softversion = $("input[name='softversion']").val();
+                var softintro = $("textarea[name='softintro']").val();
                 var addtime = $("input[name='addtime']").val();
                 $.get("{:U('Admin/Upgrade/softVersion')}", {
                     'action':'edit',
                     'name': name,
                     'softversion': softversion,
+                    'softintro': softintro,
                     'addtime': addtime
                 }, function (msg) {
                     if(msg == 200){
@@ -55,6 +57,13 @@
                                 <label class="col-sm-2 control-label">软件版本</label>
                                 <div class="col-sm-4">
                                     <input type="text" name="softversion" class="form-control" value="{$data[0]['version']}" placeholder="例：01.00.00010">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">软件介绍</label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control" name="softintro" id="" cols="10" rows="6">{$data[0]['intro']}</textarea>
                                 </div>
                             </div>
 
