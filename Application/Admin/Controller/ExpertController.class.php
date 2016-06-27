@@ -200,9 +200,14 @@ class ExpertController extends AuthController
      */
     public function expert_delete(){
         $userid = I('get.userid');
+        $status = I('get.status');
         if(!empty($userid)){
             $result = D('Expert')->delete($userid);
             if($result){
+                //删除用户后 删除 50积分
+                if($status == 1){
+                    D('MemberProfile')->where(['userid'=>$userid])->setDec('score',50);
+                }
                 $this->ajaxReturn(1);
             }else{
                 $this->ajaxReturn(0);

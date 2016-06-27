@@ -177,6 +177,18 @@ class ApiAppKnow extends Api
     }
 
     /**
+     * 完善个人信息状态
+     * @param $userid 用户ID
+     * @return mixed
+     */
+    public function profileIsOk($userid){
+        if($userid){
+            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET is_ok = 1 WHERE userid = {$userid}";
+            return $this->execute($sql);
+        }
+    }
+
+    /**
      * 生成记录信息
      * @param $log_title
      * @param $log_info
