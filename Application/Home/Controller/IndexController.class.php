@@ -179,11 +179,10 @@ class IndexController extends CommonController {
                     $show['member_profile'] = $api->getUserDetail(I('get.userid'),array('member_profile','expert_profile'));
 
                     //登录积分设置 每天累加一分
-                    $last_time = $show['member_profile'][0]['last_login_time'];
-                    $now_time = time();
-                    $timestamp = $now_time - $last_time;
-                    if($timestamp > 86400){  //24h 后才可以累加积分
+                    $is_ok = $show['member_profile'][0]['is_ok'];
+                    if($is_ok == 0){
                         $api->addScore(I('get.userid'),'sa_profile');
+                        $api->profileIsOk(I('get.userid')); //完善信息状态修改
                     }
                 }
                 break;
