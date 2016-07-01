@@ -156,7 +156,7 @@ class IndexController extends CommonController {
 
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
-                //$show['parent_areas'] = $x;
+                $show['parent_areas'] = $x;
 
                 //登录积分设置 每天累加一分
                 $last_time = $show['member_profile'][0]['last_login_time'];
