@@ -30,9 +30,11 @@ class IndexController extends CommonController {
 
                         //登录积分设置 每天累加一分
                         $mem_info = $api->getUserFromMobile(I('get.mobile'));
-                        $last_time = $mem_info[0]['last_login_time'];
-                        $now_time = time();
-                        $timestamp = $now_time - $last_time;
+                        $last_time = intval($mem_info[0]['last_login_time']);
+                        $timestamp = time() - $last_time;
+
+                        $api->putLog('sql',is_int($last_time));
+
                         if($timestamp > 86400){  //24h 后才可以累加积分
                             $api->addScore($x[0]['userid'],'sa_login');
                         }
