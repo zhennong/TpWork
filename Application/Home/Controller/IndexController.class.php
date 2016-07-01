@@ -27,6 +27,16 @@ class IndexController extends CommonController {
                     if($x[0]['status'] != 0){
                         $show['member_info'] = $x;
                         $api->getLastLoginTime($x[0]['userid']);
+
+                        //登录积分设置 每天累加一分
+                        $mem_info = $api->getUserFromMobile(I('get.mobile'));
+                        $last_time = $mem_info[0]['last_login_time'];
+                        $now_time = time();
+                        $timestamp = $now_time - $last_time;
+                        if($timestamp > 86400){  //24h 后才可以累加积分
+                            $api->addScore(I('get.userid'),'sa_login');
+                        }
+
                     }else{
                         $show['status'] = 222;
                     }
@@ -156,17 +166,7 @@ class IndexController extends CommonController {
 
                 $allArea = $api->getAllArea();
                 $x = Tools::get_list_parents($allArea, I('get.areaid'), 'areaid', 'parentid');
-                //$show['parent_areas'] = $x;
-
-                //登录积分设置 每天累加一分
-                $last_time = $show['member_profile'][0]['last_login_time'];
-                $now_time = time();
-                $timestamp = $now_time - $last_time;
-
-                if($timestamp > 86400){  //24h 后才可以累加积分
-                    $api->addScore(I('get.userid'),'sa_login');
-                }
-
+                $show['parent_areas'] = $x;
                 break;
 
             // 设置个人信息
