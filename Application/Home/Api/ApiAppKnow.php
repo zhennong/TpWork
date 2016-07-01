@@ -172,6 +172,7 @@ class ApiAppKnow extends Api
     public function addScore($userid,$module){
         if($userid){
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + {$this->score_arr[$module]} WHERE userid = {$userid}";
+            $this->putLog('sql',$sql);
             return $this->execute($sql);
         }
     }
