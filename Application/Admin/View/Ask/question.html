@@ -144,10 +144,10 @@
                                 <tr id="id_{$v.id}" data-id="{$v.id}" data-reply-list="{:U('Admin/Ask/question_answer',['id'=>$v['id']])}" data-reply-ask="{:U('Admin/Ask/question_answer_add',['id'=>$v['id']])}" data-edit="{:U('Admin/Ask/question_edit',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/question_view',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/question_delete',['id'=>$v['id']])}">
                                     <td width="6%">{$v.id}</td>
                                     <td width="10%">{$v.nickname }</td>
-                                    <td width="30%">{$v.content}</td>
+                                    <td width="28%">{$v.content}</td>
                                     <td width="10%">{$v.addtime}</td>
                                     <td width="8%">{$v.cat_name}</td>
-                                    <td width="25%" align="center">
+                                    <td width="27%" align="center">
                                         <a class="btn btn-primary admin_user view">查看</a>
 
                                         <if condition="$v.count gt 0">
