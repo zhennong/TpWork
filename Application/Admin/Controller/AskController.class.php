@@ -32,6 +32,9 @@ class AskController extends AuthController
             $question_list[$k]['nickname'] = $v['nickname'];
             $arealist = getAreaFullNameFromAreaID($v['areaid']);
             $question_list[$k]['area'] = arr2str($arealist, '');
+
+            $count = D()->query("SELECT COUNT(*) AS count FROM destoon_appknow_question_answer WHERE askid =".$v['id']);
+            $question_list[$k]['count'] = $count[0]['count'];
         }
         $this->assign(['question_list' => $question_list]);
         $this->display();
