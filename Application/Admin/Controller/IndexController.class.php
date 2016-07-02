@@ -35,8 +35,7 @@ class IndexController extends AuthController {
      */
     protected function getMemberCount($tag = 0){
         if($tag == 1){
-            $map['addtime'] = array(array($this->start),array($this->end));
-            $count = D('Member')->where($map)->count();
+            $count = D('Member')->where("addtime >= $this->start and addtime < $this->end")->count();
         }else{
             $count = D('Member')->count();
         }
