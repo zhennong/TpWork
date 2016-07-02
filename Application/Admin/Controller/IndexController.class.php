@@ -48,8 +48,7 @@ class IndexController extends AuthController {
      */
     protected function getExpertCount($tag = 0){
         if($tag == 1){
-            $map['addtime'] = array(array($this->start),array($this->end));
-            $count = D('Expert')->where($map)->count();
+            $count = D('Expert')->where("addtime >= $this->start and addtime < $this->end")->count();
         }else{
             $count = D('Expert')->count();
         }
@@ -62,8 +61,7 @@ class IndexController extends AuthController {
      */
     protected function getAskCount($tag = 0){
         if($tag == 1){
-            $map['addtime'] = array(array($this->start),array($this->end));
-            $count = D('Ask')->where($map)->count();
+            $count = D('Ask')->where("addtime >= $this->start and addtime < $this->end")->count();
         }else{
             $count = D('Ask')->count();
         }
@@ -76,8 +74,7 @@ class IndexController extends AuthController {
      */
     protected function getFeedbackCount($tag = 0){
         if($tag == 1){
-            $map['addtime'] = array(array($this->start),array($this->end));
-            $count = D('FeedBack')->where($map)->count();
+            $count = D('FeedBack')->where("addtime >= $this->start and addtime < $this->end")->count();
         }else{
             $count = D('FeedBack')->count();
         }
