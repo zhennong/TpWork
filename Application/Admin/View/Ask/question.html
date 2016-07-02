@@ -149,7 +149,14 @@
                                     <td width="8%">{$v.cat_name}</td>
                                     <td width="25%" align="center">
                                         <a class="btn btn-primary admin_user view">查看</a>
-                                        <a class="btn btn-success admin_user reply-list">回复列表({$v.count})</a>
+
+                                        <if condition="$v.count gt 0">
+                                            <a class="btn btn-success admin_user reply-list">回复列表({$v.count})</a>
+                                            <else />
+
+                                            <a class="btn btn-success admin_user reply-list">回复列表( <font color="red">无</font> )</a>
+                                        </if>
+
                                         <a class="btn btn-primary admin_user reply-ask">回复问题</a>
                                         <a class="btn btn-warning admin_user edit">编辑</a>
                                         <a class="btn btn-danger admin_user delete">删除</a>
