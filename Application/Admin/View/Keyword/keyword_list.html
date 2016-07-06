@@ -1,0 +1,113 @@
+<extend name="Layout:ly1"/>
+
+<block name="head">
+    <style>
+        #user_edit{
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            var Table = $('table');
+            var DataTable = Table.DataTable({
+                language: dataTables_zh_CN,
+                pageLength: 10,
+                aaSorting: [
+                    [3,"desc"]
+                ]
+            });
+
+            //添加关键词
+            $('#add_keyword').click(function(){
+
+                layer.open({
+                    type: 2,
+                    title: '添加关键词',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['50%', '300px'],
+                    content: '{:U("Admin/Keyword/keyword_add")}'
+                });
+            })
+
+            //删除关键词
+            $('body').delegate('table tr td .delete','click',function(){
+                var id = $(this).parents('tr').data('id');
+                layer.confirm('你确定要删除吗？', {
+                    btn: ['确定','取消'], //按钮
+                    shade: [0.4, '#393D49'] //显示遮罩
+                }, function(){
+                    $.get("{:U('Admin/Keyword/keyword_delete')}",{"id": id},function(msg){
+                        if(msg == 1){
+                            layer.msg("删除成功，1秒后自动关闭~~",{ico:1,time:1000},function(){
+                                $('table tr#id_'+id).remove();
+                            })
+                        }else if(msg == 2){
+                            layer.msg("参数异常，1秒后自动关闭~~",{ico:1,time:1000});
+                        }else{
+                            layer.msg("删除失败，1秒后自动关闭~~",{ico:1,time:1000});
+                        }
+                    })
+                });
+            })
+        });
+    </script>
+
+</block>
+
+<block name="body">
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">关键词语</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        关键词列表
+                        <span class="pull-right"><a id="add_keyword">添加关键词</a></span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-bordered table-hover table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>关键词ID</th>
+                                    <th>关键词名字</th>
+                                    <th>星级</th>
+                                    <th>添加时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <foreach name="data" item="v">
+                                    <tr id="id_{$v.id}" data-id="{$v.id}">
+                                        <td style="width:8%;text-align: center;">{$v.id}</td>
+                                        <td style="width:40%;">{$v.keyword}</td>
+                                        <td style="width:15%">{$v.stars}</td>
+                                        <td style="width:15%;text-align: center;">{$v.addtime|date="Y-m-d H:i:s",###}</td>
+                                        <td style="width:8%;text-align: center;">
+                                            <a class="btn btn-danger admin_user delete">删除</a>
+                                        </td>
+                                    </tr>
+                                </foreach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+</block>
