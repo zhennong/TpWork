@@ -1078,7 +1078,7 @@ class ApiAppKnow extends Api
      *+---------------------------------
      * @return void
      */
-    function scws($text, $top = 5, $return_array = false, $sep = ',') {
+    public function scws($text, $top = 5, $return_array = false, $sep = ',') {
         include('pscws4.php');
         $cws = new \pscws4('utf-8');
         $cws -> set_charset('utf-8');
@@ -1096,5 +1096,25 @@ class ApiAppKnow extends Api
             }
         }
         return false === $return_array ? substr($result, 1) : $result;
+    }
+
+    /**
+     * 获取关键词
+     */
+    public function getKeyWord(){
+        $sql = "SELECT * FROM destoon_appknow_keyword";
+        return $this->list_query($sql);
+    }
+
+    /**
+     * 遍历循环关键词
+     * @param $content 循环内容
+     */
+    public function eachKeyWord($content){
+        $key = $this->getKeyWord();
+        foreach ($key AS $k=>$v){
+            $content = str_replace($v['keyword'],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode($v["keyword"])."' style='color:red;' target='_blank'>".$v['keyword']."</a>",$content);
+        }
+        return $content;
     }
 }

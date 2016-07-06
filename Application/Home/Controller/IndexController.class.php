@@ -306,10 +306,15 @@ class IndexController extends CommonController {
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
                 }
                 $show['ask_info'] = $x;
+
+                //获取关键词
+
+                //问答列表
                 $x = $api->getAskAnswers(I('get.askid'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = date("Y-m-d", $v['addtime']);
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
+                    $x[$k]['content'] = $api->eachKeyWord($v['content']);
                 }
                 $show['question_answers'] = $x;
                 break;
@@ -591,7 +596,10 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
-                //测试
+//                $key = $api->getKeyWord();
+//                foreach ($key AS $k=>$v){
+//                    $arr[] = $key[$k]['keyword'];
+//                }
 
                 break;
 
