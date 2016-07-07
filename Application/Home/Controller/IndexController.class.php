@@ -307,14 +307,12 @@ class IndexController extends CommonController {
                 }
                 $show['ask_info'] = $x;
 
-                //获取关键词
-
                 //问答列表
                 $x = $api->getAskAnswers(I('get.askid'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = date("Y-m-d", $v['addtime']);
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
-                    $x[$k]['content'] = $api->eachKeyWord($v['content']);
+                    $x[$k]['content'] = $api->eachKeyWord($v['content']); //获取关键词加链接
                 }
                 $show['question_answers'] = $x;
                 break;
@@ -596,7 +594,7 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
-                $data = $api->eachKeyWord("我是阿维菌素，你是什么呢？");
+                $data = $api->eachKeyWord("阿维菌素");
                 dump($data);
 
                 break;
