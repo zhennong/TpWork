@@ -1113,7 +1113,7 @@ class ApiAppKnow extends Api
     public function eachKeyWord($content){
         $key = $this->getKeyWord();
         foreach ($key AS $k=>$v){
-            $content = str_replace($v['keyword'],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode($v["keyword"])."' style='color:red;' target='_blank'>".$v['keyword']."</a>",$content);
+            $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
         }
         return $content;
     }

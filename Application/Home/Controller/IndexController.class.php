@@ -596,10 +596,8 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
-//                $key = $api->getKeyWord();
-//                foreach ($key AS $k=>$v){
-//                    $arr[] = $key[$k]['keyword'];
-//                }
+                $data = $api->eachKeyWord("我是阿维菌素，你是什么呢？");
+                dump($data);
 
                 break;
 
