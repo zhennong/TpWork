@@ -999,7 +999,7 @@ class ApiAppKnow extends Api
 
     //添加邀请码
     public function addApplyCode($apply_code,$uid){
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}}',{$uid},{$this->now})";
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}',{$uid},{$this->now})";
         $this->execute($sql);
     }
 
