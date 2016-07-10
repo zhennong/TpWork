@@ -16,7 +16,7 @@ class IndexController extends CommonController {
         $api = new ApiAppKnow();
 
         $show['status'] = 200;
-//        $api->putLog('data',I());
+        //$api->putLog('data',I());
         switch (I('get.action')) {
             // 登陆
             case 'login':
@@ -31,7 +31,7 @@ class IndexController extends CommonController {
                         //登录积分设置 每天累加一分
                         $last_time = $x[0]['last_login_time'];
                         $timestamp = time() - $last_time;
-                        $api->putLog('sql',$timestamp);
+                        //$api->putLog('sql',$timestamp);
                         if($timestamp > 86400){  //24h 后才可以累加积分
                             $api->addScore($x[0]['userid'],'sa_login');
                         }
@@ -99,7 +99,7 @@ class IndexController extends CommonController {
                     if (S($k)) {
                         $show['status'] = 209;
                     } else {
-                        $x = rand(100000, 999999);
+                        $x = rand(100000,999999);
                         S($k, $x, 60);
                         if ($y = $api->sendSms($x, I('get.mobile'))) {
 
@@ -594,7 +594,7 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
 
-                $data = $api->eachKeyWord("阿维菌素");
+                $data = $api->eachKeyWord("阿维菌素是做什么用的");
                 dump($data);
 
                 break;

@@ -1102,8 +1102,11 @@ class ApiAppKnow extends Api
      * 获取关键词
      */
     public function getKeyWord(){
-        $sql = "SELECT * FROM destoon_appknow_keyword";
-        return $this->list_query($sql);
+        if(!S('keyword')){
+            $sql = "SELECT * FROM destoon_appknow_keyword";
+            $data = $this->list_query($sql);
+            S('keyword',$data,60); //默认关键词缓存60秒
+        }
     }
 
     /**
@@ -1111,7 +1114,7 @@ class ApiAppKnow extends Api
      * @param $content 循环内容
      */
     public function eachKeyWord($content){
-        $key = $this->getKeyWord();
+        $key = S('keyword');
         foreach ($key AS $k=>$v){
             $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
         }
