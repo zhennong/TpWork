@@ -244,10 +244,8 @@ class ApiAppKnow extends Api
     {
         if ($this->getAppknowMemberProfile($info[userid])) {
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET avatar='{$info[avatar]}' WHERE userid = {$info[userid]}";
-        } else {
-            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,avatar) VALUES ({$info[userid]},'{$info[avatar]}')";
+            return $this->execute($sql);
         }
-        return $this->execute($sql);
     }
 
     /**
@@ -258,10 +256,8 @@ class ApiAppKnow extends Api
     {
         if ($this->getAppknowMemberProfile($info[userid])) {
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
-        } else {
-            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile (userid,nickname,sex,qq,truename,areaid,address,location,instro) VALUES ({$info[userid]},'{$info[nickname]}',{$info[sex]},'{$info[qq]}','{$info[truename]}',{$info[areaid]},'{$info[address]}','{$info[location]}','{$info[instro]}')";
+            return $this->execute($sql);
         }
-        return $this->execute($sql);
     }
 
     /**
@@ -412,6 +408,9 @@ class ApiAppKnow extends Api
     public function addExpertAuthentication($info)
     {
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile (userid,name,expert_type,good_at_crop,good_at_area,qq,postion,company,id_card_front,id_card_back,content,addtime) VALUES ({$info[userid]},'{$info[name]}','{$info[expect_type]}','{$info[good_at_crop]}','{$info[good_at_area]}','{$info[qq]}','{$info[postion]}','{$info[company]}','{$info[id_card_front]}','{$info[id_card_back]}','{$info[content]}',{$this->now})";
+
+        $this->putLog('sql',$sql);
+
         return $this->execute($sql);
     }
 
@@ -1013,6 +1012,8 @@ class ApiAppKnow extends Api
 
         $sql2 = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 100 WHERE userid = '{$userid}'";
 
+        $this->putLog('sql2',$sql2);
+
         $this->execute($sql);
         $this->execute($sql2);
     }
@@ -1119,5 +1120,14 @@ class ApiAppKnow extends Api
             $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
         }
         return $content;
+    }
+
+    /**
+     * 注册时 设置用户ID
+     * @param $userid
+     */
+    public function setMemberProfile($userid){
+        $sql = "INSERT INTO destoon_appknow_member_profile(userid)VALUES({$userid})";
+        $this->execute($sql);
     }
 }

@@ -76,6 +76,9 @@ class IndexController extends CommonController {
                         $show['status'] = $api->register(I('get.'));
                         if ($show['status'] = 200) {
                             $show['member_info'] = $api->getUserFromMobile(I('get.mobile'));
+                            
+                            //默认添加信息到个人资料表
+                            $api->setMemberProfile($show['member_info'][0]['userid']);
 
                             //判断邀请码是否存在
                             $code = $api->checkApplyCode(I('get.apply_code'));
