@@ -408,9 +408,6 @@ class ApiAppKnow extends Api
     public function addExpertAuthentication($info)
     {
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile (userid,name,expert_type,good_at_crop,good_at_area,qq,postion,company,id_card_front,id_card_back,content,addtime) VALUES ({$info[userid]},'{$info[name]}','{$info[expect_type]}','{$info[good_at_crop]}','{$info[good_at_area]}','{$info[qq]}','{$info[postion]}','{$info[company]}','{$info[id_card_front]}','{$info[id_card_back]}','{$info[content]}',{$this->now})";
-
-        $this->putLog('sql',$sql);
-
         return $this->execute($sql);
     }
 
@@ -550,8 +547,6 @@ class ApiAppKnow extends Api
 
         //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
-
-        $this->putLog('sql',$sql);
 
         $this->execute($sql);
     }
@@ -783,8 +778,6 @@ class ApiAppKnow extends Api
             $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer SET against_times = against_times + 1 WHERE uid = {$userid} AND id = {$answer_id}";
         }
 
-        $this->putLog('sql',$sql);
-
         if ($this->execute($sql)) {
             $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
             if($x){
@@ -981,7 +974,6 @@ class ApiAppKnow extends Api
     //获取邀请码
     public function getApplyCode($uid){
         $sql = "SELECT apply_code FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile WHERE userid = {$uid}";
-        $this->putLog('sql',$sql);
         return $this->list_query($sql);
     }
 
@@ -1011,8 +1003,6 @@ class ApiAppKnow extends Api
         $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 100 WHERE apply_code = '{$code}'";
 
         $sql2 = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET score = score + 100 WHERE userid = '{$userid}'";
-
-        $this->putLog('sql2',$sql2);
 
         $this->execute($sql);
         $this->execute($sql2);
@@ -1103,11 +1093,14 @@ class ApiAppKnow extends Api
      * 获取关键词
      */
     public function getKeyWord(){
-        if(!S('keyword')){
-            $sql = "SELECT * FROM destoon_appknow_keyword";
-            $data = $this->list_query($sql);
-            S('keyword',$data,60); //默认关键词缓存60秒
-        }
+//        if(!S('keyword')){
+//            $sql = "SELECT * FROM destoon_appknow_keyword";
+//            $data = $this->list_query($sql);
+//            S('keyword',$data,0); //默认关键词缓存60秒
+//        }
+
+        $sql = "SELECT * FROM destoon_appknow_keyword";
+        return $this->list_query($sql);
     }
 
     /**
@@ -1115,9 +1108,11 @@ class ApiAppKnow extends Api
      * @param $content 循环内容
      */
     public function eachKeyWord($content){
-        $key = S('keyword');
+        $key = $this->getKeyWord();
+        $this->putLog('key',$key);
         foreach ($key AS $k=>$v){
             $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
+            $this->putLog('v',$v["keyword"]);
         }
         return $content;
     }
