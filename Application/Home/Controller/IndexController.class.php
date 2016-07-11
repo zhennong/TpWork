@@ -76,6 +76,9 @@ class IndexController extends CommonController {
                         $show['status'] = $api->register(I('get.'));
                         if ($show['status'] = 200) {
                             $show['member_info'] = $api->getUserFromMobile(I('get.mobile'));
+                            
+                            //默认添加信息到个人资料表
+                            $api->setMemberProfile($show['member_info'][0]['userid']);
 
                             //判断邀请码是否存在
                             $code = $api->checkApplyCode(I('get.apply_code'));
@@ -350,16 +353,16 @@ class IndexController extends CommonController {
                 if (!I('get.userid')) {
                     $show['status'] = 213;
                 } else {
-                    $_dir = APP_ROOT.C('UPLOADS').'card_front/';
+                    $_dir = C('UPLOADS').'front/';
                     $extend_type = Tools::get_extend($_FILES['filename']['name']);
-                    $upload_dir = DT_ROOT . $_dir;
+                    $upload_dir = APP_ROOT . $_dir;
                     $upload_name = "user_" . I('get.userid') . "_" . date("Y_m_d__H_i_s", time());
                     $show['status'] = ApiAppKnow::uploadImage($_FILES['filename'], $upload_dir, $upload_name);
                     if ($show['status'] == 200) {
                         $info = array('card_front_path' => $_dir . $upload_name . "." . $extend_type);
                         echo $show['save_path'] = $info['card_front_path'];
                         exit();
-                    } else {
+                    }else {
                         $show['status'] = 101;
                     }
                 }
@@ -370,16 +373,16 @@ class IndexController extends CommonController {
                 if (!I('get.userid')) {
                     $show['status'] = 213;
                 } else {
-                    $_dir = APP_ROOT.C('UPLOADS').'card_back/';
+                    $_dir = C('UPLOADS').'back/';
                     $extend_type = Tools::get_extend($_FILES['filename']['name']);
-                    $upload_dir = DT_ROOT . $_dir;
+                    $upload_dir = APP_ROOT . $_dir;
                     $upload_name = "user_" . I('get.userid') . "_" . date("Y_m_d__H_i_s", time());
                     $show['status'] = ApiAppKnow::uploadImage($_FILES['filename'], $upload_dir, $upload_name);
                     if ($show['status'] == 200) {
                         $info = array('card_back_path' => $_dir . $upload_name . "." . $extend_type);
                         echo $show['save_path'] = $info['card_back_path'];
                         exit();
-                    } else {
+                    }else {
                         $show['status'] = 101;
                     }
                 }
