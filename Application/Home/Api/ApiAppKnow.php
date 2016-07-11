@@ -999,7 +999,7 @@ class ApiAppKnow extends Api
 
     //添加邀请码
     public function addApplyCode($apply_code,$uid){
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}}',{$uid},{$this->now})";
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code(apply_code,uid,addtime)VALUES('{$apply_code}',{$uid},{$this->now})";
         $this->execute($sql);
     }
 
@@ -1078,7 +1078,7 @@ class ApiAppKnow extends Api
      *+---------------------------------
      * @return void
      */
-    function scws($text, $top = 5, $return_array = false, $sep = ',') {
+    public function scws($text, $top = 5, $return_array = false, $sep = ',') {
         include('pscws4.php');
         $cws = new \pscws4('utf-8');
         $cws -> set_charset('utf-8');
@@ -1096,5 +1096,28 @@ class ApiAppKnow extends Api
             }
         }
         return false === $return_array ? substr($result, 1) : $result;
+    }
+
+    /**
+     * 获取关键词
+     */
+    public function getKeyWord(){
+        if(!S('keyword')){
+            $sql = "SELECT * FROM destoon_appknow_keyword";
+            $data = $this->list_query($sql);
+            S('keyword',$data,60); //默认关键词缓存60秒
+        }
+    }
+
+    /**
+     * 遍历循环关键词
+     * @param $content 循环内容
+     */
+    public function eachKeyWord($content){
+        $key = S('keyword');
+        foreach ($key AS $k=>$v){
+            $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
+        }
+        return $content;
     }
 }
