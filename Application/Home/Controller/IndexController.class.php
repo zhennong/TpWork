@@ -258,13 +258,7 @@ class IndexController extends CommonController {
                     S($k1, null);
 
                     //提交问题积分设置 （每天最多3次提问累加积分）
-                    if(!S('c_a_score')){S('c_a_score',0);}
-                    $count_score = S('c_a_score');
-                    if($count_score < 3){
-                        $api->addScore(I('get.userid'), 'sa_questions');
-                        S('c_a_score',$count_score + 1,60 * 60 * 24);
-                    }
-
+                    $api->addScore(I('get.userid'), 'sa_questions');
                 } else {
                     $show['status'] = 215;
                 }
