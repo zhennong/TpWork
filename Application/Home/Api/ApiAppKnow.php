@@ -42,7 +42,7 @@ class ApiAppKnow extends Api
         'sa_share' => 50,           //每天分享微信、朋友圈、QQ空间 +50
         'sa_code' => 100,           //推荐好友并填写个人推荐码各得 +100
         'sa_agree_times' => 1,      //被点赞得积分 同意 +1
-        'sa_against_times' => 1,    //被点赞得积分 不同意 -1 暂定
+        'sa_against_times' => 1,    //被点赞得积分 不同意 -1 【暂定】
         'sa_profile' => 10,         //完善个人资料得积分 +10
         'sa_feedback' => 2          //一键反馈得积分 +2
     );

@@ -253,13 +253,11 @@ class IndexController extends CommonController {
                 $info['content'] = I('get.content');
                 $info['cat_id'] = I('get.cat_id');
                 if ($api->addQuickAsk($info)) {
+                    $api->addScore(I('get.userid'),'sa_questions');
+
                     $k = "user_ask_image_" . I('get.userid');
                     $k1 = $k . "_ask_tmp_image";
                     S($k1, null);
-
-                    //提交问题积分设置 （每天最多3次提问累加积分）
-                    $api->addScore(I('get.userid'), 'sa_questions');
-
                 } else {
                     $show['status'] = 215;
                 }
@@ -318,13 +316,7 @@ class IndexController extends CommonController {
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
                 if ($api->addQuestionAnswer(I('get.'))) {
-                    //回答问题积分设置 （每次最多3次有积分）
-                    if(!S('c_q_score')){S('c_q_score',0);}
-                    $count_score = S('c_q_score');
-                    if($count_score < 3){
-                        $x = $api->addScore(I('get.userid'),'sa_answer');
-                        S('c_q_score',$count_score + 1,60 * 60 * 24);
-                    }
+                    $api->addScore(I('get.userid'),'sa_answer');
 
                     //回复消息设置
                     $api->addMessageReply(I('get.'));
