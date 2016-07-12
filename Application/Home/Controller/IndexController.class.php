@@ -90,6 +90,8 @@ class IndexController extends CommonController {
                                 $api->addApplyCode(I('get.apply_code'),$show['member_info'][0]['userid']);
                             }
                         }
+                    }else{
+                        $show['status'] = 101;
                     }
                 }
                 break;
