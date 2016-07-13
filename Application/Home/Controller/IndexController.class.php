@@ -220,13 +220,13 @@ class IndexController extends CommonController {
                         $ask_img_path = $_dir . $upload_name . "." . $extend_type;
                         $k = "user_ask_image_" . I('get.userid');
                         $k1 = $k . "_ask_tmp_image";
-                        if (count(Tools::str2arr(S($k1))) < 6) {
-                            if (!S($k1)) {
-                                S($k1, $ask_img_path, 3600 * 24);
-                            } else {
+                        if (count(Tools::str2arr(S($k1))) <= 6) {
+                            if (S($k1)) {
                                 $x = S($k1);
                                 $x = $x . "," . $ask_img_path;
-                                S($k1, $x, 3600 * 24);
+                                S($k1, $x, 300);
+                            } else {
+                                S($k1, $ask_img_path, 300);
                             }
                         }
                         $show[$k] = Tools::str2arr(S($k1));
