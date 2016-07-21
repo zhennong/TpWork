@@ -255,7 +255,15 @@ class ApiAppKnow extends Api
     public function setAppknowMemberProfile($info)
     {
         $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
-        return $this->execute($sql);
+
+        if ($this->getAppknowMemberProfile($info[userid])) { //存在修改
+            return $this->execute($sql);
+        }else{ //不存在添加
+            $result = $this->setMemberProfile($info[userid]); //添加userid到个人资料表
+            if($result){
+                return $this->execute($sql);
+            }
+        }
     }
 
     /**
