@@ -254,10 +254,8 @@ class ApiAppKnow extends Api
      */
     public function setAppknowMemberProfile($info)
     {
-        if ($this->getAppknowMemberProfile($info[userid])) {
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
-            return $this->execute($sql);
-        }
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
+        return $this->execute($sql);
     }
 
     /**
