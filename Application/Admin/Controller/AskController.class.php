@@ -25,7 +25,7 @@ class AskController extends AuthController
         foreach ($list as $k => $v) {
             $question_list[$k]['id'] = $v['id'];
             $question_list[$k]['content'] = $v['content'];
-            $question_list[$k]['addtime'] = date('Y-m-d h:i:s', $v['addtime']);
+            $question_list[$k]['addtime'] = date('Y-m-d H:i:s', $v['addtime']);
             $question_list[$k]['perfect_answer_id'] = $v['perfect_answer_id'];
             $question_list[$k]['areaid'] = $v['areaid'];
             $question_list[$k]['cat_name'] = $v['cat_name'];
