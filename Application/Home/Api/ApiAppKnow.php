@@ -299,7 +299,7 @@ class ApiAppKnow extends Api
             $where .= substr($str,0,-2);
         }
 
-        $sql = "SELECT ask.*,profile.nickname,profile.areaid,profile.address,profile.avatar,profile.location,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
+        $sql = "SELECT ask.*,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar,profile.location,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
             ORDER BY addtime DESC";
