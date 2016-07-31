@@ -326,7 +326,7 @@ class ApiAppKnow extends Api
      */
     public function getAskInfo($askid)
     {
-        $sql = "SELECT ask.*,m_member.mobile,profile.nickname,profile.areaid,profile.address,profile.avatar
+        $sql = "SELECT ask.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar
             FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
