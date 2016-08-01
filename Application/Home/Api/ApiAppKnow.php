@@ -73,7 +73,7 @@ class ApiAppKnow extends Api
                 foreach($b as $k => $v){
                     if($v[nickname]==''){
                         $y = $this->list_query("SELECT mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}");
-                        $b[$k][nickname] = $y[0][mobile];
+                        $b[$k][nickname] = $this->mobileHide($y[0][mobile]);
                     }
                     $z = $this->getAreaFullNameFromAreaID($v['areaid']);
                     $b[$k]['area_name'] = Tools::arr2str($z,' ');
