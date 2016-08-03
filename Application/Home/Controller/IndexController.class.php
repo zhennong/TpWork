@@ -419,9 +419,6 @@ class IndexController extends CommonController {
             //添加关注
             case 'add_attention':
                 $info = $_GET;
-                if(I('get.type') == 'scanner'){
-                    $info['attention_uid'] = Tools::think_decrypt(I('get.attention_uid'));
-                }
                 $show['status'] = $api->addAttention($info);
                 break;
 
