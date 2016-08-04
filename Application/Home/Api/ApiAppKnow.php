@@ -543,7 +543,7 @@ class ApiAppKnow extends Api
             exit();
         }
 
-        if (count($this->getAttention($info[attention_uid], $info[fans_uid])) > 0) {
+        if ($this->getFetchAttention($info[attention_uid], $info[fans_uid]) > 0) {
             return 217;
             exit();
         }
@@ -593,6 +593,16 @@ class ApiAppKnow extends Api
             }
         }
         return $x;
+    }
+
+    /**
+     * 获取是否关注
+     */
+    public function getFetchAttention($attention_uid = null, $fans_uid = null)
+    {
+        $sql = "SELECT COUNT(*) AS c FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$attention_uid} AND fans_uid = {$fans_uid}";
+        $x = $this->list_query($sql);
+        return $x[0]['c'];
     }
 
     /**
