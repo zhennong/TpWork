@@ -308,7 +308,7 @@ class IndexController extends CommonController {
                 //问答列表
                 $x = $api->getAskAnswers(I('get.askid'));
                 foreach ($x as $k => $v) {
-                    $x[$k]['addtime_date'] = date("Y-m-d", $v['addtime']);
+                    $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
                     $x[$k]['content'] = $api->eachKeyWord($v['content']); //获取关键词加链接
                 }
