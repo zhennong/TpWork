@@ -554,7 +554,9 @@ class ApiAppKnow extends Api
         //粉丝设置
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
 
-        $this->execute($sql);
+        if($this->execute($sql)){
+            return 200;
+        }
     }
 
     /**
