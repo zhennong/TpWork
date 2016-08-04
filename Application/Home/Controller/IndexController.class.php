@@ -456,6 +456,10 @@ class IndexController extends CommonController {
             case 'get_my_category_list':
                 $show['my_category_list'] = $api->getMyCategoryList(I('get.userid'));
                 break;
+            
+            case 'cancel_my_category':
+                $show['status'] = $api->cancelMyCategory(I('get.id'),I('get.userid'));
+                break;
 
             //获取圈子信息
             case "get_community":
