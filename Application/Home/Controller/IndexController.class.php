@@ -278,7 +278,7 @@ class IndexController extends CommonController {
             case 'get_ask_list':
                 $x = $api->getAskList(I('get.start'), I('get.limit'), I('get.cat_id'), I('get.keyword'));
                 foreach ($x as $k => $v) {
-                    $x[$k]['addtime_date'] = date("Y-m-d", $v['addtime']);
+                    $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     for ($i = 0; $i < 6; $i++) {
                         if ($v['thumb' . $i]) {
                             $x[$k]['ask_images'][] = $v['thumb' . $i];
