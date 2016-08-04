@@ -285,7 +285,7 @@ class IndexController extends CommonController {
                             $x[$k]['image_count'] = $i + 1;
                         }
                     }
-                    $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
+                    $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),' ');
                 }
                 $show['ask_list'] = $x;
                 break;
