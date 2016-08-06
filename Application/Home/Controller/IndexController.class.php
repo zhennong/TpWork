@@ -28,6 +28,8 @@ class IndexController extends CommonController {
                         $show['member_info'] = $x;
                         $api->getLastLoginTime($x[0]['userid']);
 
+                        $show['info'] = $api->getMemAreaId($x[0]['userid']);
+
                         //登录积分设置 每天累加一分
                         $last_time = $x[0]['last_login_time'];
                         $timestamp = time() - $last_time;
