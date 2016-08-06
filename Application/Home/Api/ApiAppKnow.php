@@ -1161,6 +1161,11 @@ class ApiAppKnow extends Api
         $this->execute($sql);
     }
 
+    /**
+     * 获取用户是否完善个人信息
+     * @param $userid  用户ID
+     * @return int     返回 int 【1 已经完善   0 未完善】
+     */
     public function getMemAreaId($userid){
         $sql = "SELECT areaid FROM destoon_appknow_member_profile WHERE userid = {$userid}";
         $data = $this->list_query($sql);
