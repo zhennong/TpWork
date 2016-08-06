@@ -273,6 +273,7 @@ class ApiAppKnow extends Api
     public function addQuickAsk($info)
     {
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask (uid,content,thumb0,thumb1,thumb2,thumb3,thumb4,thumb5,addtime,catid) VALUES ({$info[uid]},'{$info[content]}','{$info[thumb0]}','{$info[thumb1]}','{$info[thumb2]}','{$info[thumb3]}','{$info[thumb4]}','{$info[thumb5]}',{$this->now},{$info[cat_id]})";
+
         return $this->execute($sql);
     }
 
@@ -383,6 +384,7 @@ class ApiAppKnow extends Api
      */
     public function addMessageReply($info){
         $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['userid']},{$info['to_uid']},{$info['askid']},{$this->now})";
+
         return $this->execute($sql);
     }
 
@@ -1144,10 +1146,8 @@ class ApiAppKnow extends Api
      */
     public function eachKeyWord($content){
         $key = $this->getKeyWord();
-        $this->putLog('key',$key);
         foreach ($key AS $k=>$v){
             $content = str_replace($v["keyword"],"<a href='http://www.nongyao001.com/sell/search.php?uagent=touch&searchid=5&kw=".urlencode(iconv('utf-8','gb2312',$v["keyword"]))."' style='color:red'>".$v["keyword"]."</a>",$content);
-            $this->putLog('v',$v["keyword"]);
         }
         return $content;
     }
@@ -1159,6 +1159,16 @@ class ApiAppKnow extends Api
     public function setMemberProfile($userid){
         $sql = "INSERT INTO destoon_appknow_member_profile(userid)VALUES({$userid})";
         $this->execute($sql);
+    }
+
+    public function getMemAreaId($userid){
+        $sql = "SELECT areaid FROM destoon_appknow_member_profile WHERE userid = {$userid}";
+        $data = $this->list_query($sql);
+        if($data[0]['areaid'] > 0){
+            return 1;  //已存在
+        }else{
+            return 0;  //未存在
+        }
     }
 
     /**
