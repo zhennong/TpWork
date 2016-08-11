@@ -717,7 +717,7 @@ class ApiAppKnow extends Api
      */
     public function cancelMyCategory($id,$userid){
         if (!empty($userid)){
-            $sql = "DELETE FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE id = {$id} AND uid = {$userid}";
+            $sql = "DELETE FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE cat_id = {$id} AND uid = {$userid}";
             if($this->execute($sql)){
                 return 200;
             }else{
