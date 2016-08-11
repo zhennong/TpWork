@@ -706,7 +706,7 @@ class ApiAppKnow extends Api
      * 获取个人产品分类
      */
     public function getMyCategoryList($userid){
-        $sql = "SELECT a.id,b.cat_name,b.cat_img FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category AS b ON a.cat_id=b.id WHERE a.uid = {$userid}";
+        $sql = "SELECT a.cat_id,b.cat_name,b.cat_img FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_category AS b ON a.cat_id=b.id WHERE a.uid = {$userid}";
         $data = $this->list_query($sql);
         return $data;
     }
