@@ -456,7 +456,13 @@ class IndexController extends CommonController {
 
             //获取个人自定义分类
             case 'get_my_category_list':
-                $show['my_category_list'] = $api->getMyCategoryList(I('get.userid'));
+                $my_category = $api->getMyCategoryList(I('get.userid'));
+                foreach ($my_category AS $k=>$v){
+                    $my_category[$k]['id'] = $v['cat_id'];
+                }
+
+                $show['my_category_list'] = $my_category;
+
                 break;
             
             case 'cancel_my_category':
