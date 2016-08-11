@@ -712,7 +712,7 @@ class ApiAppKnow extends Api
     }
 
     /**
-     * 取消圈子关注
+     * 取消我的圈子关注
      * @param $userid
      */
     public function cancelMyCategory($id,$userid){
