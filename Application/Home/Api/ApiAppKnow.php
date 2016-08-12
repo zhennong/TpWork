@@ -803,6 +803,15 @@ class ApiAppKnow extends Api
     }
 
     /**
+     * 我的邀请列表
+     * @param $userid
+     */
+    public function getMyInviteExpertList($userid){
+        $sql = "SELECT a.id,a.addtime,b.name,c.nickname,c.avatar,d.content FROM destoon_appknow_message_invite AS a LEFT JOIN destoon_appknow_expert_profile AS b ON b.userid = a.to_uid LEFT JOIN destoon_appknow_member_profile c ON c.userid = b.userid LEFT JOIN destoon_appknow_question_ask AS d ON d.id = a.askid WHERE a.from_uid = {$userid} ORDER BY addtime DESC";
+        return $this->list_query($sql);
+    }
+
+    /**
      * 点赞设置
      */
     public function setAgree($userid,$status,$from_uid,$answer_id){
@@ -905,11 +914,29 @@ class ApiAppKnow extends Api
      * 添加邀请专家
      */
     function addInviteExpert($info){
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite(from_uid,to_uid,askid,addtime)VALUES({$info['invitation_uid']},{$info['invite_uid']},{$info['ask_id']},{$this->now})";
-        if($this->execute($sql)){
-            return 200;
+        //判断是否重复邀请
+        if($this->checkInviteExpert($info) == 217){
+            return 217;
         }else{
-            return 215;
+            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite(from_uid,to_uid,askid,addtime)VALUES({$info['invitation_uid']},{$info['invite_uid']},{$info['ask_id']},{$this->now})";
+            if($this->execute($sql)){
+                return 200;
+            }else{
+                return 215;
+            }
+        }
+    }
+
+    /**
+     * 检查是否已经邀请过专家
+     * @param $info
+     */
+    function checkInviteExpert($info){
+        $sql = "SELECT COUNT(*) AS count FROM destoon_appknow_message_invite WHERE from_uid = {$info['invitation_uid']} AND to_uid = {$info['invite_uid']} AND askid = {$info['ask_id']}";
+        $result = $this->list_query($sql);
+        if($result[0]['count'] > 0){
+            return 217;
+            exit;
         }
     }
 

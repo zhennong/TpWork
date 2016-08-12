@@ -495,9 +495,19 @@ class IndexController extends CommonController {
                 $show['status'] = $api->cancelAttention(I('get.id'));
                 break;
 
+
             //Invite Expert
             case 'my_invite_expert':
                 $show['invite_expert_list'] = $api->getInviteExpert();
+                break;
+
+            case 'my_invite_expert_list':
+                $my_invite_expert_list = $api->getMyInviteExpertList(I('get.userid'));
+                foreach ($my_invite_expert_list AS $k=>$v){
+                    $my_invite_expert_list[$k]['addtime'] = date('Y-m-d',$v['addtime']);
+                    $my_invite_expert_list[$k]['content'] = msubstr($v['content'],0,30);
+                }
+                $show['my_invite_expert_list'] = $my_invite_expert_list;
                 break;
 
             //点赞
