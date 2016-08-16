@@ -406,9 +406,14 @@ class IndexController extends CommonController {
 
             //显示收藏
             case 'get_favourite_list':
-                $show['favourite_info'] = $api->getFavourite(I('get.userid'), I('get.type'));
+                $data = $api->getSimpleFavourite(I('get.userid'));
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                }
+                $show['favourite_info'] = $data;
                 break;
 
+            //提问历史
             case 'my_ask_history':
                 $show['ask_historys'] = $api->myAskHistory(I('get.userid'));
                 break;
