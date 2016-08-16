@@ -406,9 +406,14 @@ class IndexController extends CommonController {
 
             //显示收藏
             case 'get_favourite_list':
-                $show['favourite_info'] = $api->getFavourite(I('get.userid'), I('get.type'));
+                $data = $api->getSimpleFavourite(I('get.userid'));
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+                }
+                $show['favourite_info'] = $data;
                 break;
 
+            //提问历史
             case 'my_ask_history':
                 $show['ask_historys'] = $api->myAskHistory(I('get.userid'));
                 break;
@@ -495,9 +500,19 @@ class IndexController extends CommonController {
                 $show['status'] = $api->cancelAttention(I('get.id'));
                 break;
 
+
             //Invite Expert
             case 'my_invite_expert':
                 $show['invite_expert_list'] = $api->getInviteExpert();
+                break;
+
+            case 'my_invite_expert_list':
+                $my_invite_expert_list = $api->getMyInviteExpertList(I('get.userid'));
+                foreach ($my_invite_expert_list AS $k=>$v){
+                    $my_invite_expert_list[$k]['addtime'] = date('Y-m-d',$v['addtime']);
+                    $my_invite_expert_list[$k]['content'] = msubstr($v['content'],0,30);
+                }
+                $show['my_invite_expert_list'] = $my_invite_expert_list;
                 break;
 
             //点赞
