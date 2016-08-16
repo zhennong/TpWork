@@ -785,7 +785,7 @@ class ApiAppKnow extends Api
     /**
      * Invite Expert
      */
-    public function getInviteExpert(){
+    public function getInviteExpert($info){
 //        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile AS a INNER JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.userid = b.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite as c ON c.to_uid = a.userid  WHERE a.status = 1 GROUP BY a.userid ORDER BY b.score DESC";
 //        $data = $this->list_query($sql);
 //        return $data;
@@ -804,6 +804,18 @@ class ApiAppKnow extends Api
             $data[$k] = $v;
             $data[$k]['agreed_times'] = $data2[0]['agreed_times'];
             $data[$k]['fans_nums'] = $data3[0]['fans_nums'];
+
+            $arr = array();
+            $arr['invitation_uid'] = $info['invitation_uid'];       //当前用户ID
+            $arr['invite_uid'] = $v['userid'];                       //专家ID
+            $arr['ask_id'] = $info['ask_id'];                         //问答ID
+
+            //判断是否邀请过
+            if($this->checkInviteExpert($arr) == 217){
+                $data[$k]['status'] = 1;
+            }else{
+                $data[$k]['status'] = 0;
+            }
         }
         return $data;
     }
