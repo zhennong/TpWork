@@ -503,7 +503,7 @@ class IndexController extends CommonController {
 
             //Invite Expert
             case 'my_invite_expert':
-                $show['invite_expert_list'] = $api->getInviteExpert();
+                $show['invite_expert_list'] = $api->getInviteExpert(I('get.'));
                 break;
 
             case 'my_invite_expert_list':
