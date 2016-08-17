@@ -510,7 +510,7 @@ class IndexController extends CommonController {
                 $my_invite_expert_list = $api->getMyInviteExpertList(I('get.userid'));
                 foreach ($my_invite_expert_list AS $k=>$v){
                     $my_invite_expert_list[$k]['addtime'] = date('Y-m-d',$v['addtime']);
-                    $my_invite_expert_list[$k]['content'] = msubstr($v['content'],0,30);
+                    $my_invite_expert_list[$k]['content'] = msubstr($v['content'],0,25);
                 }
                 $show['my_invite_expert_list'] = $my_invite_expert_list;
                 break;
