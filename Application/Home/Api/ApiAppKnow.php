@@ -825,7 +825,7 @@ class ApiAppKnow extends Api
      * @param $userid
      */
     public function getMyInviteExpertList($userid){
-        $sql = "SELECT a.addtime,b.name,c.nickname,c.avatar,d.id,d.content,d.catid FROM destoon_appknow_message_invite AS a LEFT JOIN destoon_appknow_expert_profile AS b ON b.userid = a.to_uid LEFT JOIN destoon_appknow_member_profile c ON c.userid = b.userid LEFT JOIN destoon_appknow_question_ask AS d ON d.id = a.askid WHERE a.from_uid = {$userid} ORDER BY addtime DESC";
+        $sql = "SELECT a.addtime,a.isread,b.name,c.nickname,c.avatar,d.id,d.content,d.catid FROM destoon_appknow_message_invite AS a LEFT JOIN destoon_appknow_expert_profile AS b ON b.userid = a.to_uid LEFT JOIN destoon_appknow_member_profile c ON c.userid = b.userid LEFT JOIN destoon_appknow_question_ask AS d ON d.id = a.askid WHERE a.from_uid = {$userid} ORDER BY addtime DESC";
         return $this->list_query($sql);
     }
 
