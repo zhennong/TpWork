@@ -591,7 +591,7 @@ class ApiAppKnow extends Api
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans {$where}";
         $x = $this->list_query($sql);
         foreach($x as $k => $v){
-            $x[$k]['_id'] = $v[id];
+            //$x[$k]['_id'] = $v[id];
             $fans_detail = $this->getUserDetail($v[fans_uid],array('member_profile','expert_profile'));
             $x[$k]['fans_detail'] = $fans_detail[0];
             $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
