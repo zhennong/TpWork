@@ -594,11 +594,11 @@ class ApiAppKnow extends Api
             $x[$k]['_id'] = $v[id];
             //$fans_detail = $this->getUserDetail($v[fans_uid],array('member_profile','expert_profile'));
             //$x[$k]['fans_detail'] = $fans_detail[0];
-            $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
-            $x[$k]['attention_detail'] = $attention_detail[0];
-            if($x[$k]['attention_detail']['member_type'] != $type){
-                unset($x[$k]);
-            }
+//            $attention_detail = $this->getUserDetail($v[attention_uid],array('member_profile','expert_profile'));
+//            $x[$k]['attention_detail'] = $attention_detail[0];
+//            if($x[$k]['attention_detail']['member_type'] != $type){
+//                unset($x[$k]);
+//            }
         }
         return $x;
     }
