@@ -432,7 +432,6 @@ class IndexController extends CommonController {
             //我的关注
             case 'my_attention':
                 $info = I('get.');
-                $show = array();
                 $show['attention_list'] = $api->getAttention(null, $info['userid'], $info['type']);
                 break;
 
