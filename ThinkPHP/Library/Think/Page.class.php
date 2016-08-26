@@ -124,7 +124,7 @@ class Page{
             if($page > 0 && $page != $this->nowPage){
 
                 if($page <= $this->totalPages){
-                    $link_page .= '<a class="num"  style="width:20px;margin-left:6px; " href="' . $this->url($page) . '">' . $page . '</a>';
+                    $link_page .= '<a class="num"  style="width:20px;margin-left:6px;" href="' . $this->url($page) . '">' . $page . '</a>';
                 }else{
                     break;
                 }
