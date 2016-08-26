@@ -10,7 +10,9 @@ namespace Admin\Model;
 
 
 class MemberModel extends MallRelationModel
-{
+{ 
+    
+    protected $tablePrefix = 'destoon_'; 
     protected $tableName = 'ucenter_member';
 
     protected $_link = array(

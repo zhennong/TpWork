@@ -3,14 +3,7 @@
 <block name="head">
     <script>
         $(document).ready(function () {
-            var Table = $('table');
-            var DataTable = Table.DataTable({
-                language: dataTables_zh_CN,
-                pageLength: 10,
-                aaSorting: [
-                    [0,"desc"]
-                ]
-            });
+          
 
             //添加
             $('#add').click(function(){
@@ -117,10 +110,29 @@
                     <div class="panel-heading">
                         会员列表
                         <a id="add" class="pull-right">用户添加</a>
+						
+						
+						
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+					
+					<div class="row">
+					    <form   action="__URL__/member_list"  method="post">
+						<div class="col-sm-6">
+						<div class="dataTables_filter" >
+						<label>搜索:<input  class="form-control input-sm"     type="text" name="mobile"  value="{$mobile|default=''}"   placeholder="请输入手机号" ></label>
+						  <input  type="submit" name="submit" style="margin-left:50px;" value="提交" />	
+						</div>
+						</div>
+						</form>
+						</div>
+						
                         <div class="dataTable_wrapper">
+						
+						
+						
+						
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -143,12 +155,20 @@
                                             <td align="center">{$v.userid}</td>
                                             <td id="acount" class="acount"><span title="点击修改密码">{$v.mobile}</span></td>
                                             <td id="avatar" class="avatar" align="center">
-                                                <img src="{$v.avatar}" width="36" height="36" style="border:1px solid #dbdbdb;padding: 2px;" title="点击修改头像" />
+                                                <img src="<?php
+												
+												
+												if($member_profile[$v['userid']]['avatar']){
+												echo $constantconfig[0].substr($member_profile[$v['userid']]['avatar'],2,100);}else{
+												echo $constantconfig[1].'images/thumb.jpg';};?>"
+												width="36" height="36" style="border:1px solid #dbdbdb;padding: 2px;" title="点击修改头像" />
                                             </td>
-                                            <td>{$v.member_profile.nickname}</td>
-                                            <td>{$v.member_profile.truename}</td>
-                                            <td>{$v.member_profile.score}</td>
-                                            <td>{$v.area}</td>
+											
+                                            <td><?php  echo $member_profile[$v['userid']]['nickname'];?></td>
+                                            <td><?php  echo $member_profile[$v['userid']]['truename'];?></td>
+                                            <td><?php  echo $member_profile[$v['userid']]['score'];?></td>
+											<td ><?php  echo $member_profile[$v['userid']]['address'];?></td>
+                                         
                                             <td>{$v.last_login_time}</td>
                                             <td>{$v.addtime}</td>
                                             <td align="center">
@@ -165,8 +185,12 @@
                                             </td>
                                         </tr>
                                     </foreach>
+									<tr>   <td  colspan="10"> {$page} </td> </tr>
                                 </tbody>
                             </table>
+							
+							
+							
                         </div>
                         <!-- /.table-responsive -->
                     </div>

@@ -2,18 +2,53 @@
 namespace Admin\Controller;
 
 use Common\Tools;
-
+use  Think\Page;
 class MemberController extends AuthController {
 
     /**
-     * 会员列表
-     */
+    * 方法注释说明 ...
+    * tags  获取用户信息，优化性能
+    * @param unknowtype
+    * @return return_type
+    * @author  top_iter@qq.com
+    * @date 2016年8月26日下午2:08:48
+    * @version v1.0.0
+    */ 
     public function member_list(){
-        $data = $this->getMemberInfo();
+
+        $map['status']=1;
+       if($mobile=$_POST['mobile'] ){
+           dump($mobile);
+           $map['mobile']=$mobile;
+           $this->assign('mobile',$mobile);
+           
+       }
+        $mems=D('Member');
+        $count = $mems->where($map)->count(); // 查询满足要求的总记录数
+        $Page = new Page($count, 15); // 实例化分页类 传入总记录数和每页显示的记录数
+        $show = $Page->show(); // 分页显示输出
+        $data =$mems->where($map)->order(array('userid' => 'desc'))->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        $avatas=array();
+        foreach($data AS $k=>$v){
+            $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
+            $data[$k]['last_login_time'] = date('Y-m-d h:i:s',$v['last_login_time']);
+            $data[$k]['zt'] = $v['status'];
+            $avatas[$v['userid']]=$v['userid'];
+        }
+        if($avatas){
+            $memlist= D('MemberProfile')->itemsByIds($avatas);
+        }
+        $this->assign(['member_profile'=>$memlist]);
+        $this->assign(['page'=>$show]);
         $this->assign(['data'=>$data]);
-        $this->display();
+        $constantconfig=array(C('WEB_URL'),C('TMPL_PARSE_STRING.__ADMIN__'));
+        $this->assign(['constantconfig'=>$constantconfig]);
+       $this->display();
     }
 
+    
+    
+    
     /**
      * ajax会员列表
      */
@@ -38,6 +73,8 @@ class MemberController extends AuthController {
             $data = D('Member')->relation(true)->where($map)->select();
         }else{
             $data = D('Member')->relation(true)->select();
+	//dump(D('Member')->getLastSql());
+			
         }
         foreach($data AS $k=>$v){
             $data[$k] = $v;
@@ -47,11 +84,11 @@ class MemberController extends AuthController {
             }else{
                 $data[$k]['avatar'] = C('TMPL_PARSE_STRING.__ADMIN__')."images/thumb.jpg";
             }
-            $data[$k]['score'] = $v['member_profile']['score'] != ''?$v['member_profile']['score']:0;
+          //  $data[$k]['score'] = $v['member_profile']['score'] != ''?$v['member_profile']['score']:0;
             $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
             $data[$k]['last_login_time'] = date('Y-m-d h:i:s',$v['last_login_time']);
-            $area = getAreaFullNameFromAreaID($v['member_profile']['areaid']);
-            $data[$k]['area'] = arr2str($area,'');
+           // $area = getAreaFullNameFromAreaID($v['member_profile']['areaid']);
+         //   $data[$k]['area'] = arr2str($area,'');
             $data[$k]['zt'] = $v['status'];
         }
         return $data;

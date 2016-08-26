@@ -4,6 +4,7 @@ return array(
 
     // Auth 配置
     'ADMIN_USER_ID'=>1,
-
+     'SHOW_ERROR_MSG'=>true,
+	 'SHOW_PAGE_TRACE'=>TRUE,
     'UPLOADS' => './Uploads/',
 );
