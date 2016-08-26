@@ -9,15 +9,15 @@
 
     <script>
         $(document).ready(function () {
-            var Table = $('table');
+          /* var Table = $('table');
             var DataTable = Table.DataTable({
                 language: dataTables_zh_CN,
                 pageLength: 10,
                 aaSorting: [
                     [0,"desc"]
                 ]
-            });
-
+            }); 
+            */
             //添加
 
             $('#add_question').click(function(){
@@ -127,6 +127,17 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+					<div class="row">
+					    <form   action="__URL__/question"  method="post">
+						<div class="col-sm-6">
+						<div class="dataTables_filter" >
+						<label>搜索:<input  class="form-control input-sm"     type="text" name="mobile"  value="{$mobile|default=''}"   placeholder="请输入手机号或问题" ></label>
+						  <input  type="submit" name="submit" style="margin-left:50px;" value="提交" />	
+						</div>
+						</div>
+						</form>
+						</div>
+					
                         <div class="dataTable_wrapper">
                             <table class="table table-bordered table-hover table-responsive">
                                 <thead>
@@ -142,16 +153,17 @@
                                 <tbody>
                                <foreach name="question_list" item="v">
                                 <tr id="id_{$v.id}" data-id="{$v.id}" data-reply-list="{:U('Admin/Ask/question_answer',['id'=>$v['id']])}" data-reply-ask="{:U('Admin/Ask/question_answer_add',['id'=>$v['id']])}" data-edit="{:U('Admin/Ask/question_edit',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-view="{:U('Admin/Ask/question_view',['id'=>$v['id'],'nickname'=>$v['nickname'],'content'=>$v['content'],'addtime'=>$v['addtime'],'cat_name'=>$v['cat_name']])}" data-delete="{:U('Admin/Ask/question_delete',['id'=>$v['id']])}">
-                                    <td width="6%">{$v.id}</td>
-                                    <td width="10%">{$v.nickname }</td>
+                                    <td width="6%">{$v.id }</td>
+									
+                                    <td width="10%"><?php  echo $profilelist[$v['uid']]["nickname"];?></td>
                                     <td width="28%">{$v.content}</td>
                                     <td width="10%">{$v.addtime}</td>
-                                    <td width="8%">{$v.cat_name}</td>
+                                    <td width="8%"><?php  echo $catlist[$v["id"]]["cat_name"];?></td>
                                     <td width="27%" align="center">
                                         <a class="btn btn-primary admin_user view">查看</a>
 
-                                        <if condition="$v.count gt 0">
-                                            <a class="btn btn-success admin_user reply-list">回复列表({$v.count})</a>
+                                        <if condition="$v.answer_number gt 0">
+                                            <a class="btn btn-success admin_user reply-list">回复列表({$v.answer_number})</a>
                                             <else />
 
                                             <a class="btn btn-danger admin_user reply-list">回复列表( 无 )</a>
@@ -163,6 +175,7 @@
                                     </td>
                                 </tr>
                                </foreach>
+							   	<tr>   <td  colspan="6"> {$page} </td> </tr>
                                 </tbody>
                             </table>
                         </div>

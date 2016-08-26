@@ -319,7 +319,11 @@ class IndexController extends CommonController {
 
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
-                if ($api->addQuestionAnswer(I('get.'))) {
+			//增加回复消息数量
+                if ($resultId=$api->addQuestionAnswer(I('get.'))) {	
+				//统计回复消息数top_ier
+					D('QuestionAsk')->where(array("id"=>$resultId))->setInc('answer_number',1);
+					
                     $api->addScore(I('get.userid'),'sa_answer');
 
                     //回复消息设置
