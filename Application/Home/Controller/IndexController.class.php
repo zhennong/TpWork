@@ -255,7 +255,15 @@ class IndexController extends CommonController {
                 }
                 $info['uid'] = I('get.userid');
                 $info['content'] = I('get.content');
+
                 $info['cat_id'] = I('get.cat_id');
+                //$info['score'] = I('get.score');
+
+                //$score = $api->getMemberScore(I('get.userid'));
+//                if($info['score'] > $score){
+//                    return 224;
+//                }
+
                 if ($api->addQuickAsk($info)) {
                     $api->addScore(I('get.userid'),'sa_questions');
 
@@ -278,7 +286,7 @@ class IndexController extends CommonController {
 
             // 获取问答列表
             case 'get_ask_list':
-                $x = $api->getAskList(I('get.start'), I('get.limit'), I('get.cat_id'), I('get.keyword'));
+                $x = $api->getAskList(I('get.start'), I('get.limit'), I('get.cat_id'), I('get.keyword'),I('get.userid'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     for ($i = 0; $i < 6; $i++) {
@@ -292,9 +300,9 @@ class IndexController extends CommonController {
                 $show['ask_list'] = $x;
                 break;
 
-            // 获取问题详情
+            // 获取问题详情 (兼容老版本问题详情接口【请勿删除】)
             case "get_ask_info":
-                $x = $api->getAskInfo(I('get.askid'));
+                $x = $api->getAskInfo(I('get.askid'),I('get.userid'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     for ($i = 0; $i < 6; $i++) {
@@ -308,13 +316,41 @@ class IndexController extends CommonController {
                 $show['ask_info'] = $x;
 
                 //问答列表
-                $x = $api->getAskAnswers(I('get.askid'));
+                $x = $api->getAskAnswers(I('get.askid'),null,null,I('get.userid'));
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
                     $x[$k]['content'] = $api->eachKeyWord($v['content']); //获取关键词加链接
                 }
                 $show['question_answers'] = $x;
+                break;
+
+            // 获取问题详情 (新版接口)
+            case "get_ask_arc_info";
+                //获取问答信息
+                $x = $api->getAskInfo(I('get.askid'),I('get.userid'));
+                foreach ($x as $k => $v) {
+                    $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
+                    for ($i = 0; $i < 6; $i++) {
+                        if ($v['thumb' . $i]) {
+                            $x[$k]['ask_images'][] = $v['thumb' . $i];
+                            $x[$k]['image_count'] = $i + 1;
+                        }
+                    }
+                    $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
+                }
+                $show['ask_info'] = $x;
+
+                //问答列表
+                $x = $api->getAskArcAnswers(I('get.askid'),null,null,I('get.userid'));
+                foreach ($x as $k => $v) {
+                    $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
+                    $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
+                    $x[$k]['content'] = $api->eachKeyWord($v['content']); //获取关键词加链接
+                }
+                $show['question_answers'] = $x;
+                //获取回复信息
+
                 break;
 
             // 我要回答 && 保存回答消息
@@ -449,7 +485,7 @@ class IndexController extends CommonController {
 
             //获取分类
             case 'get_category_list':
-                $show['category_list_info'] = $api->getCategoryList(I('get.id'), I('get.pid'),null,null,1);
+                $show['category_list_info'] = $api->getCategoryList(I('get.id'), I('get.pid'),null,null,1,I('get.userid'));
                 break;
 
             //获取热门分类
@@ -480,8 +516,9 @@ class IndexController extends CommonController {
 
             //获取圈子信息
             case "get_community":
-                $show['category_list_info'] = $api->getCategoryList(I('get.cat_id'));
-                $show['member_count'] = $api->getCommunityMemberCount(I('get.cat_id'));
+                $show['category_list_info'] = $api->getCategoryList(I('get.cat_id'),null,null,null,null,I('get.userid'));
+                //$show['member_count'] = $api->getCommunityMemberCount(I('get.cat_id'));
+                //$show['is_ok'] = $api->checkUidCommunity(I('get.userid'),I('get.cat_id'));
                 break;
 
             //获取关注数
@@ -609,6 +646,17 @@ class IndexController extends CommonController {
                 if($timestamp > 86400){  //24h 后才可以累加积分
                     $api->addScore(I('get.userid'),'sa_share');
                 }
+                break;
+
+            //获取会员积分
+            case 'get_member_score':
+                $show['score'] = $api->getMemberScore(I('get.userid'));
+                break;
+
+            //问题回复采纳
+            case 'set_answer_adopt':
+                $info = I('get.');
+                $show['status'] = $api->setAnswerAdopt($info);
                 break;
 
             // 测试

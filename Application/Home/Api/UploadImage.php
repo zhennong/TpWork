@@ -6,16 +6,16 @@ namespace Home\Api;
  * 图片上传�?
  * @author ChenYue
  *
- * @param $mageStauts                 图片上传状�?? 1为正常状�?
- * @param $iamgePath                  图片上传成功保存在数据库的路�?
- * @param $imagePathTemp              临时保存图片上传成功保存在数据库的路�?
+ * @param $mageStauts                 图片上传状态 1为正常状态
+ * @param $iamgePath                  图片上传成功保存在数据库的路径
+ * @param $imagePathTemp              临时保存图片上传成功保存在数据库的路径
  * @param $destination_folder          上传文件路径
  * @param $imageName                  上传的图片名（可自定义）
- * @param $fileArray                  上传的图片信息数�?
- * @param $updateImage                判断是否更新原有图片 0表示不更�? �? 1 表示更新
- * @param $uptypes                    支持上传的图片类�?
- * @param max_file_size               支持上传的图片最大类�?
- * @param imageType                   图片的类�?
+ * @param $fileArray                  上传的图片信息数量
+ * @param $updateImage                判断是否更新原有图片 0表示不更新 1 表示更新
+ * @param $uptypes                    支持上传的图片类型
+ * @param max_file_size               支持上传的图片最大类型
+ * @param imageType                   图片的类型
  *
  */
 class UploadImage
@@ -118,7 +118,7 @@ class UploadImage
 
     /**
      *
-     * �?始图片上传的工作
+     * 开始图片上传的工作
      */
     private function doWork()
     {
@@ -180,8 +180,6 @@ class UploadImage
             return 0;
         }
     }
-
-
 }
 
 ?>
