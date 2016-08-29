@@ -483,6 +483,18 @@ class IndexController extends CommonController {
                 }
                 break;
 
+            // 我的关注 （新接口）
+            case 'my_attention_new':
+                $info = I('get.');
+                $show['attention_list'] = $api->getAttentionList($info['userid'],$info['type']);
+                break;
+
+            // 我的粉丝 （新接口）
+            case 'my_fans_new':
+                $info = I('get.');
+                $show['fans_list'] = $api->getFansList($info['userid'],$info['type']);
+                break;
+
             //获取分类
             case 'get_category_list':
                 $show['category_list_info'] = $api->getCategoryList(I('get.id'), I('get.pid'),null,null,1,I('get.userid'));

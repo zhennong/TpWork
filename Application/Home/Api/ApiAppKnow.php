@@ -701,7 +701,7 @@ class ApiAppKnow extends Api
 
 
     /**
-     * 获取关注
+     * 获取关注 (老接口)
      */
     public function getAttention($attention_uid = null, $fans_uid = null,$type = null)
     {
@@ -725,6 +725,42 @@ class ApiAppKnow extends Api
             }
         }
         return $x;
+    }
+
+    /**
+     * 获取我的关注列表（新接口）
+     * @param $userid
+     * @param null $type
+     * @return mixed
+     */
+    public function getAttentionList($userid,$type = null){
+        $data = D('MemberFans')->where(array('attention_uid'=>$userid))->select();
+        foreach ($data AS $k=>$v){
+            $attention_detail = $this->getUserDetail($v['attention_uid'],array('member_profile','expert_profile'));
+            $data[$k]['attention_detail'] = $attention_detail[0];
+            if($data[$k]['attention_detail']['member_type'] != $type){
+                unset($data[$k]);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * 获取我的粉丝列表（新接口）
+     * @param $userid
+     * @param null $type
+     * @return mixed
+     */
+    public function getFansList($userid,$type = null){
+        $data = D('MemberFans')->where(array('fans_uid'=>$userid))->select();
+        foreach ($data AS $k=>$v){
+            $attention_detail = $this->getUserDetail($v['fans_uid'],array('member_profile','expert_profile'));
+            $data[$k]['fans_detail'] = $attention_detail[0];
+            if($data[$k]['fans_detail']['member_type'] != $type){
+                unset($data[$k]);
+            }
+        }
+        return $data;
     }
 
     /**
