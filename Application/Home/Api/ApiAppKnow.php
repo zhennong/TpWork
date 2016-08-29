@@ -500,7 +500,6 @@ class ApiAppKnow extends Api
         }
         $answerid = $info['answerid'] != ''? $info['answerid'] : 0; //判断是否存在问题ID 不存在默认值为0
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime,answerid) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now},{$answerid})";
-        $this->putLog('sql',$sql);
         return $this->execute($sql);
     }
 
