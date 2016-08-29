@@ -302,12 +302,8 @@ class ApiAppKnow extends Api
      * 添加快速提问
      * @param $userid
      */
-    public function addQuickAsk($info)
-    {
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask (uid,content,thumb0,thumb1,thumb2,thumb3,thumb4,thumb5,addtime,catid) VALUES ({$info[uid]},'{$info[content]}','{$info[thumb0]}','{$info[thumb1]}','{$info[thumb2]}','{$info[thumb3]}','{$info[thumb4]}','{$info[thumb5]}',{$this->now},{$info[cat_id]})";
-
-        //$sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask (uid,content,thumb0,thumb1,thumb2,thumb3,thumb4,thumb5,addtime,catid,score) VALUES ({$info[uid]},'{$info[content]}','{$info[thumb0]}','{$info[thumb1]}','{$info[thumb2]}','{$info[thumb3]}','{$info[thumb4]}','{$info[thumb5]}',{$this->now},{$info[cat_id]},{$info[score]})";
-
+    public function addQuickAsk($info) {
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask (uid,content,thumb0,thumb1,thumb2,thumb3,thumb4,thumb5,addtime,catid,score) VALUES ({$info[uid]},'{$info[content]}','{$info[thumb0]}','{$info[thumb1]}','{$info[thumb2]}','{$info[thumb3]}','{$info[thumb4]}','{$info[thumb5]}',{$this->now},{$info[cat_id]},{$info[score]})";
         return $this->execute($sql);
     }
 
@@ -426,7 +422,7 @@ class ApiAppKnow extends Api
     /**
      * 获取问题解答【新版接口】
      */
-    public function getAskArcAnswers($askid, $start = null, $limit = null,$userid = null,$pid = 0)
+    public function getAskArcAnswers($askid, $start = null, $limit = null,$userid = null,$answerid = 0)
     {
         $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
 
@@ -435,56 +431,61 @@ class ApiAppKnow extends Api
         }
         $x = $this->list_query($sql);
         foreach ($x as $k => $v) {
-            if (!$v['nickname']) {
-                $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
-            }
-            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
-            $x[$k]['member_type'] = $y[0]['member_type'];
-            if($y[0]['expert_profile']['good_at_crop'] != null){
-                $x[$k]['good_at_crop'] = $y[0]['expert_profile']['good_at_crop'];
-            }else{
-                $x[$k]['good_at_crop'] = false;
-            }
+            if(intval($v['answerid']) == 0){
+                $data[$k] = $v;
+                if (!$v['nickname']) {
+                    $data[$k]['nickname'] = $this->mobileHide($v['mobile']);
+                }
+                $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+                $data[$k]['member_type'] = $y[0]['member_type'];
+                if($y[0]['expert_profile']['good_at_crop'] != null){
+                    $data[$k]['good_at_crop'] = $y[0]['expert_profile']['good_at_crop'];
+                }
 
-            //新版回复列表
-            $x[$k]['question_answers_sub_list'] = $this->getAskSubQuestion($askid,$v['id']);
+                $adopt_data = $this->getAnswerAdoptStatus($askid,$v['id']);                 //获取问题是否被采纳
+                if(count($adopt_data) > 0){
+                    $data[$k]['adopt'] = true;
+                    $data[$k]['cnl'] = $this->addAdoptionRates($adopt_data[0]['to_uid']);     //被采纳用户采纳率
+                }
+                $data[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);             //判断是否已加关注
 
-            //判断是否被采纳
-            $x[$k]['adopt'] = $this->getAnswerAdoptStatus($askid,$v['id']);
-
-            //判断是否已加关注
-            if ($this->getFetchAttention($v['uid'],$userid) > 0) {
-                $x[$k]['is_ok'] = 1;
-            }else{
-                $x[$k]['is_ok'] = 0;
+                //针对问题回复列表
+                $data[$k]['question_answers_sub_list'] = $this->getAskSubQuestion($askid,$v['id']);
             }
         }
-        return $x;
+        return $data;
     }
 
     /**
      * 通过问题ID、回复ID查询是否存在子回复
      * @param $askid
-     * @param $pid
+     * @param $answerid
      */
-    public function getAskSubQuestion($askid,$pid){
-        $sql = "SELECT a.*,b.truename,b.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.uid = b.userid where askid = {$askid} and pid = {$pid}";
+    public function getAskSubQuestion($askid,$answerid){
+        $sql = "SELECT a.*,b.truename,b.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS b ON a.uid = b.userid where a.askid = {$askid} and a.answerid = {$answerid}";
         return $this->list_query($sql);
     }
 
     /**
      * 通过问题ID、回复ID查询是否被采纳
-     * @param $askid
-     * @param $pid
+     * @param $askid      问题ID
+     * @param $answerid   回复ID
+     * @return mixed
      */
     public function getAnswerAdoptStatus($askid,$answerid){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_adopt where askid = {$askid} and answerid = {$answerid}";
-        $data = $this->list_query($sql);
-        if(count($data) > 0){
-            return true;
-        }else{
-            return false;
-        }
+        $data = D('question_adopt')->where(array('askid'=>$askid,'answerid'=>$answerid))->select();
+        return $data;
+    }
+
+    /**
+     * 用户回答问题采纳率计算
+     * @param $to_uid  被采纳用户ID  ( 采纳率=采纳题数/总回答题数*100% )
+     */
+    public function addAdoptionRates($to_uid){
+        $adopt_num = D('question_adopt')->where(array('to_uid'=>$to_uid))->count();
+        $total = D('question_answer')->where(array('uid'=>$to_uid))->count();
+        $cnl = ($adopt_num / $total) * 100;
+        return round($cnl,2).'%';
     }
 
     /**
@@ -497,10 +498,9 @@ class ApiAppKnow extends Api
         }else{
             $reply_nickname = $info[reply_nickname];
         }
-
-        //$sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime,answerid) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now},{$info[answerid]})";
-
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now})";
+        $answerid = $info['answerid'] != ''? $info['answerid'] : 0; //判断是否存在问题ID 不存在默认值为0
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime,answerid) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now},{$answerid})";
+        $this->putLog('sql',$sql);
         return $this->execute($sql);
     }
 
@@ -730,12 +730,19 @@ class ApiAppKnow extends Api
 
     /**
      * 获取是否关注
+     * @param null $attention_uid     关注者ID
+     * @param null $fans_uid          粉丝ID
+     * @return int
      */
-    public function getFetchAttention($attention_uid = null, $fans_uid = null)
-    {
-        $sql = "SELECT COUNT(*) AS c FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$attention_uid} AND fans_uid = {$fans_uid}";
-        $x = $this->list_query($sql);
-        return $x[0]['c'];
+    public function getFetchAttention($attention_uid = null, $fans_uid = null){
+        $map['attention_uid'] = $attention_uid;
+        $map['fans_uid'] = $fans_uid;
+        $count = D('member_fans')->where($map)->count();
+        if($count > 0){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
     /**

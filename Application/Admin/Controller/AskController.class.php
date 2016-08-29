@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * 文件描述
  *修正加载性能问题
@@ -9,13 +7,10 @@
  * @version 1.1.0
  * @copyright  Copyright 2016
  */
-
-
 namespace Admin\Controller;
 use  Think\Page;
 class AskController extends AuthController
 {
-
     /**
      * 方法注释说明 ...
      * tags  获取提问信息列表，优化性能
@@ -28,7 +23,6 @@ class AskController extends AuthController
     
     public function question()
     {
-      
         $Ask = D('Ask');
          $map=array();
         if($mobile=trim($_POST['mobile']) ){
@@ -49,24 +43,31 @@ class AskController extends AuthController
         $Page = new Page($count, 15); // 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show(); // 分页显示输出
         $question_list = $Ask->field('id,content,addtime,perfect_answer_id,areaid,catid,uid,answer_number')->where($map)->order(array('addtime' => 'desc'))->limit($Page->firstRow . ',' . $Page->listRows)->select();
-		$askids=$uids=$catids=array();
         foreach ($question_list as $k => $v) {
             $question_list[$k]['id'] = $v['id'];
 			$catids[$v['catid']]=$v['catid'];
-			$uids[$v['uid']]=(int)$v['uid'];
 			$question_list[$k]['uid'] =(int)$v['uid'];
             $question_list[$k]['content'] = $v['content'];
             $question_list[$k]['addtime'] = date('Y-m-d H:i:s', $v['addtime']);
             $question_list[$k]['perfect_answer_id'] = $v['perfect_answer_id'];
             $question_list[$k]['areaid'] = $v['areaid'];
-            $question_list[$k]['cat_name'] = $v['cat_name'];
+            $question_list[$k]['cat_name'] = $v['catid'];
             $question_list[$k]['answer_number'] = $v['answer_number'];
+            $profile_file = D('MemberProfile')->field('truename,nickname')->where(array('userid'=>$v['uid']))->find();
+            if($profile_file['truename'] != '' || $profile_file['truename'] != null){
+                $question_list[$k]['name'] = $profile_file['truename'];
+            }else{
+                if($question_list[$k]['name'] != '' || $question_list[$k]['name'] != null){
+                    $question_list[$k]['name'] = $profile_file['nickname'];
+                }else{
+                    $Mem = D('Member')->where(array('userid'=>$v['uid']))->find();
+                    $question_list[$k]['name'] = $Mem['mobile'];
+                }
+            }
+            $category = D('Category')->where(array('id'=>$v['catid']))->find();
+            $question_list[$k]['cat_name'] = $category['cat_name'];
         };
-        $this->assign(['question_list' => $question_list]); 
-		$catlist=D('Category')->cache('cate')->itemsByIds($catids);
-		$profilelist=D('MemberProfile')->cache('profile')->itemsByIds($uids);
-	    $this->assign("catlist",$catlist);
-	    $this->assign("profilelist",$profilelist);
+        $this->assign(['question_list' => $question_list]);
 	    $this->assign("page",$show);
         $this->display();
     }

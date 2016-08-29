@@ -10,14 +10,7 @@ namespace Admin\Model;
 
 
 class MemberProfileModel extends AdminModel
-{  
-    
-    
-    
-    
-    
-    
-    
+{
  /**
      * 根据主键获取数据信息 ...
      * tags
@@ -30,7 +23,8 @@ class MemberProfileModel extends AdminModel
  
     public function itemsByIds($ids = array()){
         if(empty($ids)) return array();
-        $data = $this->where(array($this->pk=>array('IN',$ids)))->select();
+        $id = implode(',',$ids);
+        $data = $this->where(array($this->pk=>array('IN',$id)))->select();
         $return = array();
         foreach($data as $val){
             $return[$val[$this->pk]] = $val;
