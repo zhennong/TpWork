@@ -257,13 +257,13 @@ class IndexController extends CommonController {
                 $info['content'] = I('get.content');
 
                 $info['cat_id'] = I('get.cat_id');
-                //$info['score'] = I('get.score');
+                $info['score'] = I('get.score') != ''? I('get.score') : 0; //兼容老版本 判断是否存在score 没有默认为 0
 
-                //$score = $api->getMemberScore(I('get.userid'));
-//                if($info['score'] > $score){
-//                    return 224;
-//                }
-
+                $score = $api->getMemberScore(I('get.userid'));
+                if($info['score'] > $score){
+                    return 224;
+                    exit;
+                }
                 if ($api->addQuickAsk($info)) {
                     $api->addScore(I('get.userid'),'sa_questions');
 
@@ -355,9 +355,9 @@ class IndexController extends CommonController {
 
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
-			//增加回复消息数量
+			    //增加回复消息数量
                 if ($resultId=$api->addQuestionAnswer(I('get.'))) {	
-				//统计回复消息数top_ier
+				   //统计回复消息数top_ier
 					D('QuestionAsk')->where(array("id"=>$resultId))->setInc('answer_number',1);
 					
                     $api->addScore(I('get.userid'),'sa_answer');
