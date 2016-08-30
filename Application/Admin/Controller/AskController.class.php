@@ -27,15 +27,13 @@ class AskController extends AuthController
          $map=array();
         if($mobile=trim($_POST['mobile']) ){
             if(is_numeric(substr($mobile,0,3))){
-			$mid=D('MemberProfile')->field('userid')->where(array('mobile'=>$mobile))->find();
-			dump($mid);
-			$map['uid']=(int)$mid['userid'];
-            $this->assign('mobile',$mobile);
+                $mid=D('MemberProfile')->field('userid')->where(array('mobile'=>$mobile))->find();
+                //dump($mid);
+                $map['uid']=(int)$mid['userid'];
+                $this->assign('mobile',$mobile);
             }else{
-                
                 $map['content']=array('like','%'.$mobile.'%');
                 $this->assign('mobile',$mobile);
-                
             }
         }
         
