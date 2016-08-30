@@ -67,6 +67,7 @@ class ApiAppKnow extends Api
     public function getUserDetail($uid,$bind=array()){
         $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member WHERE userid = {$uid}";
         $x = $this->list_query($sql);
+
         if(in_array('expert_profile',$bind)){
             $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile WHERE userid = {$uid} AND status = 1";
             $a = $this->list_query($sql);
@@ -85,7 +86,9 @@ class ApiAppKnow extends Api
                 }
             }
         }
+        $adopt = D('question_adopt')->where(array('from_uid'=>$uid))->count();
         foreach($x as $k => $v){
+            $x[$k]['adopt'] = $adopt;
             if(count($a)>0){
                 $x[$k]['member_type'] = 'expert';
                 $x[$k]['expert_profile'] = $a[0];
@@ -382,6 +385,13 @@ class ApiAppKnow extends Api
             }else{
                 $x[$k]['is_ok'] = 0;
             }
+
+            $adopt_data = $this->getAnswerAdoptStatus($askid);                 //获取问题是否被采纳
+            if(count($adopt_data) > 0){
+                $x[$k]['adopt'] = true;
+            }else{
+                $x[$k]['adopt'] = false;
+            }
         }
         return $x;
     }
@@ -474,8 +484,12 @@ class ApiAppKnow extends Api
      * @param $answerid   回复ID
      * @return mixed
      */
-    public function getAnswerAdoptStatus($askid,$answerid){
-        $data = D('question_adopt')->where(array('askid'=>$askid,'answerid'=>$answerid))->select();
+    public function getAnswerAdoptStatus($askid,$answerid = null){
+        $info['askid'] = $askid;
+        if(!empty($answerid)){
+            $info['answerid'] = $answerid;
+        }
+        $data = D('question_adopt')->where($info)->select();
         return $data;
     }
 
@@ -933,9 +947,8 @@ class ApiAppKnow extends Api
      * 获取圈子成员数
      */
     public function getCommunityMemberCount($cat_id){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE cat_id = {$cat_id}";
-        $x = $this->list_query($sql);
-        return count($x);
+        $count = D('selected_category')->where(array('cat_id'=>$cat_id))->count();
+        return $count;
     }
 
     /**
@@ -948,35 +961,34 @@ class ApiAppKnow extends Api
             return 0;
             exit;
         }
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_selected_category WHERE uid = {$userid} AND cat_id = {$cat_id}";
-        return count($this->list_query($sql));
+        $map['uid'] = $userid;
+        $map['cat_id'] = $cat_id;
+        $count = D('selected_category')->where($map)->count();
+        return $count;
     }
 
     /**
      * getMemberAttention
      */
     public function getMemberAttention($userid){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE fans_uid = {$userid}";
-        $count = $this->list_query($sql);
-        return count($count);
+        $count = D('member_fans')->where(array('fans_uid'=>$userid))->count();
+        return $count;
     }
 
     /**
      * 获取粉丝数
      */
     public function getMemberFans($userid){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE attention_uid = {$userid}";
-        $count = $this->list_query($sql);
-        return count($count);
+        $count = D('member_fans')->where(array('attention_uid'=>$userid))->count();
+        return $count;
     }
 
     /**
      * getMemberAdopt
      */
     public function getMemberAdopt($userid){
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE uid = {$userid}";
-        $count = $this->list_query($sql);
-        return count($count);
+        $count = D('question_answer')->where(array('uid'=>$userid))->count();
+        return $count;
     }
 
     /**
@@ -1459,11 +1471,10 @@ class ApiAppKnow extends Api
      */
     public function setAnswerAdopt($info){
         //判断是否已经采纳
-        if(count($this->checkAnswerAdopt($info)) > 0){
+        if($this->checkAnswerAdopt($info) > 0){
             return 217;
             exit;
         }
-
         //问题采纳
         if($this->addAnswerAdopt($info)){
             $this->addScore($info['to_uid'],(int)$info['score'],1);       //回复问题者 加积分
@@ -1493,8 +1504,8 @@ class ApiAppKnow extends Api
      * @param $info
      */
     public function checkAnswerAdopt($info){
-        $sql = "SELECT id FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_adopt WHERE askid = {$info[askid]} AND answerid = {$info[answerid]} AND to_uid = {$info[to_uid]} AND from_uid = {$info[from_uid]}";
-        return $this->list_query($sql);
+        $count = D('question_adopt')->where(array('askid'=>$info['askid']))->count();
+        return $count;
     }
 
     /**

@@ -677,10 +677,8 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-
-                $data = $api->eachKeyWord("阿维菌素是做什么用的");
-                dump($data);
-
+                $data = $api->getMemberAdopt(22);
+                $show['xxx'] = $data;
                 break;
 
             default:
