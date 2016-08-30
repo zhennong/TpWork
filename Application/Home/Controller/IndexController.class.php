@@ -255,9 +255,9 @@ class IndexController extends CommonController {
                 }
                 $info['uid'] = I('get.userid');
                 $info['content'] = I('get.content');
-
                 $info['cat_id'] = I('get.cat_id');
-                $info['score'] = I('get.score') != ''? I('get.score') : 0; //兼容老版本 判断是否存在score 没有默认为 0
+
+                $info['score'] = I('get.score') != ''? I('get.score') : -1; //兼容老版本 判断是否存在score 没有默认为 -1
 
                 $score = $api->getMemberScore(I('get.userid'));
                 if($info['score'] > $score){
@@ -348,7 +348,11 @@ class IndexController extends CommonController {
                     $x[$k]['area'] = Tools::arr2str($api->getAreaFullNameFromAreaID($v['areaid']),'');
                     $x[$k]['content'] = $api->eachKeyWord($v['content']); //获取关键词加链接
                 }
-                $show['question_answers'] = $x;
+                foreach ($x as $k=>$v){
+                    $y[] = $v;
+                }
+
+                $show['question_answers'] = $y;
                 //获取回复信息
 
                 break;

@@ -42,7 +42,7 @@ class AskController extends AuthController
         $count =  $Ask->where($map)->count(); // 查询满足要求的总记录数
         $Page = new Page($count, 15); // 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show(); // 分页显示输出
-        $question_list = $Ask->field('id,content,addtime,perfect_answer_id,areaid,catid,uid,answer_number')->where($map)->order(array('addtime' => 'desc'))->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        $question_list = $Ask->field('id,content,addtime,perfect_answer_id,areaid,catid,uid,answer_number')->where($map)->order(array('addtime desc'))->limit($Page->firstRow . ',' . $Page->listRows)->select();
         foreach ($question_list as $k => $v) {
             $question_list[$k]['id'] = $v['id'];
 			$catids[$v['catid']]=$v['catid'];
@@ -138,7 +138,7 @@ class AskController extends AuthController
                 $data_list["id"] = I('get.id');
                 $data_list["uid"] = I('get.uid');
                 $data_list["content"] = I('get.content');
-                $data_list["addtime"] = strtotime(I('get.addtime'));
+                //$data_list["addtime"] = strtotime(I('get.addtime'));
                 $data_list["catid"] = I('get.catid');
                 $map['id'] = $id;
                 $result = D('Ask')->where($map)->save($data_list);

@@ -446,6 +446,8 @@ class ApiAppKnow extends Api
                 if(count($adopt_data) > 0){
                     $data[$k]['adopt'] = true;
                     $data[$k]['cnl'] = $this->addAdoptionRates($adopt_data[0]['to_uid']);     //被采纳用户采纳率
+                }else{
+                    $data[$k]['adopt'] = false;
                 }
                 $data[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);             //判断是否已加关注
 
@@ -1464,8 +1466,9 @@ class ApiAppKnow extends Api
 
         //问题采纳
         if($this->addAnswerAdopt($info)){
-            $this->addScore($info['to_uid'],$info['score'],1);       //回复问题者 加积分
-            $this->minusScore($info['from_uid'],$info['score'],1);   //提问问题者 减积分
+            $this->addScore($info['to_uid'],(int)$info['score'],1);       //回复问题者 加积分
+            $this->minusScore($info['from_uid'],(int)$info['score'],1);   //提问问题者 减积分
+            return 200;
         }else{
             return 215;
         }
