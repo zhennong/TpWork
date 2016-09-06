@@ -9,11 +9,7 @@ class FeedbackController extends AuthController {
      * 意见回馈列表
      */
     public function feedback_list(){
-        $data = M('FeedBack')->order('id desc')->select();
-        foreach($data as $k=>$v){
-            $data[$k] = $v;
-            $data[$k]['addtime'] = date('Y-m-d h:i:s',$v['addtime']);
-        }
+        $data = D('FeedBack')->getFeedBackData();
         $this->assign('data',$data);
         $this->display();
     }
@@ -22,10 +18,9 @@ class FeedbackController extends AuthController {
      * 删除意见
      */
     public function feedback_del(){
-        $id = I('get.id');
+        $id = I('get.id','','htmlspecialchars');
         if(!empty($id)){
-            $map['id'] = $id;
-            $resutl = M('FeedBack')->where($map)->delete();
+            $resutl = D('FeedBack')->delFeedBackById($id);
             if($resutl){
                 $this->ajaxReturn(1);
             }else{

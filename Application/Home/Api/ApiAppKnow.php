@@ -15,6 +15,7 @@
 namespace Home\Api;
 
 use Common\Tools;
+use Common\Jpush;
 
 class ApiAppKnow extends Api
 {
@@ -50,12 +51,50 @@ class ApiAppKnow extends Api
         'sa_feedback' => 2          //一键反馈得积分 +2
     );
 
+    //职称设置
+    public $pos = array(
+        0 => '地主',
+        1 => '农户',
+        2 => '农场主',
+        3 => '合作社',
+        4 => '零售商',
+        5 => '批发商',
+        6 => '农艺师',
+        7 => '农技师',
+        8 => '厂家',
+        9 => '科研所',
+        10 => '专家'
+    );
+
+    //消息类型
+    public $mess_type = array(
+        'reply' => '回复了你',
+        'apply' => '邀请了你',
+        'agree' => '赞了你',
+        'attention' => '关注了你',
+        'system' => ''
+    );
+
     public $tablePrefix;
 
     public function __construct()
     {
         parent::__construct();
         $this->tablePrefix = C('DATABASE_MALL_TABLE_PREFIX');
+    }
+
+    /**
+     * 通过用户ID获取用户名
+     * @param $uid
+     */
+    public function getUidByName($uid){
+        $data = D('MemberProfile')->field('truename,nickname')->where(array('userid'=>$uid))->find();
+        if(!empty($data['truename'])){
+            $name = $data['truename'];
+        }else{
+            $name = $data['nickname'];
+        }
+        return $name;
     }
 
     /**
@@ -90,10 +129,12 @@ class ApiAppKnow extends Api
         foreach($x as $k => $v){
             $x[$k]['adopt'] = $adopt;
             if(count($a)>0){
-                $x[$k]['member_type'] = 'expert';
+                $x[$k]['member_type'] = 'expert';                          //旧版会员类型
+                $x[$k]['memberships'] = $this->pos[10];                    //新版会员类型
                 $x[$k]['expert_profile'] = $a[0];
             }else{
-                $x[$k]['member_type'] = 'landlord';
+                $x[$k]['member_type'] = 'landlord';                       //旧版会员类型
+                $x[$k]['memberships'] = $this->pos[$b[0]['positional']]; //新版会员类型
             }
             if(count($b)>0){
                 $x[$k]['member_profile'] = $b[0];
@@ -102,7 +143,7 @@ class ApiAppKnow extends Api
 
                 $x[$k]['grade'] = $this->setMemberGrade(intval($b[0]['score']));
             }else{
-                $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'Uploads/image/defaultx20.jpg'];
+                $x[$k]['member_profile'] = ['area_name'=>'暂无','nickname'=>$this->mobileHide($v['mobile']),'avatar'=>'Uploads/image/defaultx20.jpg','is_ok'=>0];
             }
         }
         return $x;
@@ -289,7 +330,7 @@ class ApiAppKnow extends Api
      */
     public function setAppknowMemberProfile($info)
     {
-        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}' WHERE userid = {$info[userid]}";
+        $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET nickname='{$info[nickname]}',sex={$info[sex]},qq='{$info[qq]}',truename='{$info[truename]}',areaid={$info[areaid]},address='{$info[address]}',location='{$info[location]}',instro='{$info[instro]}',memberships='{$info[memberships]}' WHERE userid = {$info[userid]}";
 
         if ($this->getAppknowMemberProfile($info[userid])) { //存在修改
             return $this->execute($sql);
@@ -333,7 +374,7 @@ class ApiAppKnow extends Api
             $where .= substr($str,0,-2);
         }
 
-        $sql = "SELECT ask.*,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar,profile.location,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
+        $sql = "SELECT ask.*,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar,profile.location,profile.memberships,m_member.mobile FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
             ORDER BY addtime DESC";
@@ -348,15 +389,26 @@ class ApiAppKnow extends Api
             }
             $sql = "SELECT id FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer WHERE askid = {$v['id']}";
             $x[$k]['answer_count'] = count($this->list_query($sql));
-            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+
+            //$y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            //$mem = $this->getUserDetail($v['uid'],array('member_profile'));
+            //if($y[0]['member_type'] > 0){
+            //$x[$k]['member_type'] = 'expert';
+            //}else{
+            //$x[$k]['member_type'] = 'expert';
+            //}
+
+            $y = $this->getUserDetail($v['uid'],array('member_profile','expert_profile'));
+
+            //旧版会员类型接口
             $x[$k]['member_type'] = $y[0]['member_type'];
+            //新版会员类型接口
+            $x[$k]['memberships'] = $y[0]['memberships'] != null ? $y[0]['memberships'] : $this->pos[0];
+
+            //内容关键词匹配
             $x[$k]['keyword'] = implode(',',$arr_keyword);
             //判断是否已加关注
-            if ($this->getFetchAttention($v['uid'],$userid) > 0) {
-                $x[$k]['is_ok'] = 1;
-            }else{
-                $x[$k]['is_ok'] = 0;
-            }
+            $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
         }
         return $x;
     }
@@ -366,8 +418,7 @@ class ApiAppKnow extends Api
      */
     public function getAskInfo($askid,$userid = null)
     {
-        $sql = "SELECT ask.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar
-            FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
+        $sql = "SELECT ask.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.address,profile.avatar,profile.memberships FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS ask
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             WHERE id = {$askid}";
@@ -376,15 +427,18 @@ class ApiAppKnow extends Api
             if (!$v['nickname']) {
                 $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
             }
-            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+//            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+//            $x[$k]['member_type'] = $y[0]['member_type'];
+
+            $y = $this->getUserDetail($v['uid'],array('member_profile','expert_profile'));
+
+            //旧版会员类型接口
             $x[$k]['member_type'] = $y[0]['member_type'];
+            //新版会员类型接口
+            $x[$k]['memberships'] = $y[0]['memberships'] != null ? $y[0]['memberships'] : $this->pos[0];
 
             //判断是否已加关注
-            if ($this->getFetchAttention($v['uid'],$userid) > 0) {
-                $x[$k]['is_ok'] = 1;
-            }else{
-                $x[$k]['is_ok'] = 0;
-            }
+            $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
 
             $adopt_data = $this->getAnswerAdoptStatus($askid);                 //获取问题是否被采纳
             if(count($adopt_data) > 0){
@@ -401,7 +455,7 @@ class ApiAppKnow extends Api
      */
     public function getAskAnswers($askid, $start = null, $limit = null,$userid = null)
     {
-        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
+        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.avatar,profile.memberships FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
 
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
@@ -411,7 +465,8 @@ class ApiAppKnow extends Api
             if (!$v['nickname']) {
                 $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
             }
-            $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            //$y = $this->getUserDetail($v['uid'],array('expert_profile'));
+            $y = $this->getUserDetail($v['uid'],array('member_profile','expert_profile'));
             $x[$k]['member_type'] = $y[0]['member_type'];
             if($y[0]['expert_profile']['good_at_crop'] != null){
                 $x[$k]['good_at_crop'] = $y[0]['expert_profile']['good_at_crop'];
@@ -419,12 +474,11 @@ class ApiAppKnow extends Api
                 $x[$k]['good_at_crop'] = false;
             }
 
+            //新版会员类型接口
+            $x[$k]['memberships'] = $y[0]['memberships'] != null ? $y[0]['memberships'] : $this->pos[0];
+
             //判断是否已加关注
-            if ($this->getFetchAttention($v['uid'],$userid) > 0) {
-                $x[$k]['is_ok'] = 1;
-            }else{
-                $x[$k]['is_ok'] = 0;
-            }
+            $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
         }
         return $x;
     }
@@ -434,7 +488,7 @@ class ApiAppKnow extends Api
      */
     public function getAskArcAnswers($askid, $start = null, $limit = null,$userid = null,$answerid = 0)
     {
-        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.avatar FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
+        $sql = "SELECT answer.*,m_member.mobile,profile.nickname,profile.truename,profile.areaid,profile.avatar,profile.memberships FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS answer LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON answer.uid = m_member.userid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON answer.uid = profile.userid WHERE answer.askid = {$askid} ORDER BY addtime ASC";
 
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
@@ -446,11 +500,14 @@ class ApiAppKnow extends Api
                 if (!$v['nickname']) {
                     $data[$k]['nickname'] = $this->mobileHide($v['mobile']);
                 }
-                $y = $this->getUserDetail($v['uid'],array('expert_profile'));
+                $y = $this->getUserDetail($v['uid'],array('member_profile','expert_profile'));
                 $data[$k]['member_type'] = $y[0]['member_type'];
                 if($y[0]['expert_profile']['good_at_crop'] != null){
                     $data[$k]['good_at_crop'] = $y[0]['expert_profile']['good_at_crop'];
                 }
+
+                //新版会员类型接口
+                $x[$k]['memberships'] = $y[0]['memberships'] != null ? $y[0]['memberships'] : $this->pos[0];
 
                 $adopt_data = $this->getAnswerAdoptStatus($askid,$v['id']);                 //获取问题是否被采纳
                 if(count($adopt_data) > 0){
@@ -460,6 +517,7 @@ class ApiAppKnow extends Api
                     $data[$k]['adopt'] = false;
                 }
                 $data[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);             //判断是否已加关注
+                $x[$k]['positional'] = $this->pos[$v['positional']];
 
                 //针对问题回复列表
                 $data[$k]['question_answers_sub_list'] = $this->getAskSubQuestion($askid,$v['id']);
@@ -523,9 +581,15 @@ class ApiAppKnow extends Api
      * 保存回答消息
      */
     public function addMessageReply($info){
-        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_reply (from_uid,to_uid,askid,addtime)VALUES({$info['userid']},{$info['to_uid']},{$info['askid']},{$this->now})";
-
-        return $this->execute($sql);
+        $data['from_uid'] = $info['userid'];
+        $data['to_uid'] = $info['to_uid'];
+        $data['askid'] = $info['askid'];
+        $data['addtime'] = $this->now;
+        $result = D('MessageReply')->add($data);
+        if($result){
+            $name = $this->getUidByName($info['userid']);
+            $this->Jpush_Send($info['to_uid'],$name . $this->mess_type['reply']);  //极光推送（回复消息）
+        }
     }
 
 
@@ -535,7 +599,7 @@ class ApiAppKnow extends Api
      */
     public function addFeedBack($info)
     {
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_feed_back (feed_content,feed_mail,addtime) VALUES ('{$info[feed_content]}','{$info[feed_mail]}',{$this->now})";
+        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_feed_back (uid,feed_content,feed_mail,addtime) VALUES ({$info[uid]},'{$info[feed_content]}','{$info[feed_mail]}',{$this->now})";
         return $this->execute($sql);
     }
 
@@ -545,8 +609,8 @@ class ApiAppKnow extends Api
      */
     public function getExpertProfile($userid)
     {
-        $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_expert_profile WHERE userid = {$userid}";
-        return $this->list_query($sql);
+        $data = D('ExpertProfile')->where(array('userid'=>$userid))->find();
+        return $data;
     }
 
     /**
@@ -690,19 +754,17 @@ class ApiAppKnow extends Api
             return 221;
             exit();
         }
-
         if ($this->getFetchAttention($info[attention_uid], $info[fans_uid]) > 0) {
             return 217;
             exit();
         }
-
-        //关注消息设置
-        $this->addMessageAttention($info[fans_uid],$info[attention_uid]);
-
         //粉丝设置
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans (attention_uid,fans_uid,addtime) VALUES ({$info[attention_uid]},{$info[fans_uid]},{$this->now})";
-
-        if($this->execute($sql)){
+        $data['attention_uid'] = $info['attention_uid'];
+        $data['fans_uid'] = $info['fans_uid'];
+        $data['addtime'] = $this->now;
+        $result = D('MemberFans')->add($data);
+        if($result){
+            $this->addMessageAttention($info['fans_uid'],$info['attention_uid']);  //关注消息设置
             return 200;
         }
     }
@@ -711,8 +773,14 @@ class ApiAppKnow extends Api
      * 关注消息设置
      */
     public function addMessageAttention($from_uid,$to_uid){
-        $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention (from_uid,to_uid,addtime) VALUES ({$from_uid},{$to_uid},{$this->now})";
-        $this->execute($sql);
+        $data['from_uid'] = $from_uid;
+        $data['to_uid'] = $to_uid;
+        $data['addtime'] = $this->now;
+        $result = D('MessageAttention')->add($data);
+        if($result){
+            $name = $this->getUidByName($from_uid);
+            $this->Jpush_Send($to_uid,$name . $this->mess_type['attention']);  //极光推送（关注消息）
+        }
     }
 
 
@@ -750,7 +818,7 @@ class ApiAppKnow extends Api
      * @return mixed
      */
     public function getAttentionList($userid,$type = null){
-        $data = D('MemberFans')->where(array('attention_uid'=>$userid))->select();
+        $data = D('MemberFans')->where(array('fans_uid'=>$userid))->select();
         foreach ($data AS $k=>$v){
             $attention_detail = $this->getUserDetail($v['attention_uid'],array('member_profile','expert_profile'));
             $data[$k]['attention_detail'] = $attention_detail[0];
@@ -758,7 +826,11 @@ class ApiAppKnow extends Api
                 unset($data[$k]);
             }
         }
-        return $data;
+
+        foreach ($data as $k=>$v){
+            $d[] = $v;
+        }
+        return $d;
     }
 
     /**
@@ -768,15 +840,20 @@ class ApiAppKnow extends Api
      * @return mixed
      */
     public function getFansList($userid,$type = null){
-        $data = D('MemberFans')->where(array('fans_uid'=>$userid))->select();
+        $data = D('MemberFans')->where(array('attention_uid'=>$userid))->select();
         foreach ($data AS $k=>$v){
-            $attention_detail = $this->getUserDetail($v['fans_uid'],array('member_profile','expert_profile'));
-            $data[$k]['fans_detail'] = $attention_detail[0];
+            $fans_detail = $this->getUserDetail($v['fans_uid'],array('member_profile','expert_profile'));
+            $data[$k]['fans_detail'] = $fans_detail[0];
+            $data[$k]['fans_detail']['is_ok'] = $this->getFetchAttention($v['fans_uid'],$userid);
             if($data[$k]['fans_detail']['member_type'] != $type){
                 unset($data[$k]);
             }
         }
-        return $data;
+
+        foreach ($data as $k=>$v){
+            $d[] = $v;
+        }
+        return $d;
     }
 
     /**
@@ -947,7 +1024,7 @@ class ApiAppKnow extends Api
      * 获取圈子成员数
      */
     public function getCommunityMemberCount($cat_id){
-        $count = D('selected_category')->where(array('cat_id'=>$cat_id))->count();
+        $count = D('SelectedCategory')->where(array('cat_id'=>$cat_id))->count();
         return $count;
     }
 
@@ -963,7 +1040,7 @@ class ApiAppKnow extends Api
         }
         $map['uid'] = $userid;
         $map['cat_id'] = $cat_id;
-        $count = D('selected_category')->where($map)->count();
+        $count = D('SelectedCategory')->where($map)->count();
         return $count;
     }
 
@@ -971,7 +1048,7 @@ class ApiAppKnow extends Api
      * getMemberAttention
      */
     public function getMemberAttention($userid){
-        $count = D('member_fans')->where(array('fans_uid'=>$userid))->count();
+        $count = D('MemberFans')->where(array('fans_uid'=>$userid))->count();
         return $count;
     }
 
@@ -979,7 +1056,7 @@ class ApiAppKnow extends Api
      * 获取粉丝数
      */
     public function getMemberFans($userid){
-        $count = D('member_fans')->where(array('attention_uid'=>$userid))->count();
+        $count = D('MemberFans')->where(array('attention_uid'=>$userid))->count();
         return $count;
     }
 
@@ -987,7 +1064,7 @@ class ApiAppKnow extends Api
      * getMemberAdopt
      */
     public function getMemberAdopt($userid){
-        $count = D('question_answer')->where(array('uid'=>$userid))->count();
+        $count = D('QuestionAnswer')->where(array('uid'=>$userid))->count();
         return $count;
     }
 
@@ -996,6 +1073,7 @@ class ApiAppKnow extends Api
      */
     public function cancelAttention($id){
         $sql = "DELETE FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_fans WHERE id = {$id}";
+        $this->putLog('sql',$sql);
         if ($this->execute($sql)) {
             return 200;
         } else {
@@ -1054,22 +1132,16 @@ class ApiAppKnow extends Api
      * 点赞设置
      */
     public function setAgree($userid,$status,$from_uid,$answer_id){
+        $data['uid'] = $userid;
+        $data['id'] = $answer_id;
         if($status == 1){
-//            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile SET agreed_times = agreed_times + 1 WHERE userid = {$userid}";
-
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer SET agree_times = agree_times + 1 WHERE uid = {$userid} AND id = {$answer_id}";
-
+            $result = D('QuestionAnswer')->where($data)->setInc('agree_times',1);
         }else{
-            $sql = "UPDATE ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer SET against_times = against_times + 1 WHERE uid = {$userid} AND id = {$answer_id}";
+            $result = D('QuestionAnswer')->where($data)->setInc('against_times',1);
         }
-
-        if ($this->execute($sql)) {
-            $x = $this->addMessageAgree($from_uid,$userid,$answer_id);
-            if($x){
-                return 200;
-            }else{
-                return 215;
-            }
+        if ($result) {
+            $this->addMessageAgree($from_uid,$userid,$answer_id);
+            return 200;
         } else {
             return 220;
         }
@@ -1080,8 +1152,16 @@ class ApiAppKnow extends Api
      */
     public function addMessageAgree($from_uid,$to_uid,$answer_id)
     {
-        $sql = "INSERT INTO {$this->tablePrefix}appknow_message_agree (from_uid,to_uid,answer_id,addtime,isread)VALUES({$from_uid},{$to_uid},{$answer_id},{$this->now},0)";
-        return $this->execute($sql);
+        $data['from_uid'] = $from_uid;
+        $data['to_uid'] = $to_uid;
+        $data['answer_id'] = $answer_id;
+        $data['addtime'] = $this->now;
+        $data['isread'] = 0;
+        $result = D('MessageAgree')->add($data);
+        if($result){
+            $name = $this->getUidByName($from_uid);
+            $this->Jpush_Send($to_uid,$name . $this->mess_type['agree']);  //极光推送（回复消息）
+        }
     }
 
     /**
@@ -1157,8 +1237,14 @@ class ApiAppKnow extends Api
         if($this->checkInviteExpert($info) == 217){
             return 217;
         }else{
-            $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite(from_uid,to_uid,askid,addtime)VALUES({$info['invitation_uid']},{$info['invite_uid']},{$info['ask_id']},{$this->now})";
-            if($this->execute($sql)){
+            $data['from_uid'] = $info['invitation_uid'];
+            $data['to_uid'] = $info['invite_uid'];
+            $data['askid'] = $info['ask_id'];
+            $data['addtime'] = $this->now;
+            $result = D('MessageInvite')->add($data);
+            if($result){
+                $name = $this->getUidByName($info['from_uid']);
+                $this->Jpush_Send($info['to_uid'],$name . $this->mess_type['apply']);  //极光推送（邀请专家消息）
                 return 200;
             }else{
                 return 215;
@@ -1185,19 +1271,19 @@ class ApiAppKnow extends Api
     public function getMessList($info){
         switch ($info['action']){
             case 'get_mess_tips': //通知
-                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_reply AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.truename,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_reply AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
 
             case 'get_mess_invite': //邀请
-                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                $sql = "SELECT a.id,a.addtime,a.askid,a.isread,b.content,b.catid,c.mobile,d.truename,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_invite AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_ask AS b ON b.id = a.askid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
 
             case 'get_mess_agree': //点赞
-                $sql = "SELECT a.id,a.addtime,a.isread,b.content,c.mobile,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_agree AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS b ON b.id = a.answer_id LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                $sql = "SELECT a.id,a.addtime,a.isread,b.content,c.mobile,d.truename,d.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_agree AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer AS b ON b.id = a.answer_id LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS c ON c.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS d ON d.userid = c.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
 
             case 'get_mess_attention': //关注
-                $sql = "SELECT a.id,a.addtime,a.isread,b.mobile,c.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS c ON c.userid = b.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
+                $sql = "SELECT a.id,a.addtime,a.isread,b.mobile,c.truename,c.nickname FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_attention AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.from_uid LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS c ON c.userid = b.userid WHERE a.to_uid = {$info['userid']} ORDER BY a.id DESC LIMIT 10";
                 break;
             case 'get_mess_sys': //系统消息
                 $sql = "SELECT * FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_message_sys WHERE to_uid = {$info['userid']} OR to_uid = 0 ORDER BY id DESC LIMIT 10";
@@ -1205,8 +1291,20 @@ class ApiAppKnow extends Api
             default:
                 break;
         }
-        //$this->putLog('sql',$sql);
-        return $this->list_query($sql);
+        $data = $this->list_query($sql);
+        foreach ($data as $k=>$v){
+            //判断是否存在真名
+            if($info['action'] !== 'get_mess_sys'){
+                if(!empty($v['truename'])){
+                    $data[$k]['name'] = $v['truename'];
+                }else{
+                    $data[$k]['name'] = $v['nickname'];
+                }
+            }
+            $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
+            $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
+        }
+        return $data;
     }
 
     //判断是否已经阅读
@@ -1561,6 +1659,27 @@ class ApiAppKnow extends Api
             if (0 !=$c=floor($t/(int)$k)) {
                 return $c.$v.'前';
             }
+        }
+    }
+
+    /**
+     * 极光推送
+     * @param $receive    推送类型  all 全部  alias 别名
+     * @param $content    推送内容
+     */
+    public function Jpush_Send($receive,$content){
+        if(!empty($receive)){
+            $j = new Jpush();
+            if($receive == 'all'){
+                $receive = 'all';
+            }else{
+                $receive = array('alias'=>array($receive));
+            }
+            $content = '农医问药小秘书：'.$content;
+            $m_type = '';
+            $m_txt = '';
+            $m_time = '3600';        //离线保留时间
+            $res = $j->send_pub($receive, $content ,$m_type, $m_txt ,$m_time);
         }
     }
 }

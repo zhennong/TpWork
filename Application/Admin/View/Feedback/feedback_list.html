@@ -60,16 +60,18 @@
                                 <thead>
                                     <tr>
                                         <th width="5%">ID</th>
-                                        <th width="15%">邮箱 / 手机号</th>
-                                        <th width="55%">内容</th>
-                                        <th width="15%">添加时间</th>
+                                        <th width="10%">姓名</th>
+                                        <th width="10%">邮箱 / 手机号</th>
+                                        <th width="35%">内容</th>
+                                        <th width="10%">添加时间</th>
                                         <th width="10%">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <foreach name="data" item="v" key="k" >
                                         <tr id="id_{$v.id}" data-id="{$v.id}">
-                                            <td>{$v.id}</td>
+                                            <td align="center">{$v.id}</td>
+                                            <td>{$v.name}</td>
                                             <td>{$v.feed_mail}</span></td>
                                             <td>{$v.feed_content}</td>
                                             <td>{$v.addtime}</td>

@@ -1,4 +1,5 @@
 <?php
 return array(
-	//'配置项'=>'配置值'
+    //全局过滤函数
+    'DEFAULT_FILTER' => 'addslashes',
 );
