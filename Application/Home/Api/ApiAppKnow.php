@@ -379,8 +379,6 @@ class ApiAppKnow extends Api
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
             ORDER BY addtime DESC";
 
-        dump($sql);
-
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
