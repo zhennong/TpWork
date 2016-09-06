@@ -357,6 +357,7 @@ class ApiAppKnow extends Api
      */
     public function getAskList($start = null, $limit = null,$cat_id = null,$keyword = null,$userid = null)
     {
+        dump($start);
         $where = "WHERE 1=1";
         if($cat_id != null){
             $where .= " AND catid = {$cat_id}";
@@ -410,7 +411,6 @@ class ApiAppKnow extends Api
             //判断是否已加关注
             $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
         }
-        var_dump($x);
         return $x;
     }
 
