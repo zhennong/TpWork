@@ -576,8 +576,8 @@ class IndexController extends CommonController {
             //获取圈子信息
             case "get_community":
                 $show['category_list_info'] = $api->getCategoryList(I('get.cat_id'),null,null,null,null,I('get.userid'));
-                //$show['member_count'] = $api->getCommunityMemberCount(I('get.cat_id'));
-                //$show['is_ok'] = $api->checkUidCommunity(I('get.userid'),I('get.cat_id'));
+                $show['member_count'] = $api->getCommunityMemberCount(I('get.cat_id'));
+                $show['is_ok'] = $api->checkUidCommunity(I('get.userid'),I('get.cat_id'));
                 break;
 
             //获取关注数
