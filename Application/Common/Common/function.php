@@ -268,13 +268,6 @@ function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root 
     return $tree;
 }
 
-
-
-
-
-
-
-
 /**
  * 获取list数组单个字段值
  * @param array $list 数组
@@ -455,7 +448,6 @@ function getAreaInfoFromAreaID($areaid,&$areaInfo){
     }
     return $areaInfo;
 }
-
 
 
 

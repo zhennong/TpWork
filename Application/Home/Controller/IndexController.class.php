@@ -4,6 +4,7 @@ namespace Home\Controller;
 header('Access-Control-Allow-Origin: *');
 
 use Common\Controller\CommonController;
+use Common\Jpush;
 use Common\Tools;
 use Home\Api\ApiAppKnow;
 
@@ -360,16 +361,18 @@ class IndexController extends CommonController {
             // 我要回答 && 保存回答消息
             case "submit_questions_answer":
 			    //增加回复消息数量
-                if ($resultId=$api->addQuestionAnswer(I('get.'))) {	
+                $resultId = $api->addQuestionAnswer(I('get.'));
+                if ($resultId > 0) {
 				   //统计回复消息数top_ier
 					D('QuestionAsk')->where(array("id"=>$resultId))->setInc('answer_number',1);
-					
+
+                    //积分累加
                     $api->addScore(I('get.userid'),'sa_answer');
 
                     //回复消息设置
                     $api->addMessageReply(I('get.'));
 
-                } else {
+                }else {
                     $show['status'] = 215;
                 }
                 break;
@@ -462,9 +465,49 @@ class IndexController extends CommonController {
                 $show['ask_historys'] = $api->myAskHistory(I('get.userid'));
                 break;
 
+            //提问历史 （新接口）
+            case 'my_ask_history_new':
+                $data = D('QuestionAsk')->getUidByAskList(22);
+                foreach ($data AS $k=>$v){
+                    $data[$k]['addtime'] = $api->format_date($v['addtime']);
+                    $data[$k]['address'] = $api->getAreaFullNameFromAreaID($v['areaid']);
+                    if($v['avatar'] == null){
+                        $data[$k]['avatar'] = false;
+                    }
+                    for ($i = 0; $i < 6; $i++) {
+                        if ($v['thumb' . $i]) {
+                            $data[$k]['ask_images'][] = $v['thumb' . $i];
+                            $data[$k]['image_count'] = $i + 1;
+                        }
+                    }
+                }
+                $show['ask_history_list'] = $data;
+                break;
+
             //问答历史
             case 'my_answer_history':
                 $show['answer_historys'] = $api->myAnswerHistory(I('get.userid'));
+                break;
+
+            //问答历史 （新接口）
+            case 'my_answer_history_new':
+                $data = D('QuestionAsk')->getUidByAnswerList(22);
+//                foreach ($data AS $k=>$v){
+//                    $data[$k]['addtime'] = $api->format_date($v['addtime']);
+//                    $data[$k]['address'] = $api->getAreaFullNameFromAreaID($v['areaid']);
+//                    if($v['avatar'] == null){
+//                        $data[$k]['avatar'] = false;
+//                    }
+//                    for ($i = 0; $i < 6; $i++) {
+//                        if ($v['thumb' . $i]) {
+//                            $data[$k]['ask_images'][] = $v['thumb' . $i];
+//                            $data[$k]['image_count'] = $i + 1;
+//                        }
+//                    }
+//
+//                    dump($v['asklist'][0]['areaid']);
+//                }
+                $show['answer_history_list'] = $data;
                 break;
 
             //添加关注
@@ -677,8 +720,8 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-                $data = $api->getMemberAdopt(22);
-                $show['xxx'] = $data;
+                $name = $api->getUidByName(22);
+                $api->Jpush_Send(6378,$name." ".$api->mess_type['reply']);  //极光推送（回复消息）
                 break;
 
             default:

@@ -139,6 +139,7 @@ class MessageController extends CommonController {
                 }
                 $mess_data = json_encode($data);
                 break;
+
             //获取关注消息
             case 'get_mess_sys':
                 $info = $_GET;

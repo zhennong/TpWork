@@ -14,9 +14,6 @@
 
         $('#mobile').keyup(function(){
             var mobile = $("input[name='mobile']").val();
-
-            console.log(mobile.length);
-
             if(mobile.length >= 11){
                 $.get("{:U('Admin/Message/getMemberID')}",{"mobile":mobile},function(data){
                     if(data > 0){
