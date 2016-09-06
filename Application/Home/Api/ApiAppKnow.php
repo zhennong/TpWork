@@ -381,8 +381,8 @@ class ApiAppKnow extends Api
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
-
         $x = $this->list_query($sql);
+        dump($x);
         foreach ($x as $k => $v) {
             if (!$v['nickname']) {
                 $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
@@ -410,7 +410,6 @@ class ApiAppKnow extends Api
             //判断是否已加关注
             $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
         }
-        dump($x);
         return $x;
     }
 
