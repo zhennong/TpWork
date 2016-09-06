@@ -378,11 +378,13 @@ class ApiAppKnow extends Api
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_profile AS profile ON ask.uid = profile.userid
             LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS m_member ON ask.uid = m_member.userid {$where}
             ORDER BY addtime DESC";
+
+        dump($sql);
+
         if ($start != null && $limit != null) {
             $sql = $sql . " LIMIT {$start},{$limit}";
         }
         $x = $this->list_query($sql);
-        dump($x);
         foreach ($x as $k => $v) {
             if (!$v['nickname']) {
                 $x[$k]['nickname'] = $this->mobileHide($v['mobile']);
