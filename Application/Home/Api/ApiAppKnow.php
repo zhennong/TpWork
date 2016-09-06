@@ -410,6 +410,7 @@ class ApiAppKnow extends Api
             //判断是否已加关注
             $x[$k]['is_ok'] = $this->getFetchAttention($v['uid'],$userid);
         }
+        var_dump($x);
         return $x;
     }
 
