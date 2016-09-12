@@ -701,8 +701,10 @@ class IndexController extends CommonController {
 
             // 测试
             case 'test':
-                $name = $api->getUidByName(22);
-                Tools::Jpush_Send(6378,$name." ".$api->mess_type['reply']);  //极光推送（回复消息）
+                $info['userid'] = 22;
+                $info['askid'] = 5258;
+                $result = $api->getQuestionAnswerStatus($info);
+                dump($result);
                 break;
 
             default:

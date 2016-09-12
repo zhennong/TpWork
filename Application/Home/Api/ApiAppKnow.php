@@ -571,6 +571,13 @@ class ApiAppKnow extends Api
      */
     public function addQuestionAnswer($info)
     {
+        //判断是否重复提交
+        $qa_status = $this->getQuestionAnswerStatus($info);
+        if($qa_status == false){
+            return 0;
+            exit;
+        }
+
         if(empty($info[reply_nickname])||$info[reply_nickname] == null){
             $reply_nickname = 0;
         }else{
@@ -579,6 +586,27 @@ class ApiAppKnow extends Api
         $answerid = $info['answerid'] != ''? $info['answerid'] : 0; //判断是否存在问题ID 不存在默认值为0
         $sql = "INSERT INTO ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_question_answer (uid,reply_nickname,askid,content,addtime,answerid) VALUES ({$info[userid]},'{$reply_nickname}',{$info[askid]},'{$info[content]}',{$this->now},{$answerid})";
         return $this->execute($sql);
+    }
+
+    /**
+     * 判断是否重复回复问答（默认8秒）
+     * @param $info
+     * @return bool
+     */
+    public function getQuestionAnswerStatus($info){
+        $map['uid'] = $info['userid'];
+        $map['askid'] = $info['askid'];
+        $data = D('QuestionAnswer')->field('addtime')->where($map)->order('addtime desc')->find();
+        $this->putLog('a',$data['addtime'] ."|||".(time() - $data['addtime']));
+        if(!empty($data['addtime'])){
+            if((time() - $data['addtime']) < 8){
+                return false;
+            }else{
+                return ture;
+            }
+        }else{
+            return true;
+        }
     }
 
     /**
