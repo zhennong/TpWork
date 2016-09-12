@@ -597,7 +597,6 @@ class ApiAppKnow extends Api
         $map['uid'] = $info['userid'];
         $map['askid'] = $info['askid'];
         $data = D('QuestionAnswer')->field('addtime')->where($map)->order('addtime desc')->find();
-        $this->putLog('a',$data['addtime'] ."|||".(time() - $data['addtime']));
         if(!empty($data['addtime'])){
             if((time() - $data['addtime']) < 8){
                 return false;
