@@ -8,16 +8,48 @@
     </style>
 
     <script>
+        //获取是否有新问题
+        var text;
+        var timerID;
+        function ajaxGetNotify(){
+            $.ajax({
+                type:'get',
+                url : '{:U("Admin/Ask/getAskStatus")}',
+                dataType : 'json',
+                success  : function(data) {
+                    if(data > 0){
+                        text = "您有【新消息】，请注意查收~";
+                        newtext();
+                    }else{
+                        clearTimeout(timerID);
+                        document.title = '提问列表 - 暂无新消息';
+                    }
+                },
+                error : function() {}
+            })
+        }
+
+        //标题滚动定时器
+
+        function newtext() {
+            clearTimeout(timerID)
+            document.title=text.substring(1,text.length)+text.substring(0,1)
+            text=document.title.substring(0,text.length)
+            timerID = setTimeout("newtext()", 100)
+        }
+
+        setInterval("ajaxGetNotify()", parseInt(1) * 1000);
+
         $(document).ready(function () {
-          /* var Table = $('table');
-            var DataTable = Table.DataTable({
-                language: dataTables_zh_CN,
-                pageLength: 10,
-                aaSorting: [
-                    [0,"desc"]
-                ]
-            }); 
-            */
+            /* var Table = $('table');
+              var DataTable = Table.DataTable({
+                  language: dataTables_zh_CN,
+                  pageLength: 10,
+                  aaSorting: [
+                      [0,"desc"]
+                  ]
+              });
+              */
             //添加
 
             $('#add_question').click(function(){

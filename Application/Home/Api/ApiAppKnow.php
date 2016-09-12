@@ -520,7 +520,11 @@ class ApiAppKnow extends Api
                 $x[$k]['positional'] = $this->pos[$v['positional']];
 
                 //针对问题回复列表
-                $data[$k]['question_answers_sub_list'] = $this->getAskSubQuestion($askid,$v['id']);
+                $AskSubQuestionData = $this->getAskSubQuestion($askid,$v['id']);
+                foreach ($AskSubQuestionData AS $k2=>$v2){
+                    $AskSubQuestionData[$k]['content'] = $this->eachKeyWord($v2['content']); //获取关键词加链接
+                }
+                $data[$k]['question_answers_sub_list'] = $AskSubQuestionData;
             }
         }
         return $data;
@@ -588,7 +592,7 @@ class ApiAppKnow extends Api
         $result = D('MessageReply')->add($data);
         if($result){
             $name = $this->getUidByName($info['userid']);
-            $this->Jpush_Send($info['to_uid'],$name . $this->mess_type['reply']);  //极光推送（回复消息）
+            Tools::Jpush_Send($info['to_uid'],$name . $this->mess_type['reply']);  //极光推送（回复消息）
         }
     }
 
@@ -610,7 +614,12 @@ class ApiAppKnow extends Api
     public function getExpertProfile($userid)
     {
         $data = D('ExpertProfile')->where(array('userid'=>$userid))->find();
-        return $data;
+        if($data['status'] != null){
+            $status = $data['status'];
+        }else{
+            $status = -1;
+        }
+        return $status;
     }
 
     /**
@@ -779,7 +788,7 @@ class ApiAppKnow extends Api
         $result = D('MessageAttention')->add($data);
         if($result){
             $name = $this->getUidByName($from_uid);
-            $this->Jpush_Send($to_uid,$name . $this->mess_type['attention']);  //极光推送（关注消息）
+            Tools::Jpush_Send($to_uid,$name . $this->mess_type['attention']);  //极光推送（关注消息）
         }
     }
 
@@ -822,6 +831,8 @@ class ApiAppKnow extends Api
         foreach ($data AS $k=>$v){
             $attention_detail = $this->getUserDetail($v['attention_uid'],array('member_profile','expert_profile'));
             $data[$k]['attention_detail'] = $attention_detail[0];
+            $data[$k]['attention_detail']['agree_count'] = $this->getAnswerAgree($v['attention_uid']);  //获取点赞个数
+            $data[$k]['attention_detail']['attention_count'] = $this->getMemberAttention($v['attention_uid']);  //获取关注个数
             if($data[$k]['attention_detail']['member_type'] != $type){
                 unset($data[$k]);
             }
@@ -845,6 +856,8 @@ class ApiAppKnow extends Api
             $fans_detail = $this->getUserDetail($v['fans_uid'],array('member_profile','expert_profile'));
             $data[$k]['fans_detail'] = $fans_detail[0];
             $data[$k]['fans_detail']['is_ok'] = $this->getFetchAttention($v['fans_uid'],$userid);
+            $data[$k]['fans_detail']['agree_count'] = $this->getAnswerAgree($v['fans_uid']);  //获取点赞个数
+            $data[$k]['fans_detail']['attention_count'] = $this->getMemberAttention($v['fans_uid']);  //获取关注个数
             if($data[$k]['fans_detail']['member_type'] != $type){
                 unset($data[$k]);
             }
@@ -1160,7 +1173,7 @@ class ApiAppKnow extends Api
         $result = D('MessageAgree')->add($data);
         if($result){
             $name = $this->getUidByName($from_uid);
-            $this->Jpush_Send($to_uid,$name . $this->mess_type['agree']);  //极光推送（回复消息）
+            Tools::Jpush_Send($to_uid,$name . $this->mess_type['agree']);  //极光推送（回复消息）
         }
     }
 
@@ -1244,7 +1257,7 @@ class ApiAppKnow extends Api
             $result = D('MessageInvite')->add($data);
             if($result){
                 $name = $this->getUidByName($info['from_uid']);
-                $this->Jpush_Send($info['to_uid'],$name . $this->mess_type['apply']);  //极光推送（邀请专家消息）
+                Tools::Jpush_Send($info['to_uid'],$name . $this->mess_type['apply']);  //极光推送（邀请专家消息）
                 return 200;
             }else{
                 return 215;
@@ -1338,8 +1351,11 @@ class ApiAppKnow extends Api
 
     //会员中心获取点赞个数
     public function getAnswerAgree($uid){
-        $sql = "SELECT SUM(agree_times) AS count FROM destoon_appknow_question_answer WHERE uid = {$uid} AND agree_times > 0";
-        return $this->list_query($sql);
+        $data = D('QuestionAnswer')->where(array('uid'=>$uid,'agree_times'=>array('gt',0)))->field('SUM(agree_times) AS count')->find();
+        if (empty($data['count'])||$data['count'] == null){
+            $data['count'] = 0;
+        }
+        return $data['count'];
     }
 
     //获取最新版本
@@ -1424,11 +1440,18 @@ class ApiAppKnow extends Api
 
     //获取我的邀请列表
     public function getMyApplyCode($code){
-        $sql = "SELECT b.mobile,b.addtime FROM ".C('DATABASE_MALL_TABLE_PREFIX')."appknow_member_code AS a LEFT JOIN ".C('DATABASE_MALL_TABLE_PREFIX')."ucenter_member AS b ON b.userid = a.uid WHERE a.apply_code = '{$code}'";
-        $data = $this->list_query($sql);
-        foreach ($data AS $key=>$value){
-            $data[$key]['addtime'] = date('Y-m-d',$value['addtime']);
+        $data = D('MemberCode')
+              ->field('b.userid,b.mobile')
+              ->alias('a')
+              ->join('LEFT JOIN destoon_ucenter_member AS b ON b.userid = a.uid')
+              ->where(array('a.apply_code'=>$code))
+              ->order('a.id desc')
+              ->select();
+        foreach ($data AS $k=>$v){
+            $member_info = D('MemberProfile')->getMemberInfo($v['userid'],'expert');
+            $data[$k]['member_info'] = $member_info[0];
         }
+
         return $data;
     }
 
@@ -1659,27 +1682,6 @@ class ApiAppKnow extends Api
             if (0 !=$c=floor($t/(int)$k)) {
                 return $c.$v.'前';
             }
-        }
-    }
-
-    /**
-     * 极光推送
-     * @param $receive    推送类型  all 全部  alias 别名
-     * @param $content    推送内容
-     */
-    public function Jpush_Send($receive,$content){
-        if(!empty($receive)){
-            $j = new Jpush();
-            if($receive == 'all'){
-                $receive = 'all';
-            }else{
-                $receive = array('alias'=>array($receive));
-            }
-            $content = '农医问药小秘书：'.$content;
-            $m_type = '';
-            $m_txt = '';
-            $m_time = '3600';        //离线保留时间
-            $res = $j->send_pub($receive, $content ,$m_type, $m_txt ,$m_time);
         }
     }
 }

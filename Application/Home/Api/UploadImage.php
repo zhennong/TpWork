@@ -3,7 +3,7 @@ namespace Home\Api;
 
 /**
  *
- * 图片上传�?
+ * 图片上传类
  * @author ChenYue
  *
  * @param $mageStauts                 图片上传状态 1为正常状态

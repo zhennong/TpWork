@@ -69,7 +69,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         消息列表
-                        <span class="pull-right"><a id="add_question">添加消息</a></span>
+                        <span class="pull-right"><a id="add_question">推送消息</a></span>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -82,7 +82,6 @@
                                     <th>消息内容</th>
                                     <th>推送时间</th>
                                     <th>用户范围</th>
-                                    <th>状态</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -98,13 +97,6 @@
                                                 所有用户
                                                 <else />
                                                 {$v.mobile}
-                                            </if>
-                                        </td>
-                                        <td style="width:6%;text-align: center;color: red;">
-                                            <if condition="$v.isread == 1">
-                                                <font color="green">已读</font>
-                                                <else />
-                                                <font color="red">未读</font>
                                             </if>
                                         </td>
                                         <td style="width:10%;text-align: center;">

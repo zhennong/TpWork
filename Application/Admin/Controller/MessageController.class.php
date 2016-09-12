@@ -59,6 +59,10 @@ class MessageController extends AuthController
 
             $result = M('message_sys')->add($data);
             if($result){
+                if(I('get.range') == 0){
+                    //消息推送全局
+                    Tools::Jpush_Send('all',$data['content']);
+                }
                 $this->ajaxReturn(1);
             }else{
                 $this->ajaxReturn(0);

@@ -7,6 +7,7 @@
  */
 
 namespace Common;
+use Common\Jpush;
 
 class Tools
 {
@@ -721,4 +722,26 @@ class Tools
             return null;
         }
     }
+
+    /**
+     * 极光推送
+     * @param $receive    推送类型  all 全部  alias 别名
+     * @param $content    推送内容
+     */
+    public static function Jpush_Send($receive,$content){
+        if(!empty($receive)){
+            $j = new Jpush();
+            if($receive == 'all'){
+                $receive = 'all';
+            }else{
+                $receive = array('alias'=>array($receive));
+            }
+            $content = '农医问药小秘书：'.$content;
+            $m_type = '';
+            $m_txt = '';
+            $m_time = '3600';        //离线保留时间
+            $res = $j->send_pub($receive, $content ,$m_type, $m_txt ,$m_time);
+        }
+    }
+
 }

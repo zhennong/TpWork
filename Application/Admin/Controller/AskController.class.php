@@ -264,8 +264,20 @@ class AskController extends AuthController
     }
 
 
-
-
+    /**
+     * 获取是否有新消息
+     */
+    public function getAskStatus(){
+        $now = strtotime(date('Y-m-d 00:00:00',time())); //获取当天 00:00:00时间
+        $map['addtime'] = array('gt',$now);
+        $map['answer_number'] = 0;
+        $count = D('QuestionAsk')->where($map)->count();
+        if ($count) {
+            $this->ajaxReturn($count);
+        } else {
+            $this->ajaxReturn(0);
+        }
+    }
 }
 
 

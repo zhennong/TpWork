@@ -108,7 +108,7 @@ class IndexController extends CommonController {
                         $show['status'] = 209;
                     } else {
                         $x = rand(100000,999999);
-                        S($k, $x, 60);
+                        S($k, $x, 120);
                         if ($y = $api->sendSms($x, I('get.mobile'))) {
 
                         } else {
@@ -467,20 +467,8 @@ class IndexController extends CommonController {
 
             //提问历史 （新接口）
             case 'my_ask_history_new':
-                $data = D('QuestionAsk')->getUidByAskList(22);
-                foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = $api->format_date($v['addtime']);
-                    $data[$k]['address'] = $api->getAreaFullNameFromAreaID($v['areaid']);
-                    if($v['avatar'] == null){
-                        $data[$k]['avatar'] = false;
-                    }
-                    for ($i = 0; $i < 6; $i++) {
-                        if ($v['thumb' . $i]) {
-                            $data[$k]['ask_images'][] = $v['thumb' . $i];
-                            $data[$k]['image_count'] = $i + 1;
-                        }
-                    }
-                }
+                $data = D('QuestionAsk')->getUidByAskList(I('get.userid'));
+
                 $show['ask_history_list'] = $data;
                 break;
 
@@ -491,22 +479,7 @@ class IndexController extends CommonController {
 
             //问答历史 （新接口）
             case 'my_answer_history_new':
-                $data = D('QuestionAsk')->getUidByAnswerList(22);
-//                foreach ($data AS $k=>$v){
-//                    $data[$k]['addtime'] = $api->format_date($v['addtime']);
-//                    $data[$k]['address'] = $api->getAreaFullNameFromAreaID($v['areaid']);
-//                    if($v['avatar'] == null){
-//                        $data[$k]['avatar'] = false;
-//                    }
-//                    for ($i = 0; $i < 6; $i++) {
-//                        if ($v['thumb' . $i]) {
-//                            $data[$k]['ask_images'][] = $v['thumb' . $i];
-//                            $data[$k]['image_count'] = $i + 1;
-//                        }
-//                    }
-//
-//                    dump($v['asklist'][0]['areaid']);
-//                }
+                $data = D('QuestionAsk')->getUidByAnswerList(I('get.userid'));
                 $show['answer_history_list'] = $data;
                 break;
 
@@ -533,13 +506,21 @@ class IndexController extends CommonController {
             // 我的关注 （新接口）
             case 'my_attention_new':
                 $info = I('get.');
-                $show['attention_list'] = $api->getAttentionList($info['userid'],$info['type']);
+                $atten_list = $api->getAttentionList($info['userid'],$info['type']);
+                if(count($atten_list) == 0){
+                    $atten_list = array();
+                }
+                $show['attention_list'] = $atten_list;
                 break;
 
             // 我的粉丝 （新接口）
             case 'my_fans_new':
                 $info = I('get.');
-                $show['fans_list'] = $api->getFansList($info['userid'],$info['type']);
+                $fans_list = $api->getFansList($info['userid'],$info['type']);
+                if(count($fans_list) == 0){
+                    $fans_list = array();
+                }
+                $show['fans_list'] = $fans_list;
                 break;
 
             //获取分类
@@ -721,7 +702,7 @@ class IndexController extends CommonController {
             // 测试
             case 'test':
                 $name = $api->getUidByName(22);
-                $api->Jpush_Send(6378,$name." ".$api->mess_type['reply']);  //极光推送（回复消息）
+                Tools::Jpush_Send(6378,$name." ".$api->mess_type['reply']);  //极光推送（回复消息）
                 break;
 
             default:

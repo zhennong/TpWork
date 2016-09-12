@@ -58,3 +58,5 @@ a{
 .table-bordered>tbody>tr>td .btn{margin: 0 5px;}
 .table-bordered>tbody>tr>td.acount,.table-bordered>tbody>tr>td.avatar{cursor: pointer;font-weight:bold;}
 .num{width:40px;}
+
+html{overflow-x: hidden;}
