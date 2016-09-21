@@ -522,7 +522,7 @@ class ApiAppKnow extends Api
                 //针对问题回复列表
                 $AskSubQuestionData = $this->getAskSubQuestion($askid,$v['id']);
                 foreach ($AskSubQuestionData AS $k2=>$v2){
-                    $AskSubQuestionData[$k]['content'] = $this->eachKeyWord($v2['content']); //获取关键词加链接
+                    $AskSubQuestionData[$k2]['content'] = $this->eachKeyWord($v2['content']); //获取关键词加链接
                 }
                 $data[$k]['question_answers_sub_list'] = $AskSubQuestionData;
             }
