@@ -110,7 +110,6 @@ class MessageController extends CommonController {
                 $info = $_GET;
                 $data = $api->getMessList($info);
                 foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
                     $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
                     $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
                 }
@@ -122,7 +121,6 @@ class MessageController extends CommonController {
                 $info = $_GET;
                 $data = $api->getMessList($info);
                 foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
                     $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
                     $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
                 }
@@ -134,7 +132,6 @@ class MessageController extends CommonController {
                 $info = $_GET;
                 $data = $api->getMessList($info);
                 foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
                     $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
                 }
                 $mess_data = json_encode($data);
@@ -144,9 +141,6 @@ class MessageController extends CommonController {
             case 'get_mess_sys':
                 $info = $_GET;
                 $data = $api->getMessList($info);
-                foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
-                }
                 $mess_data = json_encode($data);
                 break;
             default:
