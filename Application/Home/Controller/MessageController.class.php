@@ -95,9 +95,7 @@ class MessageController extends CommonController {
             //获取回复消息
             case 'get_mess_tips':
                 $data = $api->getMessList($info);
-                
                 foreach ($data AS $k=>$v){
-                    $data[$k]['addtime'] = date("Y-m-d",$v['addtime']);
                     $data[$k]['mobile'] = $api->mobileHide($v['mobile']);
                     $data[$k]['content'] = Tools::msubstr($v['content'],0,25);
                 }
