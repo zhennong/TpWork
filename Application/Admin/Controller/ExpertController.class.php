@@ -61,6 +61,7 @@ class ExpertController extends AuthController
         $opt = I('get.action');
         if($opt == 'add'){
             $data = array();
+            $data['userid'] = I('get.userid');
             $data['name'] = I('get.name');
             $data['expert_type'] = I('get.expert_type');
             $data['good_at_crop'] = I('get.good_at_crop');
