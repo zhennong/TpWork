@@ -1382,7 +1382,7 @@ class ApiAppKnow extends Api
         if (empty($data['count'])||$data['count'] == null){
             $data['count'] = 0;
         }
-        return $data['count'];
+        return intval($data['count']);
     }
 
     //获取最新版本
