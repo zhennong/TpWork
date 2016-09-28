@@ -480,6 +480,9 @@ class IndexController extends CommonController {
             //问答历史 （新接口）
             case 'my_answer_history_new':
                 $data = D('QuestionAsk')->getUidByAnswerList(I('get.userid'));
+                if(empty($data)){
+                    $data = array('');
+                }
                 $show['answer_history_list'] = $data;
                 break;
 
