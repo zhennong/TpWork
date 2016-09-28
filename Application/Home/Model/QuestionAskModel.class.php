@@ -88,7 +88,7 @@ class QuestionAskModel extends Model{
             }
         }
 
-        !empty($list) ? $list : array();
+        !empty($list) ? $list : array("");
         return $list;
     }
 }
