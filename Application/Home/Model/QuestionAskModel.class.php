@@ -82,7 +82,10 @@ class QuestionAskModel extends Model{
         }
         $askid = array_unique($askid);
         foreach ($askid as $k=>$v){
-            $list[] = $this->getIdByAskList($v);
+            $data = $this->getIdByAskList($v);
+            if(!empty($data)){
+                $list[] = $data;
+            }
         }
         return $list;
     }
