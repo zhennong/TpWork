@@ -48,18 +48,30 @@ class KeywordController extends AuthController
     public function keyword_add(){
         $opt = I('get.action');
         if($opt == 'add'){
-            $data = array();
-            $data['keyword'] = I('get.keyword');
-            $data['stars'] = I('get.stars');
-            $data['addtime'] = time();
+            if($this->findKeyword(I('get.keyword')) == 0){
+                $data = array();
+                $data['keyword'] = I('get.keyword');
+                $data['stars'] = I('get.stars');
+                $data['addtime'] = time();
 
-            $result = D('keyword')->add($data);
-            if($result){
-                $this->ajaxReturn(1);
+                $result = D('keyword')->add($data);
+                if($result){
+                    $this->ajaxReturn(1);
+                }else{
+                    $this->ajaxReturn(0);
+                }
             }else{
-                $this->ajaxReturn(0);
+                $this->ajaxReturn(2);
             }
         }
         $this->display();
+    }
+
+    /**
+     * 获取是否已经添加过
+     */
+    public function findKeyword($keyword){
+        $resutl = D('keyword')->where(array('keyword'=>$keyword))->count();
+        return (int)$resutl;
     }
 }
