@@ -87,6 +87,8 @@ class QuestionAskModel extends Model{
                 $list[] = $data;
             }
         }
+
+        !empty($list) ? $list : array();
         return $list;
     }
 }
