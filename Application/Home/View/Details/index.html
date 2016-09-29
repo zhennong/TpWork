@@ -26,12 +26,14 @@
 <div class="forum-info-template share-temp">
 	<div id="pageContainer">
 
-		<div class="circle-info">
-			<img src="__UPLOADS__/{$category['cat_img']}">
-			<h5>{$category['cat_name']}</h5>
-			<p>成员<i> {$category['member_count']|default="0"} 人</i></p>
-			<a class="circle-button"></a>
-		</div>
+        <if condition="$category['cat_name'] neq ''">
+            <div class="circle-info">
+                <img src="__UPLOADS__/{$category['cat_img']}">
+                <h5>{$category['cat_name']}</h5>
+                <p>成员<i> {$category['member_count']|default="0"} 人</i></p>
+                <a class="circle-button"></a>
+            </div>
+        </if>
 
 		<div class="topic-detail">
 			<div class="topic-user">
