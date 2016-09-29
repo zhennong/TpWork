@@ -26,103 +26,112 @@
 <div class="forum-info-template share-temp">
 	<div id="pageContainer">
 
-        <if condition="$category['cat_name'] neq ''">
-            <div class="circle-info">
-                <img src="__UPLOADS__/{$category['cat_img']}">
-                <h5>{$category['cat_name']}</h5>
-                <p>成员<i> {$category['member_count']|default="0"} 人</i></p>
-                <a class="circle-button"></a>
-            </div>
-        </if>
-
-		<div class="topic-detail">
-			<div class="topic-user">
-                <if condition="$ask_data['avatar'] neq ''">
-				    <img src="{$ask_data['avatar']}"
-                <else />
-                    <img src="__HOME__/images/pic.jpg"
-                </if>
-				<h5>{$ask_data['truename'] ? $ask_data['truename'] : $ask_data['nickname']}</h5><br>
-				<div class="topic-user-info">
-                    <span>{$ask_data['area']|default="未知地区"}</span>
-                    <span>{$ask_data['addtime_date']}</span>
-                </div>
-                <a class="attention"></a>
-			</div>
-
-			<div class="topic-main">
-
-                <!-- Swiper -->
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-                        <if condition="$ask_data['image_count'] gt 0">
-                            <foreach name="ask_data['ask_images']" item="vo" key="k" >
-                                <div class="swiper-slide">
-                                    <img src="{$vo}" />
-                                </div>
-                            </foreach>
-                        </if>
+        <empty name="ask_data">
+                <!--<p align="center" style="font-size: 16px;padding: 15px 0;">暂无内容~~</p>-->
+            <else />
+                <if condition="$category['cat_name'] neq ''">
+                    <div class="circle-info">
+                        <img src="__UPLOADS__/{$category['cat_img']}">
+                        <h5>{$category['cat_name']}</h5>
+                        <p>成员<i> {$category['member_count']|default="0"} 人</i></p>
+                        <a class="circle-button"></a>
                     </div>
-                    <!-- Add Pagination -->
-                    <div class="swiper-pagination"></div>
-                    <!-- Add Arrows -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
+                </if>
+
+
+                <div class="topic-detail">
+                <div class="topic-user">
+                    <if condition="$ask_data['avatar'] neq ''">
+                        <img src="{$ask_data['avatar']}"
+                    <else />
+                        <img src="__HOME__/images/s_icon_mine_select.png"
+                    </if>
+                    <h5>{$ask_data['truename'] ? $ask_data['truename'] : $ask_data['nickname']}</h5><br>
+                    <div class="topic-user-info">
+                        <span>{$ask_data['area']|default="未知地区"}</span>
+                        <span>{$ask_data['addtime_date']}</span>
+                    </div>
+                    <a class="attention"></a>
                 </div>
 
-                <!-- Swiper JS -->
-                <script src="__HOME__/js/swiper.min.js"></script>
+                <div class="topic-main">
 
-                <!-- Initialize Swiper -->
-                <script>
-                    var swiper = new Swiper('.swiper-container', {
-                        nextButton: '.swiper-button-next',
-                        prevButton: '.swiper-button-prev',
-                        pagination: '.swiper-pagination',
-                        paginationType: 'fraction'
-                    });
-                </script>
+                    <if condition="$ask_data['image_count'] gt 0">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper">
 
-                <p>{$ask_data['content']}</p>
-            </div>
-		</div>
+                                    <foreach name="ask_data['ask_images']" item="vo" key="k" >
+                                        <div class="swiper-slide">
+                                            <img src="{$vo}" />
+                                        </div>
+                                    </foreach>
 
-		<div class="comments-list">
-            <h3 class="line">回答（<php>echo count($answer_data);</php>）</h3>
-            <ul>
-
-                <foreach name="answer_data" item="vo" key="k" >
-                    <li class="topic-one" data-name="">
-                        <div class="topic-user">
-                            <img src="__HOME__/images/tx01.jpg">
-                            <h5>{$vo['truename']} <b class="purple" style="display: none;"></b>
-                                <if condition="$vo['member_type'] eq 'expert'">
-                                    <b style="background: red;">专家</b>
-                                <else />
-                                    <b class="purple">地主</b>
-                                </if>
-                            </h5><br>
-                            <div class="topic-user-info">
-                                <span>{$vo['area']}</span>
-                                <span>{$vo['addtime_date']}</span>
                             </div>
-                            <a class="attention"></a>
+                            <!-- Add Pagination -->
+                            <div class="swiper-pagination"></div>
+                            <!-- Add Arrows -->
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
                         </div>
-                        <div class="comment-main">
-                            <p>{$vo['content']}
-                            <a class="confirm-img" style="display: none;"></a>
-                            </p>
-                        </div>
-                        <div class="comment-operate">
-                            <a class="bad"><img src="__HOME__/images/cai.png">反对（{$vo['against_times']}）<i></i></a>
-                            <a class="good"><img src="__HOME__/images/zan.png">赞同（{$vo['agree_times']}）<i></i></a>
-                            <a class="reback"><img src="__HOME__/images/resomeone.png">回复</a>
-                        </div>
-                    </li>
-                </foreach>
+                        <!-- Swiper JS -->
+                        <script src="__HOME__/js/swiper.min.js"></script>
 
-            </ul>
-        </div>
+                        <!-- Initialize Swiper -->
+                        <script>
+                            var swiper = new Swiper('.swiper-container', {
+                                nextButton: '.swiper-button-next',
+                                prevButton: '.swiper-button-prev',
+                                pagination: '.swiper-pagination',
+                                paginationType: 'fraction'
+                            });
+                        </script>
+                    </if>
+                    <p>{$ask_data['content']}</p>
+                </div>
+            </div>
+
+            <div class="comments-list">
+                <h3 class="line">回答（<php>echo count($answer_data);</php>）</h3>
+                <empty name="answer_data">
+                    <p align="center" style="font-size: 16px;padding: 15px 0;">暂无回复内容~~</p>
+                    <else />
+                    <ul>
+                        <foreach name="answer_data" item="vo" key="k" >
+                            <li class="topic-one" data-name="">
+                                <div class="topic-user">
+                                    <img src="__HOME__/images/tx01.jpg">
+                                    <h5>{$vo['truename']} <b class="purple" style="display: none;"></b>
+                                        <if condition="$vo['member_type'] eq 'expert'">
+                                            <b style="background: red;">专家</b>
+                                        <else />
+                                            <b class="purple">地主</b>
+                                        </if>
+                                    </h5><br>
+                                    <div class="topic-user-info">
+                                        <span>{$vo['area']}</span>
+                                        <span>{$vo['addtime_date']}</span>
+                                    </div>
+                                    <a class="attention"></a>
+                                </div>
+                                <div class="comment-main">
+                                    <p>{$vo['content']}
+                                    <a class="confirm-img" style="display: none;"></a>
+                                    </p>
+                                </div>
+                                <div class="comment-operate">
+                                    <a class="bad"><img src="__HOME__/images/cai.png">反对（{$vo['against_times']}）<i></i></a>
+                                    <a class="good"><img src="__HOME__/images/zan.png">赞同（{$vo['agree_times']}）<i></i></a>
+                                    <a class="reback"><img src="__HOME__/images/resomeone.png">回复</a>
+                                </div>
+                            </li>
+                        </foreach>
+
+                    </ul>
+                </empty>
+            </div>
+
+        </empty>
+
         <div class="share-pic">
             <div class="link-div">
                 <fieldset>
