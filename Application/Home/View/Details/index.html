@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html data-dpr="3" style="font-size:40.2px;">
+<head>
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, width=device-width">
+	<title>{$ask_data['content']|mb_substr=###,0,60,'utf-8'} - 中国农药第一网</title>
+	<link rel="stylesheet" type="text/css" href="__HOME__/css/view.css">
+    <link rel="stylesheet" href="__HOME__/css/swiper.min.css">
+    <style>
+        .swiper-container {
+            width: 100%;
+            height: 300px;
+            margin: 10px auto;
+        }
+        .swiper-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+            line-height: 300px;
+        }
+        .swiper-pagination{width:95%;margin:0 auto;font-size: 16px;color:#fff;text-align: right;}
+        .swiper-pagination span{font-size: 1em;color:#fff;}
+    </style>
+    <script type="text/javascript" src="http://ngjios.laodao.so/js/lib/TouchSlide.1.1.js"></script>
+</head>
+<body style="font-size:36px;">
+<div class="forum-info-template share-temp">
+	<div id="pageContainer">
+
+		<div class="circle-info">
+			<img src="__UPLOADS__/{$category['cat_img']}">
+			<h5>{$category['cat_name']}</h5>
+			<p>成员<i> {$category['member_count']|default="0"} 人</i></p>
+			<a class="circle-button"></a>
+		</div>
+
+		<div class="topic-detail">
+			<div class="topic-user">
+                <if condition="$ask_data['avatar'] neq ''">
+				    <img src="{$ask_data['avatar']}"
+                <else />
+                    <img src="__HOME__/images/pic.jpg"
+                </if>
+				<h5>{$ask_data['truename'] ? $ask_data['truename'] : $ask_data['nickname']}</h5><br>
+				<div class="topic-user-info">
+                    <span>{$ask_data['area']|default="未知地区"}</span>
+                    <span>{$ask_data['addtime_date']}</span>
+                </div>
+                <a class="attention"></a>
+			</div>
+
+			<div class="topic-main">
+
+                <!-- Swiper -->
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <if condition="$ask_data['image_count'] gt 0">
+                            <foreach name="ask_data['ask_images']" item="vo" key="k" >
+                                <div class="swiper-slide">
+                                    <img src="{$vo}" />
+                                </div>
+                            </foreach>
+                        </if>
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+
+                <!-- Swiper JS -->
+                <script src="__HOME__/js/swiper.min.js"></script>
+
+                <!-- Initialize Swiper -->
+                <script>
+                    var swiper = new Swiper('.swiper-container', {
+                        nextButton: '.swiper-button-next',
+                        prevButton: '.swiper-button-prev',
+                        pagination: '.swiper-pagination',
+                        paginationType: 'fraction'
+                    });
+                </script>
+
+                <p>{$ask_data['content']}</p>
+            </div>
+		</div>
+
+		<div class="comments-list">
+            <h3 class="line">回答（<php>echo count($answer_data);</php>）</h3>
+            <ul>
+
+                <foreach name="answer_data" item="vo" key="k" >
+                    <li class="topic-one" data-name="">
+                        <div class="topic-user">
+                            <img src="__HOME__/images/tx01.jpg">
+                            <h5>{$vo['truename']} <b class="purple" style="display: none;"></b>
+                                <if condition="$vo['member_type'] eq 'expert'">
+                                    <b style="background: red;">专家</b>
+                                <else />
+                                    <b class="purple">地主</b>
+                                </if>
+                            </h5><br>
+                            <div class="topic-user-info">
+                                <span>{$vo['area']}</span>
+                                <span>{$vo['addtime_date']}</span>
+                            </div>
+                            <a class="attention"></a>
+                        </div>
+                        <div class="comment-main">
+                            <p>{$vo['content']}
+                            <a class="confirm-img" style="display: none;"></a>
+                            </p>
+                        </div>
+                        <div class="comment-operate">
+                            <a class="bad"><img src="__HOME__/images/cai.png">反对（{$vo['against_times']}）<i></i></a>
+                            <a class="good"><img src="__HOME__/images/zan.png">赞同（{$vo['agree_times']}）<i></i></a>
+                            <a class="reback"><img src="__HOME__/images/resomeone.png">回复</a>
+                        </div>
+                    </li>
+                </foreach>
+
+            </ul>
+        </div>
+        <div class="share-pic">
+            <div class="link-div">
+                <fieldset>
+                    <legend>农医问药下载链接</legend>
+                </fieldset>
+            </div>
+            <a><img src="__HOME__/images/share-download.jpg"></a>
+        </div>
+	</div>
+	<div class="make-comments">
+	    <a class="make-comments-button"><img src="__HOME__/images/invited_experts.png" class="invite">邀请专家</a>
+	    <a class="make-comments-button"><img src="__HOME__/images/pencil_w.png">我要回答</a>
+	</div>
+
+
+
+
+</div>
+
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("a").click(function(){
+        window.open('http://www.nongyao001.com/temporary/nywyappdl/');
+    })
+})
+</script>
+</body>
+</html>
