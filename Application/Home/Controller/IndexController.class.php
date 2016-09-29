@@ -702,12 +702,16 @@ class IndexController extends CommonController {
                 $show['status'] = $api->setAnswerAdopt($info);
                 break;
 
+            //获取banner图列表
+            case 'get_banner_list':
+                $show['banner_list'] = $api->getBannerList();
+                break;
+
             // 测试
             case 'test':
                 $info['userid'] = 22;
                 $info['askid'] = 5258;
                 $result = $api->getQuestionAnswerStatus($info);
-                dump($result);
                 break;
 
             default:

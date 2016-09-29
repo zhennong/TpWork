@@ -1711,4 +1711,14 @@ class ApiAppKnow extends Api
             }
         }
     }
+
+    /**
+     * 获取banner列表
+     * @return mixed
+     */
+    function getBannerList(){
+        $list = D('ad')->where(array('status'=>1))->order('sort,id')->select();
+        return $list;
+    }
+
 }
