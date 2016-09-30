@@ -191,6 +191,8 @@ class IndexController extends CommonController {
                         $api->addScore(I('get.userid'),'sa_profile');
                         $api->profileIsOk(I('get.userid')); //完善信息状态修改
                     }
+
+                    $api->setApplyCode($show['member_profile'][0]['userid']);  //设置邀请码
                 }
                 break;
 
