@@ -106,10 +106,10 @@ class Jpush{
                 ),
                 //ios的自定义
                 "ios"=>array(
-                         "alert"=>$content,
-                        "badge"=>"1",
+                        "alert"=>$content,
+                        "badge"=>"+1",
                         "sound"=>"default",
-                         "extras"=>array("type"=>$m_type, "txt"=>$m_txt)
+                        "extras"=>array("type"=>$m_type, "txt"=>$m_txt)
                 )
         );
 
