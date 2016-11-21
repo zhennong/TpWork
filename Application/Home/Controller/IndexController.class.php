@@ -260,7 +260,7 @@ class IndexController extends CommonController {
                 $info['content'] = I('get.content');
                 $info['cat_id'] = I('get.cat_id');
 
-                $info['score'] = I('get.score') != ''? I('get.score') : -1; //兼容老版本 判断是否存在score 没有默认为 -1
+                $info['score'] = I('get.score') != ''? I('get.score') : 0; //兼容老版本 判断是否存在score 没有默认为 0
 
                 $score = $api->getMemberScore(I('get.userid'));
                 if($info['score'] > $score){
