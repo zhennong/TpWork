@@ -355,7 +355,7 @@ class IndexController extends CommonController {
                     $y[] = $v;
                 }
 
-                $api->putLog($y);
+                $api->putLog("回复内容：".$y);
 
                 $show['question_answers'] = $y;
                 //获取回复信息
@@ -366,6 +366,7 @@ class IndexController extends CommonController {
             case "submit_questions_answer":
 			    //增加回复消息数量
                 $resultId = $api->addQuestionAnswer(I('get.'));
+                $api->putLog("添加回复：".$resultId);
                 if ($resultId > 0) {
 				   //统计回复消息数top_ier
 					D('QuestionAsk')->where(array("id"=>$resultId))->setInc('answer_number',1);
