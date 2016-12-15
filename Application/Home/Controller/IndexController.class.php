@@ -332,7 +332,6 @@ class IndexController extends CommonController {
             case "get_ask_arc_info";
                 //获取问答信息
                 $x = $api->getAskInfo(I('get.askid'),I('get.userid'));
-                $api->putLog($x);
                 foreach ($x as $k => $v) {
                     $x[$k]['addtime_date'] = $api->format_date($v['addtime']);
                     for ($i = 0; $i < 6; $i++) {
@@ -355,6 +354,8 @@ class IndexController extends CommonController {
                 foreach ($x as $k=>$v){
                     $y[] = $v;
                 }
+
+                $api->putLog($y);
 
                 $show['question_answers'] = $y;
                 //获取回复信息
